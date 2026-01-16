@@ -281,35 +281,49 @@
             margin: 0 auto;
             padding: 20px;
         }
-        
-        /* Hero Section */
-        .hero-section {
-            background: linear-gradient(rgba(255,255,255,0.9), rgba(255,255,255,0.9)), 
-                        url('https://images.unsplash.com/photo-1417733403748-83bbc7c05140?q=80&w=1000');
-            background-size: cover;
-            border-radius: 20px;
-            padding: 40px;
-            text-align: center;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 30px var(--shadow);
-            border: 1px solid var(--border);
-        }
-        
-        .hero-title {
-            font-size: 32px;
-            font-weight: 800;
-            color: var(--primary);
-            margin-bottom: 10px;
-        }
-        
-        .hero-subtitle {
-            font-size: 16px;
-            color: var(--text-light);
-            max-width: 600px;
-            margin: 0 auto 25px;
-        }
-        
-        /* Search and Filter */
+        .hero {
+    height: 70vh; /* Tapai le pahile nai halnu bhayeko chha */
+    background-image: url("paladrium.jpg"); /* Sahi path halnu-hos */
+    background-size: cover; /* Yasle image lai section bhitra thikka parera adaptive banaucha */
+    background-position: center; /* Image ko bhibhag center ma dekhaucha */
+    background-repeat: no-repeat; /* Image pheri-pheri dohorina didaina */
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color:white;
+}
+
+/* Overlay to make text readable */
+.hero-overlay{
+  position: absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:black(0,0,0,0.45) /* semi-transparent dark overlay */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 20px;
+}
+
+.hero-content{
+  max-width: 700px;
+}
+
+.hero h1{
+  font-size: 42px;
+  margin-bottom: 15px;
+}
+
+.hero p{
+  font-size: 16px;
+  opacity: .95;
+  margin-bottom: 25px;
+}
+ /* Search and Filter */
         .search-section {
             background: var(--card);
             padding: 20px;
@@ -1022,13 +1036,7 @@
                             <input type="password" class="auth-input" id="loginPassword" placeholder="••••••••">
                         </div>
                     </div>
-                    
-                    <button class="btn btn-primary" style="width: 100%; margin-top: 10px;" onclick="login()">
-                        <i class="fas fa-sign-in-alt"></i> Sign In
-                    </button>
-                    
-                    <div class="auth-switch-link">
-                        New user? <a href="javascript:void(0)" onclick="switchAuthTab('register')">Create an account</a>
+                    user? <a href="javascript:void(0)" onclick="switchAuthTab('register')">Create an account</a>
                     </div>
                     
                     <!-- Admin Login Hint -->
@@ -1142,13 +1150,20 @@
         </div>
     </div>
     
-    <!-- Main Content -->
-    <div class="container">
-        <!-- Hero Section -->
-        <div class="hero-section">
-            <h1 class="hero-title">Find Your Perfect Pet Companion</h1>
-            <p class="hero-subtitle">Buy, sell, or adopt pets in Nepal's largest pet marketplace. Connect with trusted sellers and find your furry, feathery, or scaly friend today!</p>
-        </div>
+    <section class="hero">
+  <div class="hero-overlay">
+    <div class="hero-content">
+      <h1>Find Your Perfect Pet Companion</h1>
+      <p>
+        Buy, sell, or adopt pets in Nepal's largest pet marketplace.
+        Connect with trusted sellers and find your furry, feathery, or scaly friend today!
+      </p>
+      <button class="btn btn-primary" onclick="filterByCategory('fish')">
+        Explore Pets
+      </button>
+    </div>
+  </div>
+</section> 
         
         <!-- Stats Bar -->
         <div class="stats-bar">
@@ -1346,1355 +1361,840 @@
                 <a href="#" style="color: white; opacity: 0.8; transition: opacity 0.3s;">Terms of Service</a>
             </div>
             <div style="opacity: 0.7; font-size: 14px;">
-                © 2024 ABI Fish & Pets. Thankyou for choosing us.🙏💐
+                © 2021 ABI Fish & Pets. Thankyou for choosing us.🙏💐
             </div>
         </div>
     </div>
-<script>
-    // ==================== DATA & STATE ====================
-    let currentUser = null;
-    let listings = JSON.parse(localStorage.getItem('petListings')) || [];
-    let uploadedImages = [];
-    let listingToDelete = null;
-    let userToBlock = null;
-    const ADMIN_COMMISSION_RATE = 2.5;
-    
-    // ==================== INITIALIZATION ====================
-    document.addEventListener('DOMContentLoaded', function() {
-        // Check if data exists, if not initialize with sample data
-        if (!localStorage.getItem('petListings') || JSON.parse(localStorage.getItem('petListings')).length === 0) {
-            initializeSampleData();
-        }
-        
-        if (!localStorage.getItem('users')) {
-            initializeUsers();
-        }
-        
-        loadListings();
-        checkAuthStatus();
-        setupEventListeners();
+<!-- Firebase SDKs -->
+<script type="module">
+  // Import Firebase v12 modules
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+
+  // Your Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyAgrXYL1M-cO8LYTmJeEtfwhkp-ghXfNWY",
+    authDomain: "abi-fish-pets.firebaseapp.com",
+    databaseURL: "https://abi-fish-pets-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "abi-fish-pets",
+    storageBucket: "abi-fish-pets.firebasestorage.app",
+    messagingSenderId: "644115504257",
+    appId: "1:644115504257:web:278b713d235aa8938a0180",
+    measurementId: "G-2T3T8RTJKE"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const auth = getAuth(app);
+
+  // ==================== GLOBAL STATE ====================
+  let currentUser = null;
+  let uploadedImages = [];
+  let listingToDelete = null;
+  const ADMIN_COMMISSION_RATE = 2.5;
+  // ==================== ORDER + COMMISSION AUTO ====================
+async function placeOrder(listingId, title, price, sellerId){
+  if(!currentUser){
+    alert("Please login to place order");
+    toggleAuthModal();
+    return;
+  }
+
+  const paymentMethod = prompt("Payment method: cash / online");
+  if(!paymentMethod) return;
+
+  const commission = price * (ADMIN_COMMISSION_RATE / 100);
+  const sellerGets = price - commission;
+
+  try{
+    await addDoc(collection(db,"orders"),{
+      listingId: listingId,
+      listingTitle: title,
+      sellerId: sellerId,
+      buyerId: currentUser.id,
+      price: price,
+      commission: commission,
+      sellerGets: sellerGets,
+      paymentMethod: paymentMethod,
+      orderStatus: "pending",
+      createdAt: serverTimestamp()
     });
+
+    showNotification(
+      `Order placed successfully! Seller gets रु ${sellerGets.toLocaleString()}`,
+      "success"
+    );
+  }catch(error){
+    alert("Order failed: " + error.message);
+  }
+}
+
+  // ==================== INITIALIZATION ====================
+  document.addEventListener('DOMContentLoaded', function() {
+    setupEventListeners();
+    setupAuthStateListener();
+    loadListings();
+  });
+
+  function setupEventListeners() {
+    document.getElementById('petPrice').addEventListener('input', updatePriceDisplay);
     
-    function initializeSampleData() {
-        // Create admin user first
-        const adminUser = {
-            id: 'admin_001',
-            name: 'Admin User',
-            email: 'admin@abifishpets.com',
-            phone: '9703710719',
-            password: 'admin123',
-            location: 'Kathmandu',
-            userType: 'admin',
-            createdAt: new Date().toISOString(),
-            isActive: true
-        };
-        
-        // Create some sample users
-        const sampleUsers = [
-            adminUser,
-            {
-                id: 'user_001',
-                name: 'John Doe',
-                email: 'john@example.com',
-                phone: '9812345678',
-                password: 'password123',
-                location: 'Kathmandu',
-                userType: 'seller',
-                createdAt: new Date().toISOString(),
-                isActive: true
-            },
-            {
-                id: 'user_002',
-                name: 'Jane Smith',
-                email: 'jane@example.com',
-                phone: '9823456789',
-                password: 'password123',
-                location: 'Pokhara',
-                userType: 'customer',
-                createdAt: new Date().toISOString(),
-                isActive: true
-            }
-        ];
-        
-        localStorage.setItem('users', JSON.stringify(sampleUsers));
-        
-        // Create sample listings
-        const sampleListings = [
-            {
-                id: 1,
-                title: "Golden Retriever Puppy",
-                price: 25000,
-                category: "dog",
-                description: "3 month old golden retriever puppy, vaccinated and healthy.",
-                location: "Kathmandu",
-                sellerName: "John Doe",
-                sellerId: "user_001",
-                sellerPhone: "9812345678",
-                date: "2024-01-15",
-                images: [],
-                commission: 625,
-                sellerGets: 24375,
-                createdAt: new Date().toISOString(),
-                isActive: true
-            },
-            {
-                id: 2,
-                title: "Persian Cat",
-                price: 18000,
-                category: "cat",
-                description: "Beautiful white persian cat, 6 months old.",
-                location: "Pokhara",
-                sellerName: "Jane Smith",
-                sellerId: "user_002",
-                sellerPhone: "9823456789",
-                date: "2024-01-14",
-                images: [],
-                commission: 450,
-                sellerGets: 17550,
-                createdAt: new Date().toISOString(),
-                isActive: true
-            },
-            {
-                id: 3,
-                title: "Halfmoon Betta Fish",
-                price: 450,
-                category: "fish",
-                description: "Beautiful halfmoon Betta fish, vibrant colors.",
-                location: "Kathmandu",
-                sellerName: "John Doe",
-                sellerId: "user_001",
-                sellerPhone: "9812345678",
-                date: "2024-01-13",
-                images: [],
-                commission: 11.25,
-                sellerGets: 438.75,
-                createdAt: new Date().toISOString(),
-                isActive: true
-            }
-        ];
-        
-        localStorage.setItem('petListings', JSON.stringify(sampleListings));
-        listings = sampleListings;
-        
-        showNotification("Sample data initialized!", 'success');
-    }
-    
-    function initializeUsers() {
-        const users = [
-            {
-                id: 'admin_001',
-                name: 'Admin User',
-                email: 'admin@abifishpets.com',
-                phone: '9703710719',
-                password: 'admin123',
-                location: 'Kathmandu',
-                userType: 'admin',
-                createdAt: new Date().toISOString(),
-                isActive: true
-            }
-        ];
-        localStorage.setItem('users', JSON.stringify(users));
-    }
-    
-    function setupEventListeners() {
-        document.getElementById('petPrice').addEventListener('input', updatePriceDisplay);
-        
-        document.getElementById('searchInput').addEventListener('input', function(e) {
-            filterListings();
-        });
-        
-        document.getElementById('locationFilter').addEventListener('change', filterListings);
-        document.getElementById('priceFilter').addEventListener('change', filterListings);
-    }
-    
-    function filterListings() {
-        const term = document.getElementById('searchInput').value.toLowerCase();
-        const location = document.getElementById('locationFilter').value;
-        const priceFilter = document.getElementById('priceFilter').value;
-        
-        const container = document.getElementById('listingsContainer');
-        container.innerHTML = '';
-        
-        const filtered = listings.filter(listing => {
-            if (term && !listing.title.toLowerCase().includes(term) && 
-                !listing.description.toLowerCase().includes(term) &&
-                !listing.sellerName.toLowerCase().includes(term)) {
-                return false;
-            }
-            
-            if (location && !listing.location.toLowerCase().includes(location)) {
-                return false;
-            }
-            
-            if (priceFilter) {
-                if (priceFilter === 'low' && listing.price >= 5000) return false;
-                if (priceFilter === 'medium' && (listing.price < 5000 || listing.price > 20000)) return false;
-                if (priceFilter === 'high' && listing.price <= 20000) return false;
-            }
-            
-            return true;
-        });
-        
-        if (filtered.length === 0) {
-            container.innerHTML = `
-                <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-light);">
-                    <i class="fas fa-search" style="font-size: 50px; margin-bottom: 20px;"></i>
-                    <h3>No Pets Found</h3>
-                    <p>Try changing your search criteria</p>
-                    <button class="btn btn-primary" onclick="loadListings()" style="margin-top: 10px;">
-                        <i class="fas fa-redo"></i> Reset Filters
-                    </button>
-                </div>
-            `;
-            return;
-        }
-        
-        filtered.forEach(listing => {
-            const card = createListingCard(listing);
-            container.innerHTML += card;
-        });
-    }
-    
-    // ==================== AUTHENTICATION ====================
-    function toggleAuthModal() {
-        const modal = document.getElementById('authModal');
-        modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
-    }
-    
-    function switchAuthTab(tab) {
-        document.getElementById('loginForm').style.display = tab === 'login' ? 'block' : 'none';
-        document.getElementById('registerForm').style.display = tab === 'register' ? 'block' : 'none';
-        
-        document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
-        event.target.classList.add('active');
-        
-        if (tab === 'register') {
-            resetUserTypeSelection();
-        }
-    }
-    
-    function resetUserTypeSelection() {
-        document.querySelectorAll('.user-type-btn').forEach(btn => {
-            btn.classList.remove('selected');
-        });
-        document.querySelectorAll('.user-type-btn')[0].classList.add('selected');
-        document.getElementById('userType').value = 'customer';
-    }
-    
-    function selectUserType(type) {
-        document.querySelectorAll('.user-type-btn').forEach(btn => {
-            btn.classList.remove('selected');
-        });
-        event.target.classList.add('selected');
-        document.getElementById('userType').value = type;
-    }
-    
-    function login() {
-        const email = document.getElementById('loginEmail').value;
-        const password = document.getElementById('loginPassword').value;
-        
-        if (!email || !password) {
-            alert("Please enter email and password");
-            return;
-        }
-const users = JSON.parse(localStorage.getItem('users')) || [];
-        const user = users.find(u => u.email === email && u.password === password);
-        
-        if (!user) {
-            alert("Invalid email or password");
-            return;
-        }
-        
-        if (!user.isActive) {
-            alert("This account has been blocked. Please contact admin.");
-            return;
-        }
-        
+    // Search functionality
+    document.getElementById('searchInput').addEventListener('input', filterListings);
+    document.getElementById('locationFilter').addEventListener('change', filterListings);
+    document.getElementById('priceFilter').addEventListener('change', filterListings);
+  }
+
+  // ==================== AUTHENTICATION ====================
+  function setupAuthStateListener() {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
         currentUser = {
-            id: user.id,
-            name: user.name,
-            email: user.email,
-            phone: user.phone,
-            location: user.location || "Kathmandu",
-            userType: user.userType,
-            createdAt: user.createdAt
+          id: user.uid,
+          name: user.displayName || user.email.split('@')[0],
+          email: user.email,
+          phone: localStorage.getItem(`userPhone_${user.uid}`) || '',
+          userType: localStorage.getItem(`userType_${user.uid}`) || 'customer'
         };
-        
-        localStorage.setItem('currentUser', JSON.stringify(currentUser));
         updateUserUI();
-        toggleAuthModal();
-        
-        showNotification(`Welcome ${currentUser.name}!`, 'success');
-    }
-    
-    function register() {
-        const name = document.getElementById('regName').value;
-        const email = document.getElementById('regEmail').value;
-        const phone = document.getElementById('regPhone').value;
-        const password = document.getElementById('regPassword').value;
-        const userType = document.getElementById('userType').value;
-        
-        if (!name || !email || !phone || !password) {
-            alert("Please fill all fields");
-            return;
-        }
-        
-        if (!phone.match(/^(97|98)\d{8}$/)) {
-            alert("Please enter a valid Nepali phone number starting with 97 or 98");
-            return;
-        }
-        
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-            alert("Please enter a valid email address");
-            return;
-        }
-        
-        if (password.length < 6) {
-            alert("Password must be at least 6 characters long");
-            return;
-        }
-        
-        const users = JSON.parse(localStorage.getItem('users')) || [];
-        
-        if (users.find(u => u.email === email)) {
-            alert("Email already registered. Please login instead.");
-            switchAuthTab('login');
-            return;
-        }
-        
-        if (users.find(u => u.phone === phone)) {
-            alert("Phone number already registered");
-            return;
-        }
-        
-        const newUser = {
-            id: 'user_' + Date.now(),
-            name: name,
-            email: email,
-            phone: phone,
-            password: password,
-            location: "Kathmandu",
-            userType: userType,
-            createdAt: new Date().toISOString(),
-            isActive: true
-        };
-        
-        users.push(newUser);
-        localStorage.setItem('users', JSON.stringify(users));
-        
-        currentUser = {
-            id: newUser.id,
-            name: newUser.name,
-            email: newUser.email,
-            phone: newUser.phone,
-            location: newUser.location,
-            userType: newUser.userType,
-            createdAt: newUser.createdAt
-        };
-        
-        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+      } else {
+        currentUser = null;
         updateUserUI();
-        toggleAuthModal();
-        
-        showNotification(`Account created successfully! Welcome ${name}.`, 'success');
+      }
+    });
+  }
+
+  function toggleAuthModal() {
+    const modal = document.getElementById('authModal');
+    modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
+  }
+
+  function switchAuthTab(tab) {
+    document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+    event.target.classList.add('active');
+    
+    document.getElementById('loginForm').style.display = tab === 'login' ? 'block' : 'none';
+    document.getElementById('registerForm').style.display = tab === 'register' ? 'block' : 'none';
+  }
+
+  async function login() {
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+    
+    if (!email || !password) {
+      alert("Please enter email and password");
+      return;
     }
     
-    function checkAuthStatus() {
-        const savedUser = localStorage.getItem('currentUser');
-        if (savedUser) {
-            currentUser = JSON.parse(savedUser);
-            updateUserUI();
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      showNotification("Login successful!", 'success');
+      toggleAuthModal();
+    } catch (error) {
+      alert("Login failed: " + error.message);
+    }
+  }
+
+  async function register() {
+    const email = document.getElementById('regEmail').value;
+    const password = document.getElementById('regPassword').value;
+    const name = document.getElementById('regName').value;
+    const phone = document.getElementById('regPhone').value;
+    const userType = document.getElementById('userType').value;
+    
+    if (!email || !password || !name || !phone || !userType) {
+      alert("Please fill all fields");
+      return;
+    }
+    
+    if (!phone.match(/^(97|98)\d{8}$/)) {
+      alert("Please enter a valid Nepali phone number starting with 97 or 98");
+      return;
+    }
+    
+    try {
+      // Create user
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      
+      // Save additional user info
+      localStorage.setItem(`userType_${user.uid}`, userType);
+      localStorage.setItem(`userPhone_${user.uid}`, phone);
+      localStorage.setItem(`userName_${user.uid}`, name);
+      
+      // Update display name
+      await updateProfile(user, {
+        displayName: name
+      });
+      
+      showNotification("Account created successfully!", 'success');
+      toggleAuthModal();
+    } catch (error) {
+      alert("Registration failed: " + error.message);
+    }
+  }
+
+  function logout() {
+    if (confirm("Are you sure you want to logout?")) {
+      signOut(auth).then(() => {
+        showNotification("Logged out successfully", 'info');
+      });
+    }
+  }
+
+  function updateUserUI() {
+    const userInitial = document.getElementById('userInitial');
+    const myListingsBtn = document.getElementById('myListingsBtn');
+    
+    if (currentUser) {
+      userInitial.innerHTML = currentUser.userType === 'seller' ? 
+        `<i class="fas fa-store"></i>` : 
+        `<i class="fas fa-user"></i>`;
+      userInitial.onclick = showUserMenu;
+      
+      myListingsBtn.style.display = currentUser.userType === 'seller' ? 'flex' : 'none';
+      myListingsBtn.onclick = showMyListings;
+      
+      // Update my listings count
+      updateMyListingsCount();
+    } else {
+      userInitial.innerHTML = `<i class="fas fa-user"></i>`;
+      userInitial.onclick = toggleAuthModal;
+      myListingsBtn.style.display = 'none';
+    }
+  }
+
+  // ==================== FIRESTORE DATABASE OPERATIONS ====================
+  async function loadListings() {
+    const container = document.getElementById('listingsContainer');
+    container.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:40px;"><i class="fas fa-spinner fa-spin"></i> Loading listings...</div>';
+    
+    try {
+      const q = query(collection(db, "listings"), orderBy("createdAt", "desc"));
+      const querySnapshot = await getDocs(q);
+      
+      container.innerHTML = '';
+      let listingsCount = 0;
+      
+      querySnapshot.forEach((doc) => {
+        const listing = doc.data();
+        listing.id = doc.id;
+        const card = createListingCard(listing);
+        container.innerHTML += card;
+        listingsCount++;
+      });
+      
+      document.getElementById('totalPets').textContent = listingsCount;
+      
+      if (listingsCount === 0) {
+        container.innerHTML = `
+          <div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--text-light);">
+            <i class="fas fa-paw" style="font-size:50px;"></i>
+            <h3>No Pets Available Yet</h3>
+            <p>Be the first to list a pet!</p>
+          </div>
+        `;
+      }
+    } catch (error) {
+      console.error("Error loading listings: ", error);
+      container.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:red;">Error loading listings. Please refresh.</div>`;
+    }
+  }
+
+  async function submitListing() {
+    if (!currentUser) {
+      alert("Please login first");
+      toggleAuthModal();
+      return;
+    }
+    
+    if (currentUser.userType !== 'seller') {
+      alert("Only sellers can list pets");
+      return;
+    }
+    
+    const title = document.getElementById('petTitle').value;
+    const category = document.getElementById('petCategory').value;
+    const price = document.getElementById('petPrice').value;
+    const description = document.getElementById('petDescription').value;
+    const location = document.getElementById('petLocation').value;
+    const phone = document.getElementById('petPhone').value;
+    const editId = document.getElementById('editListingId').value;
+    
+    // Validation
+    if (!title || !category || !price || !description || !location || !phone) {
+      alert("Please fill all required fields");
+      return;
+    }
+    
+    const listingPrice = parseInt(price);
+    if (listingPrice <= 0) {
+      alert("Please enter a valid price");
+      return;
+    }
+    
+    const commission = listingPrice * (ADMIN_COMMISSION_RATE/100);
+    const sellerGets = listingPrice - commission;
+    
+    const listingData = {
+      title: title,
+      category: category,
+      price: listingPrice,
+      description: description,
+      location: location,
+      sellerName: currentUser.name,
+      sellerId: currentUser.id,
+      sellerPhone: phone,
+      images: uploadedImages,
+      commission: commission,
+      sellerGets: sellerGets,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    };
+    
+    try {
+      if (editId) {
+        // Update existing listing
+        const listingRef = doc(db, "listings", editId);
+        await updateDoc(listingRef, listingData);
+        showNotification("Listing updated successfully!", 'success');
+      } else {
+        // Create new listing
+        await addDoc(collection(db, "listings"), listingData);
+        showNotification(`Listing published! Price: रु ${listingPrice.toLocaleString()}`, 'success');
+      }
+      loadListings();
+      closeSellModal();
+    } catch (error) {
+      alert("Error: " + error.message);
+    }
+  }
+
+  async function confirmDelete() {
+    if (!listingToDelete) return;
+    
+    try {
+      await deleteDoc(doc(db, "listings", listingToDelete));
+      showNotification("Listing deleted successfully!", 'success');
+      loadListings();
+      closeDeleteModal();
+    } catch (error) {
+      alert("Error deleting listing: " + error.message);
+    }
+  }
+
+  async function updateMyListingsCount() {
+    if (!currentUser || currentUser.userType !== 'seller') return;
+    
+    try {
+      const q = query(collection(db, "listings"), orderBy("createdAt", "desc"));
+      const querySnapshot = await getDocs(q);
+      
+      let myListingsCount = 0;
+      querySnapshot.forEach((doc) => {
+        const listing = doc.data();
+        if (listing.sellerId === currentUser.id) {
+          myListingsCount++;
         }
+      });
+      
+      document.getElementById('myListingsCount').textContent = myListingsCount;
+    } catch (error) {
+      console.error("Error counting listings: ", error);
+    }
+  }
+
+  // ==================== UI FUNCTIONS (Keep your existing ones) ====================
+  function createListingCard(listing) {
+    const icon = getCategoryIcon(listing.category);
+    const placeholderColor = getCategoryColor(listing.category);
+    const isOwner = currentUser && listing.sellerId === currentUser.id;
+    
+    // Format date
+    let dateDisplay = "Recent";
+    if (listing.createdAt && listing.createdAt.toDate) {
+      dateDisplay = listing.createdAt.toDate().toLocaleDateString();
     }
     
-    function logout() {
-        if (confirm("Are you sure you want to logout?")) {
-            currentUser = null;
-            localStorage.removeItem('currentUser');
-            updateUserUI();
-            showNotification("Logged out successfully", 'info');
-            loadListings();
-        }
-    }
-    
-    function updateUserUI() {
-        const userInitial = document.getElementById('userInitial');
-        const myListingsBtn = document.getElementById('myListingsBtn');
-        const adminBtn = document.getElementById('adminBtn');
+    return `
+      <div class="listing-card" data-category="${listing.category}" data-id="${listing.id}">
+        <div class="listing-badge">${getCategoryName(listing.category)}</div>
         
-        if (currentUser) {
-            userInitial.innerHTML = currentUser.userType === 'admin' ? 
-                `<i class="fas fa-crown"></i>` :
-                currentUser.userType === 'seller' ? 
-                `<i class="fas fa-store"></i>` : 
-                `<i class="fas fa-user"></i>`;
+        <!-- Images Display -->
+        <div class="listing-img">
+          ${listing.images && listing.images.length > 0 ? 
+            `<div style="display: grid; grid-template-columns: repeat(${Math.min(listing.images.length, 3)}, 1fr); gap: 2px; height: 100%;">
+              ${listing.images.slice(0, 3).map((img, index) => `
+                <div style="overflow: hidden; position: relative; ${listing.images.length === 1 ? 'grid-column: 1/-1;' : ''}">
+                  <img src="${img}" alt="${listing.title} ${index + 1}" 
+                       style="width: 100%; height: 100%; object-fit: cover;">
+                  ${listing.images.length > 1 && index === 2 && listing.images.length > 3 ? 
+                    `<div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; color: white; font-size: 24px; font-weight: bold;">
+                      +${listing.images.length - 3}
+                    </div>` : ''}
+                </div>
+              `).join('')}
+            </div>` :
+            `<div class="img-placeholder" style="background: ${placeholderColor};">
+              <i class="${icon}" style="font-size: 60px;"></i>
+            </div>`
+          }
+        </div>
+        
+        <div class="listing-details">
+          <div class="listing-price">रु ${listing.price.toLocaleString()}</div>
+          <div class="listing-title">${listing.title}</div>
+          
+          <div class="listing-meta">
+            <div class="meta-item">
+              <i class="fas fa-map-marker-alt"></i>
+              <span>${listing.location}</span>
+            </div>
+            <div class="meta-item">
+              <i class="fas fa-calendar"></i>
+              <span>${dateDisplay}</span>
+            </div>
+          </div>
+          
+          <p style="font-size: 14px; color: var(--text-light); margin-bottom: 15px;">
+            ${listing.description}
+          </p>
+          
+          <!-- Commission Info -->
+          <div style="background: #fff8e1; padding: 8px; border-radius: 6px; margin-bottom: 10px; font-size: 12px;">
+            <i class="fas fa-info-circle" style="color: #ff9800;"></i>
+            Seller gets: <strong>रु ${listing.sellerGets?.toLocaleString() || (listing.price - (listing.price * (ADMIN_COMMISSION_RATE/100))).toLocaleString()}</strong> 
+            (${ADMIN_COMMISSION_RATE}% commission)
+          </div>
+          
+          <!-- Seller Contact Box -->
+          <div class="seller-info">
+            <div class="seller-avatar">
+              ${listing.sellerName?.charAt(0) || 'S'}
+            </div>
+            <div class="seller-details">
+              <div class="seller-name">${listing.sellerName || 'Seller'}</div>
+              <div class="seller-phone">
+                <i class="fas fa-phone"></i> ${listing.sellerPhone || 'N/A'}
+              </div>
+            </div>
+          </div>
+          
+          ${isOwner && currentUser.userType === 'seller' ? 
+            `
+            <div class="owner-actions">
+              <button class="owner-btn btn-edit" onclick="editListing('${listing.id}')">
+                <i class="fas fa-edit"></i> Edit
+              </button>
+              <button class="owner-btn btn-delete" onclick="openDeleteModal('${listing.id}', '${listing.title}')">
+                <i class="fas fa-trash"></i> Delete
+              </button>
+            </div>
+            ` : 
+            `
             
-            userInitial.onclick = function() {
-                showUserMenu();
-            };
-            
-            myListingsBtn.style.display = currentUser.userType === 'seller' ? 'flex' : 'none';
-            adminBtn.style.display = currentUser.userType === 'admin' ? 'flex' : 'none';
-            
-            updateMyListingsCount();
-        } else {
-            userInitial.innerHTML = `<i class="fas fa-user"></i>`;
-            userInitial.onclick = toggleAuthModal;
-            myListingsBtn.style.display = 'none';
-            adminBtn.style.display = 'none';
-        }
+            <div class="action-buttons">
+  <button class="btn btn-primary"
+    onclick="placeOrder(
+      '${listing.id}',
+      '${listing.title}',
+      ${listing.price},
+      '${listing.sellerId}'
+    )">
+    <i class="fas fa-shopping-cart"></i> Order Now
+  </button>
+
+  <button class="btn btn-secondary"
+    onclick="sendWhatsApp('${listing.sellerPhone}', '${listing.title}')">
+    <i class="fab fa-whatsapp"></i> WhatsApp
+  </button>
+</div>
+            `
+          }
+        </div>
+      </div>
+    `;
+  }
+
+  function editListing(listingId) {
+    // Load listing data and populate form
+    // You'll need to implement this function
+    alert("Edit function to be implemented");
+  }
+
+  function openDeleteModal(listingId, listingTitle) {
+    listingToDelete = listingId;
+    document.getElementById('deleteMessage').textContent = 
+      `Are you sure you want to delete "${listingTitle}"? This action cannot be undone.`;
+    document.getElementById('deleteModal').style.display = 'flex';
+  }
+
+  function closeDeleteModal() {
+    document.getElementById('deleteModal').style.display = 'none';
+    listingToDelete = null;
+  }
+
+  function openSellModal() {
+    if (!currentUser) {
+      alert("Please login to sell pets");
+      toggleAuthModal();
+      return;
     }
     
-    function showUserMenu() {
-        if (!currentUser) return;
-        
-        const menu = document.createElement('div');
-        menu.style.cssText = `
-            position: absolute;
-            top: 60px;
-            right: 20px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
-            padding: 15px;
-            min-width: 200px;
-            z-index: 2001;
-            animation: fadeIn 0.2s ease;
-        `;
-        
-        menu.innerHTML = `
-            <div style="padding: 10px; border-bottom: 1px solid #eee;">
-                <div style="font-weight: bold;">${currentUser.name}</div>
-                <div style="font-size: 12px; color: #666;">${currentUser.email}</div>
-                <div style="font-size: 11px; color: #888; margin-top: 5px;">
-                    <i class="fas fa-${currentUser.userType === 'admin' ? 'crown' : currentUser.userType === 'seller' ? 'store' : 'user'}"></i>
-                    ${currentUser.userType === 'admin' ? 'Admin' : currentUser.userType === 'seller' ? 'Seller' : 'Customer'}
-                </div>
-            </div>
-            <div style="padding: 10px;">
-                <button onclick="showMyProfile()" class="user-menu-item">
-                    <i class="fas fa-user-circle"></i> My Profile
-                </button>
-                ${currentUser.userType === 'seller' ? 
-                    `<button onclick="showMyListings()" class="user-menu-item">
-                        <i class="fas fa-list"></i> My Listings
-                    </button>` : ''
-                }
-                ${currentUser.userType === 'admin' ? 
-                    `<button onclick="openAdminPanel()" class="user-menu-item">
-                        <i class="fas fa-cog"></i> Admin Panel
-                    </button>` : ''
-                }
-                <button onclick="logout()" class="user-menu-item" style="color: #f44336;">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                </button>
-            </div>
-        `;
-        
-        menu.onclick = function(e)
-          {
-            e.stopPropagation();
-        };
-        
-        document.body.appendChild(menu);
-        
-        const closeMenu = function() {
-            if (document.body.contains(menu)) {
-                document.body.removeChild(menu);
-                document.removeEventListener('click', closeMenu);
-            }
-        };
-        
-        setTimeout(closeMenu, 5000);
-        document.addEventListener('click', closeMenu);
+    if (currentUser.userType !== 'seller') {
+      alert("Only sellers can list pets. Please register as seller.");
+      return;
     }
     
-    function showMyProfile() {
-        if (!currentUser) return;
-        alert(`My Profile\n\nName: ${currentUser.name}\nEmail: ${currentUser.email}\nPhone: ${currentUser.phone}\nAccount Type: ${currentUser.userType}\nJoined: ${new Date(currentUser.createdAt).toLocaleDateString()}`);
-    }
+    document.getElementById('sellModal').style.display = 'flex';
+    updatePriceDisplay();
+  }
+
+  function closeSellModal() {
+    document.getElementById('sellModal').style.display = 'none';
+    resetSellForm();
+  }
+
+  function resetSellForm() {
+    document.getElementById('editListingId').value = '';
+    document.getElementById('petTitle').value = '';
+    document.getElementById('petCategory').value = '';
+    document.getElementById('petPrice').value = '';
+    document.getElementById('petDescription').value = '';
+    document.getElementById('petLocation').value = '';
+    document.getElementById('petPhone').value = '';
+    uploadedImages = [];
+    document.getElementById('imagePreview').innerHTML = '';
     
-    function showMyListings() {
-        if (!currentUser) {
-            alert("Please login first");
-            toggleAuthModal();
-            return;
-        }
-        
-        if (currentUser.userType !== 'seller') {
-            alert("Only sellers can view their listings");
-            return;
-        }
-        
-        const myListings = listings.filter(l => l.sellerId === currentUser.id);
-        const container = document.getElementById('listingsContainer');
-        container.innerHTML = '';
-        
-        if (myListings.length === 0) {
-            container.innerHTML = `
-                <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-light);">
-                    <i class="fas fa-box-open" style="font-size: 50px; margin-bottom: 20px;"></i>
-                    <h3>No Listings Yet</h3>
-                    <p>You haven't listed any pets for sale.</p>
-                    <button class="btn btn-primary" onclick="openSellModal()" style="margin-top: 20px;">
-                        <i class="fas fa-plus"></i> Sell Your First Pet
-                    </button>
-                    <button class="btn btn-secondary" onclick="loadListings()" style="margin-top: 10px;">
-                        <i class="fas fa-arrow-left"></i> Back to All Listings
-                    </button>
-                </div>
-            `;
-            return;
-        }
-        
-        myListings.forEach(listing => {
-            const card = createListingCard(listing);
-            container.innerHTML += card;
-        });
-        
-        const backButton = document.createElement('div');
-        backButton.style.cssText = `
-            grid-column: 1/-1;
-            text-align: center;
-            margin-top: 20px;
-        `;
-        backButton.innerHTML = `
-            <button class="btn btn-secondary" onclick="loadListings()">
-                <i class="fas fa-arrow-left"></i> Back to All Listings
-            </button>
-            <div style="margin-top: 10px; color: var(--text-light);">
-                Showing ${myListings.length} of your listings
-            </div>
-        `;
-        container.appendChild(backButton);
-    }
+    // Reset modal title
+    document.getElementById('sellModalTitle').textContent = "Sell Your Pet";
+    document.getElementById('sellModalSubtitle').textContent = "List your pet in just 2 minutes";
+    document.getElementById('submitListingBtn').innerHTML = '<i class="fas fa-paper-plane"></i> Publish Listing';
+  }
+
+  function updatePriceDisplay() {
+    const price = parseFloat(document.getElementById('petPrice').value) || 0;
+    const commission = price * (ADMIN_COMMISSION_RATE/100);
+    const sellerGets = price - commission;
     
-    // ==================== LISTINGS ====================
-    function loadListings() {
-        const container = document.getElementById('listingsContainer');
-        container.innerHTML = '';
-        
-        // Reset filters
-        document.getElementById('searchInput').value = '';
-        document.getElementById('locationFilter').value = '';
-        document.getElementById('priceFilter').value = '';
-        
-        // Update active category button
-        document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
-        document.querySelectorAll('.category-btn')[0].classList.add('active');
-        
-        if (listings.length === 0) {
-            container.innerHTML = `
-                <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-light);">
-                    <i class="fas fa-paw" style="font-size: 50px; margin-bottom: 20px;"></i>
-                    <h3>No Pets Available</h3>
-                    <p>Be the first to list a pet for sale!</p>
-                    <button class="btn btn-primary" onclick="openSellModal()" style="margin-top: 20px;">
-                        <i class="fas fa-plus"></i> Sell Your First Pet
-                    </button>
-                </div>
-            `;
-        } else {
-            listings.forEach(listing => {
-                const card = createListingCard(listing);
-                container.innerHTML += card;
-            });
-        }
-        
-        updateStats();
+    const commissionInfo = document.getElementById('commissionInfo');
+    if (price > 0) {
+      commissionInfo.innerHTML = `
+        <div style="background: #f8f9fa; padding: 10px; border-radius: 8px; border-left: 3px solid #ff9800;">
+          <i class="fas fa-info-circle" style="color: #ff9800;"></i>
+          <strong>Commission Details:</strong><br>
+          • Listing Price: <strong>रु ${price.toLocaleString()}</strong><br>
+          • Admin Commission (${ADMIN_COMMISSION_RATE}%): <strong>रु ${commission.toFixed(2)}</strong><br>
+          • <strong style="color: var(--primary);">You Receive: रु ${sellerGets.toLocaleString()}</strong>
+        </div>
+      `;
+    } else {
+      commissionInfo.innerHTML = `
+        <div style="color: var(--text-light); font-size: 12px;">
+          <i class="fas fa-info-circle"></i> Enter price to see commission details
+        </div>
+      `;
     }
+  }
+
+  function handleImageUpload(event) {
+    const files = event.target.files;
     
-    function createListingCard(listing) {
-        const icon = getCategoryIcon(listing.category);
-        const placeholderColor = getCategoryColor(listing.category);
-        const commission = listing.price * (ADMIN_COMMISSION_RATE/100);
-        const sellerGets = listing.price - commission;
-        const isOwner = currentUser && listing.sellerId === currentUser.id;
-        const isAdmin = currentUser && currentUser.userType === 'admin';
-        
-        // 3 ओटा images देखाउने
-        const displayImages = listing.images && listing.images.length > 0 ? 
-            listing.images.slice(0, 3) : [];
-        
-        return `
-            <div class="listing-card" data-category="${listing.category}" data-id="${listing.id}">
-                <div class="listing-badge">${getCategoryName(listing.category)}</div>
-                
-                <!-- 3 ओटा Images Display -->
-                <div class="listing-img">
-                    ${displayImages.length > 0 ? 
-                        `<div style="display: grid; grid-template-columns: repeat(${Math.min(displayImages.length, 3)}, 1fr); gap: 2px; height: 100%;">
-                            ${displayImages.map((img, index) => `
-                                <div style="overflow: hidden; position: relative; ${displayImages.length === 1 ? 'grid-column: 1/-1;' : ''}">
-                                    <img src="${img}" alt="${listing.title} ${index + 1}" 
-                                         style="width: 100%; height: 100%; object-fit: cover;">
-                                    ${displayImages.length > 1 && index === 2 && listing.images.length > 3 ? 
-                                        `<div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; color: white; font-size: 24px; font-weight: bold;">
-                                            +${listing.images.length - 3}
-                                        </div>` : ''}
-                                </div>
-                            `).join('')}
-                        </div>` :
-                        `<div class="img-placeholder" style="background: ${placeholderColor};">
-                            <i class="${icon}" style="font-size: 60px;"></i>
-                        </div>`
-                    }
-                </div>
-                
-                <div class="listing-details">
-                    <div class="listing-price">रु ${listing.price.toLocaleString()}</div>
-                    <div class="listing-title">${listing.title}</div>
-                    
-                    <div class="listing-meta">
-                        <div class="meta-item">
-                            <i class="fas fa-map-marker-alt"></i>
-                            <span>${listing.location}</span>
-                        </div>
-                        <div class="meta-item">
-                            <i class="fas fa-calendar"></i>
-                            <span>${listing.date}</span>
-                        </div>
-                    </div>
-                    
-                    <p style="font-size: 14px; color: var(--text-light); margin-bottom: 15px;">
-                        ${listing.description}
-                    </p>
-                    
-                    <!-- Commission Info -->
-                    <div style="background: #fff8e1; padding: 8px; border-radius: 6px; margin-bottom: 10px; font-size: 12px;">
-                        <i class="fas fa-info-circle" style="color: #ff9800;"></i>
-                        Seller gets: <strong>रु ${sellerGets.toLocaleString()}</strong> 
-                        (${ADMIN_COMMISSION_RATE}% commission)
-                    </div>
-                    
-                    <!-- Seller Contact Box -->
-                    <div class="seller-info">
-                        <div class="seller-avatar">
-                            ${listing.sellerName.charAt(0)}
-                        </div>
-                        <div class="seller-details">
-                            <div class="seller-name">${listing.sellerName}</div>
-                            <div class="seller-phone">
-                                <i class="fas fa-phone"></i> ${listing.sellerPhone}
-                            </div>
-                        </div>
-                    </div>
-                    
-                    ${isOwner ? 
-                        `
-                        <div class="owner-actions">
-                            <button class="owner-btn btn-edit" onclick="editListing(${listing.id})">
-                                <i class="fas fa-edit"></i> Edit
-                            </button>
-                            <button class="owner-btn btn-delete" onclick="openDeleteModal(${listing.id}, '${listing.title}')">
-                                <i class="fas fa-trash"></i> Delete
-                            </button>
-                        </div>
-                        ` : 
-                        `
-                        <div class="action-buttons">
-                                                    <button class="btn btn-secondary" onclick="callSeller('${listing.sellerPhone}')">
-                                <i class="fas fa-phone"></i> Call Now
-                            </button>
-                            <button class="btn btn-primary btn-whatsapp" onclick="sendWhatsApp('${listing.sellerPhone}', '${listing.title}')">
-                                <i class="fab fa-whatsapp"></i> WhatsApp Message
-                            </button>
-                        </div>
-                        `
-                    }
-                    
-                    ${isAdmin ? 
-                        `
-                        <div class="admin-actions">
-                            <button class="owner-btn btn-admin" onclick="adminEditListing(${listing.id})">
-                                <i class="fas fa-edit"></i> Admin Edit
-                            </button>
-                            <button class="owner-btn btn-delete" onclick="adminDeleteListing(${listing.id}, '${listing.title}')">
-                                <i class="fas fa-trash"></i> Admin Delete
-                            </button>
-                            <button class="owner-btn btn-block" onclick="openBlockUserModal('${listing.sellerId}', '${listing.sellerName}')">
-                                <i class="fas fa-ban"></i> Block Seller
-                            </button>
-                        </div>
-                        ` : ''
-                    }
-                </div>
-            </div>
-        `;
-    }
-    
-    function updateStats() {
-        document.getElementById('totalPets').textContent = listings.length;
-        updateMyListingsCount();
-    }
-    
-    function updateMyListingsCount() {
-        if (!currentUser || currentUser.userType !== 'seller') return;
-        const myListings = listings.filter(l => l.sellerId === currentUser.id);
-        document.getElementById('myListingsCount').textContent = myListings.length;
-    }
-    
-    // ==================== CONTACT FUNCTIONS ====================
-    function sendWhatsApp(phone, title) {
-        if (!currentUser) {
-            alert("Please login to contact sellers");
-            toggleAuthModal();
-            return;
-        }
-        
-        const message = `Namaste! I'm interested in your "${title}" listing on ABI Fish & Pets. Is it still available?`;
-        const encodedMessage = encodeURIComponent(message);
-        const whatsappUrl = `https://wa.me/${phone}?text=${encodedMessage}`;
-        
-        window.open(whatsappUrl, '_blank');
-        showNotification(`Opening WhatsApp for ${phone}...`, 'info');
-    }
-    
-    function callSeller(phone) {
-        if (!currentUser) {
-            alert("Please login to contact sellers");
-            toggleAuthModal();
-            return;
-        }
-        
-        if (confirm(`Call ${phone}? This will open your phone's dialer.`)) {
-            window.location.href = `tel:${phone}`;
-            showNotification(`Dialing ${phone}...`, 'info');
-        }
-    }
-    
-    // ==================== EDIT FUNCTIONALITY ====================
-    function editListing(listingId) {
-        const listing = listings.find(l => l.id === listingId);
-        if (!listing) return;
-        
-        if (!currentUser || listing.sellerId !== currentUser.id) {
-            alert("You can only edit your own listings");
-            return;
-        }
-        
-        document.getElementById('editListingId').value = listing.id;
-        document.getElementById('petTitle').value = listing.title;
-        document.getElementById('petCategory').value = listing.category;
-        document.getElementById('petPrice').value = listing.price;
-        document.getElementById('petDescription').value = listing.description;
-        document.getElementById('petLocation').value = listing.location;
-        document.getElementById('petPhone').value = listing.sellerPhone;
-        
-        document.getElementById('sellModalTitle').textContent = "Edit Listing";
-        document.getElementById('sellModalSubtitle').textContent = "Update your pet listing";
-        document.getElementById('submitListingBtn').innerHTML = '<i class="fas fa-save"></i> Update Listing';
-        
-        uploadedImages = listing.images || [];
+    for (let i = 0; i < Math.min(files.length, 5 - uploadedImages.length); i++) {
+      const file = files[i];
+      const reader = new FileReader();
+      
+      reader.onload = function(e) {
+        uploadedImages.push(e.target.result);
         updateImagePreview();
-        
-        updatePriceDisplay();
-        openSellModal();
+      }
+      
+      reader.readAsDataURL(file);
     }
     
-    function adminEditListing(listingId) {
-        if (!currentUser || currentUser.userType !== 'admin') {
-            alert("Only admin can perform this action");
-            return;
-        }
-        
-        const listing = listings.find(l => l.id === listingId);
-        if (!listing) return;
-        
-        document.getElementById('editListingId').value = listing.id;
-        document.getElementById('petTitle').value = listing.title;
-        document.getElementById('petCategory').value = listing.category;
-        document.getElementById('petPrice').value = listing.price;
-        document.getElementById('petDescription').value = listing.description;
-        document.getElementById('petLocation').value = listing.location;
-        document.getElementById('petPhone').value = listing.sellerPhone;
-        
-        document.getElementById('sellModalTitle').textContent = "Admin: Edit Listing";
-        document.getElementById('sellModalSubtitle').textContent = "Edit listing as admin";
-        document.getElementById('submitListingBtn').innerHTML = '<i class="fas fa-save"></i> Update as Admin';
-        
-        uploadedImages = listing.images || [];
+    event.target.value = '';
+  }
+
+  function updateImagePreview() {
+    const preview = document.getElementById('imagePreview');
+    preview.innerHTML = '';
+    
+    uploadedImages.forEach((imgSrc, index) => {
+      const imgContainer = document.createElement('div');
+      imgContainer.style.position = 'relative';
+      imgContainer.style.display = 'inline-block';
+      imgContainer.style.margin = '5px';
+      
+      const img = document.createElement('img');
+      img.src = imgSrc;
+      img.style.width = '80px';
+      img.style.height = '80px';
+      img.style.objectFit = 'cover';
+      img.style.borderRadius = '8px';
+      img.style.border = '2px solid var(--border)';
+      
+      const removeBtn = document.createElement('button');
+      removeBtn.innerHTML = '<i class="fas fa-times"></i>';
+      removeBtn.style.cssText = `
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        background: var(--danger);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        font-size: 10px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      `;
+      removeBtn.onclick = function(e) {
+        e.stopPropagation();
+        uploadedImages.splice(index, 1);
         updateImagePreview();
-        
-        updatePriceDisplay();
-        openSellModal();
+      };
+      
+      imgContainer.appendChild(img);
+      imgContainer.appendChild(removeBtn);
+      preview.appendChild(imgContainer);
+    });
+  }
+
+  function sendWhatsApp(phone, title) {
+    if (!currentUser) {
+      alert("Please login to contact sellers");
+      toggleAuthModal();
+      return;
     }
-function adminDeleteListing(listingId, title) {
-        if (!currentUser || currentUser.userType !== 'admin') {
-            alert("Only admin can perform this action");
-            return;
+    
+    const message = `Namaste! I'm interested in your "${title}" listing on ABI Fish & Pets. Is it still available?`;
+    const encodedMessage = encodeURIComponent(message);
+    const whatsappUrl = `https://wa.me/${phone}?text=${encodedMessage}`;
+    
+    window.open(whatsappUrl, '_blank');
+    showNotification(`Opening WhatsApp for ${phone}...`, 'info');
+  }
+
+  function callSeller(phone) {
+    if (!currentUser) {
+      alert("Please login to contact sellers");
+      toggleAuthModal();
+      return;
+    }
+    
+    if (confirm(`Call ${phone}?`)) {
+      showNotification(`Calling ${phone}...`, 'info');
+    }
+  }
+
+  function filterListings() {
+    // This function needs your existing filtering logic
+    // For now, just reload all listings
+    loadListings();
+  }
+
+  function filterByCategory(category) {
+    document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+    
+    // Implement category filtering
+    loadListings();
+  }
+
+  function showMyListings() {
+    if (!currentUser) {
+      alert("Please login first");
+      toggleAuthModal();
+      return;
+    }
+    
+    if (currentUser.userType !== 'seller') {
+      alert("Only sellers can view their listings");
+      return;
+    }
+
+        // Filter to show only current user's listings
+    const container = document.getElementById('listingsContainer');
+    container.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:40px;"><i class="fas fa-spinner fa-spin"></i> Loading your listings...</div>';
+    
+    // You'll need to modify loadListings() to filter by sellerId
+    // For now, just show a message
+    container.innerHTML = `
+      <div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--text-light);">
+        <i class="fas fa-list" style="font-size:50px;"></i>
+        <h3>My Listings Feature</h3>
+        <p>This feature will show only your listings.</p>
+        <button class="btn btn-secondary" onclick="loadListings()" style="margin-top:20px;">
+          <i class="fas fa-arrow-left"></i> Back to All Listings
+        </button>
+      </div>
+    `;
+  }
+
+  function showUserMenu() {
+    if (!currentUser) return;
+    
+    const menu = document.createElement('div');
+    menu.style.cssText = `
+      position: absolute;
+      top: 60px;
+      right: 20px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+      padding: 15px;
+      min-width: 200px;
+      z-index: 2001;
+      animation: fadeIn 0.2s ease;
+    `;
+    
+    menu.innerHTML = `
+      <div style="padding: 10px; border-bottom: 1px solid #eee;">
+        <div style="font-weight: bold;">${currentUser.name}</div>
+        <div style="font-size: 12px; color: #666;">${currentUser.email}</div>
+        <div style="font-size: 11px; color: #888; margin-top: 5px;">
+          <i class="fas fa-${currentUser.userType === 'seller' ? 'store' : 'user'}"></i>
+          ${currentUser.userType === 'seller' ? 'Seller' : 'Customer'}
+        </div>
+      </div>
+      <div style="padding: 10px;">
+        <button onclick="showMyProfile()" style="width: 100%; padding: 10px; text-align: left; background: none; border: none; cursor: pointer;">
+          <i class="fas fa-user-circle"></i> My Profile
+        </button>
+        ${currentUser.userType === 'seller' ? 
+          `<button onclick="showMyListings()" style="width: 100%; padding: 10px; text-align: left; background: none; border: none; cursor: pointer;">
+            <i class="fas fa-list"></i> My Listings
+          </button>` : ''
         }
-        
-        if (confirm(`Admin: Are you sure you want to delete "${title}"?`)) {
-            listings = listings.filter(l => l.id !== listingId);
-            localStorage.setItem('petListings', JSON.stringify(listings));
-            loadListings();
-            showNotification("Listing deleted by admin!", 'success');
-        }
-    }
+        <button onclick="logout()" style="width: 100%; padding: 10px; text-align: left; background: none; border: none; cursor: pointer; color: #f44336;">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+      </div>
+    `;
     
-    function updateImagePreview() {
-        const preview = document.getElementById('imagePreview');
-        preview.innerHTML = '';
-        
-        uploadedImages.forEach((imgSrc, index) => {
-            const imgContainer = document.createElement('div');
-            imgContainer.style.position = 'relative';
-            imgContainer.style.display = 'inline-block';
-            imgContainer.style.margin = '5px';
-            
-            const img = document.createElement('img');
-            img.src = imgSrc;
-            img.style.width = '80px';
-            img.style.height = '80px';
-            img.style.objectFit = 'cover';
-            img.style.borderRadius = '8px';
-            img.style.border = '2px solid var(--border)';
-            
-            const removeBtn = document.createElement('button');
-            removeBtn.innerHTML = '<i class="fas fa-times"></i>';
-            removeBtn.style.cssText = `
-                position: absolute;
-                top: -5px;
-                right: -5px;
-                background: var(--danger);
-                color: white;
-                border: none;
-                border-radius: 50%;
-                width: 20px;
-                height: 20px;
-                font-size: 10px;
-                cursor: pointer;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            `;
-            removeBtn.onclick = function(e) {
-                e.stopPropagation();
-                uploadedImages.splice(index, 1);
-                updateImagePreview();
-            };
-            
-            imgContainer.appendChild(img);
-            imgContainer.appendChild(removeBtn);
-            preview.appendChild(imgContainer);
-        });
-    }
+    document.body.appendChild(menu);
     
-    // ==================== DELETE FUNCTIONALITY ====================
-    function openDeleteModal(listingId, listingTitle) {
-        listingToDelete = listingId;
-        
-        const listing = listings.find(l => l.id === listingId);
-        
-        if (!currentUser || !listing || listing.sellerId !== currentUser.id) {
-            alert("You can only delete your own listings");
-            return;
-        }
-        
-        document.getElementById('deleteMessage').textContent = 
-            `Are you sure you want to delete "${listingTitle}"? This action cannot be undone.`;
-        
-        document.getElementById('deleteModal').style.display = 'flex';
-    }
+    const closeMenu = function() {
+      if (document.body.contains(menu)) {
+        document.body.removeChild(menu);
+        document.removeEventListener('click', closeMenu);
+      }
+    };
     
-    function closeDeleteModal() {
-        document.getElementById('deleteModal').style.display = 'none';
-        listingToDelete = null;
-    }
+    setTimeout(closeMenu, 5000);
+    document.addEventListener('click', closeMenu);
+  }
+
+  function showMyProfile() {
+    if (!currentUser) return;
     
-    function confirmDelete() {
-        if (!listingToDelete) return;
-        
-        const listing = listings.find(l => l.id === listingToDelete);
-        
-        if (!currentUser || !listing || listing.sellerId !== currentUser.id) {
-            alert("You can only delete your own listings");
-            return;
-        }
-        
-        const initialLength = listings.length;
-        listings = listings.filter(l => l.id !== listingToDelete);
-        
-        if (listings.length < initialLength) {
-            localStorage.setItem('petListings', JSON.stringify(listings));
-            loadListings();
-            showNotification("Listing deleted successfully!", 'success');
-        }
-        
-        closeDeleteModal();
-    }
+    alert(`My Profile\n\nName: ${currentUser.name}\nEmail: ${currentUser.email}\nPhone: ${currentUser.phone}\nAccount Type: ${currentUser.userType}`);
+  }
+
+  function showNotification(message, type) {
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: ${type === 'success' ? '#4caf50' : type === 'info' ? '#2196f3' : '#ff9800'};
+      color: white;
+      padding: 15px 25px;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      z-index: 3000;
+      animation: slideInRight 0.3s ease;
+      font-weight: 500;
+      max-width: 400px;
+    `;
+    notification.innerHTML = `
+      <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'info' ? 'info-circle' : 'exclamation-triangle'}"></i>
+      ${message}
+    `;
     
-    // ==================== BLOCK USER FUNCTIONALITY ====================
-    function openBlockUserModal(userId, userName) {
-        if (!currentUser || currentUser.userType !== 'admin') {
-            alert("Only admin can block users");
-            return;
-        }
-        
-        userToBlock = userId;
-        document.getElementById('blockMessage').textContent = 
-            `Are you sure you want to block user "${userName}"? They will not be able to login.`;
-        
-        document.getElementById('blockModal').style.display = 'flex';
-    }
+    document.body.appendChild(notification);
     
-    function closeBlockModal() {
-        document.getElementById('blockModal').style.display = 'none';
-        userToBlock = null;
-    }
+    setTimeout(() => {
+      notification.style.animation = 'slideOutRight 0.3s ease';
+      setTimeout(() => notification.remove(), 300);
+    }, 3000);
     
-    function confirmBlock() {
-        if (!userToBlock) return;
-        
-        const users = JSON.parse(localStorage.getItem('users')) || [];
-        const userIndex = users.findIndex(u => u.id === userToBlock);
-        
-        if (userIndex !== -1) {
-            users[userIndex].isActive = false;
-            localStorage.setItem('users', JSON.stringify(users));
-            
-            // Also delete all listings by this user
-            const initialCount = listings.length;
-            listings = listings.filter(l => l.sellerId !== userToBlock);
-            localStorage.setItem('petListings', JSON.stringify(listings));
-            
-            showNotification(`User blocked and ${initialCount - listings.length} listings removed!`, 'success');
-            loadListings();
-        }
-        
-        closeBlockModal();
-    }
-    
-    // ==================== SELL/EDIT FUNCTION ====================
-    function openSellModal() {
-        if (!currentUser) {
-            alert("Please login to sell pets");
-            toggleAuthModal();
-            return;
-        }
-        
-        // Check if user is blocked
-        const users = JSON.parse(localStorage.getItem('users')) || [];
-        const user = users.find(u => u.id === currentUser.id);
-        
-        if (user && !user.isActive) {
-            alert("Your account has been blocked. Please contact admin.");
-            return;
-        }
-        
-        document.getElementById('sellModal').style.display = 'flex';
-        updatePriceDisplay();
-    }
-    
-    function closeSellModal() {
-        document.getElementById('sellModal').style.display = 'none';
-        resetSellForm();
-    }
-    
-    function resetSellForm() {
-        document.getElementById('editListingId').value = '';
-        document.getElementById('petTitle').value = '';
-        document.getElementById('petCategory').value = '';
-        document.getElementById('petPrice').value = '';
-        document.getElementById('petDescription').value = '';
-        document.getElementById('petLocation').value = '';
-        document.getElementById('petPhone').value = '';
-        uploadedImages = [];
-        document.getElementById('imagePreview').innerHTML = '';
-        
-        document.getElementById('sellModalTitle').textContent = "Sell Your Pet";
-        document.getElementById('sellModalSubtitle').textContent = "List your pet in just 2 minutes";
-        document.getElementById('submitListingBtn').innerHTML = '<i class="fas fa-paper-plane"></i> Publish Listing';
-    }
-    
-    function updatePriceDisplay() {
-        const price = parseFloat(document.getElementById('petPrice').value) || 0;
-        const commission = price * (ADMIN_COMMISSION_RATE/100);
-        const sellerGets = price - commission;
-        
-        const commissionInfo = document.getElementById('commissionInfo');
-        if (price > 0) {
-            commissionInfo.innerHTML = `
-                <div style="background: #f8f9fa; padding: 10px; border-radius: 8px; border-left: 3px solid #ff9800;">
-                    <i class="fas fa-info-circle" style="color: #ff9800;"></i>
-                    <strong>Commission Details:</strong><br>
-                    • Listing Price: <strong>रु ${price.toLocaleString()}</strong><br>
-                    • Admin Commission (${ADMIN_COMMISSION_RATE}%): <strong>रु ${commission.toFixed(2)}</strong><br>
-                    • <strong style="color: var(--primary);">You Receive: रु ${sellerGets.toLocaleString()}</strong>
-                </div>
-            `;
-        } else {
-            commissionInfo.innerHTML = `
-                <div style="color: var(--text-light); font-size: 12px;">
-                    <i class="fas fa-info-circle"></i> Enter price to see commission details
-                </div>
-            `;
-        }
-    }
-    
-    function handleImageUpload(event) {
-        const files = event.target.files;
-        
-        for (let i = 0; i < Math.min(files.length, 5 - uploadedImages.length); i++) {
-            const file = files[i];
-            const reader = new FileReader();
-            
-            reader.onload = function(e) {
-                uploadedImages.push(e.target.result);
-                updateImagePreview();
-            }
-            
-            reader.readAsDataURL(file);
-        }
-        
-        event.target.value = '';
-    }
-    
-    // ==================== SUBMIT LISTING ====================
-    function submitListing() {
-        if (!currentUser) {
-            alert("Please login first");
-            return;
-        }
-        
-        const title = document.getElementById('petTitle').value;
-        const category = document.getElementById('petCategory').value;
-        const price = document.getElementById('petPrice').value;
-        const description = document.getElementById('petDescription').value;
-        const location = document.getElementById('petLocation').value;
-        const phone = document.getElementById('petPhone').value;
-        const editId = document.getElementById('editListingId').value;
-        
-        if (!title || !category || !price || !description || !location || !phone) {
-            alert("Please fill all required fields");
-            return;
-        }
-        
-        if (!phone.match(/^(97|98)\d{8}$/)) {
-            alert("Please enter a valid 10-digit Nepali phone number starting with 97 or 98");
-            return;
-        }
-        
-        if (parseInt(price) <= 0) {
-            alert("Please enter a valid price");
-            return;
-        }
-        
-        const listingPrice = parseInt(price);
-        const commission = listingPrice * (ADMIN_COMMISSION_RATE/100);
-        const sellerGets = listingPrice - commission;
-        
-        if (editId) {
-            // UPDATE EXISTING LISTING
-            const index = listings.findIndex(l => l.id == editId);
-            if (index !== -1) {
-                // Check if admin or owner
-                if (currentUser.userType !== 'admin' && listings[index].sellerId !== currentUser.id) {
-                    alert("You can only edit your own listings");
-                    return;
-                }
-                
-                listings[index] = {
-                    ...listings[index],
-                    title: title,
-                    category: category,
-                    price: listingPrice,
-                    description: description,
-                    location: location,
-                    sellerPhone: phone,
-                    images: uploadedImages,
-                    commission: commission,
-                    sellerGets: sellerGets,
-                    updatedAt: new Date().toISOString()
-                };
-                
-                showNotification("Listing updated successfully!", 'success');
-            }
-        } else {
-            // CREATE NEW LISTING
-            const newListing = {
-                id: Date.now(),
-                title: title,
-                price: listingPrice,
-                category: category,
-                description: description,
-                location: location,
-                sellerName: currentUser.name,
-                sellerId: currentUser.id,
-                sellerPhone: phone,
-                date: new Date().toISOString().split('T')[0],
-                images: uploadedImages,
-                commission: commission,
-                sellerGets: sellerGets,
-                createdAt: new Date().toISOString(),
-                isActive: true
-            };
-            
-            listings.unshift(newListing);
-            saveCommissionRecord(newListing);
-            
-            showNotification(
-                `Listing published!<br>
-                Price: रु ${listingPrice.toLocaleString()}<br>
-                Commission (${ADMIN_COMMISSION_RATE}%): रु ${commission.toFixed(2)}<br>
-                You get: रु ${sellerGets.toLocaleString()}`, 
-                'success'
-            );
-        }
-        
-        localStorage.setItem('petListings', JSON.stringify(listings));
-        loadListings();
-        closeSellModal();
-    }
-    
-    function saveCommissionRecord(listing) {
-        const commissions = JSON.parse(localStorage.getItem('adminCommissions')) || [];
-        
-        const commissionRecord = {
-            id: 'comm_' + Date.now(),
-            listingId: listing.id,
-            listingTitle: listing.title,
-            sellerName: listing.sellerName,
-            sellerPhone: listing.sellerPhone,
-            amount: listing.price,
-            commission: listing.commission,
-            commissionRate: ADMIN_COMMISSION_RATE + '%',
-            date: new Date().toISOString(),
-            status: 'pending'
-        };
-        
-        commissions.unshift(commissionRecord);
-        localStorage.setItem('adminCommissions', JSON.stringify(commissions));
-    }
-    
-    // ==================== ADMIN PANEL ====================
-    function openAdminPanel() {
-        if (!currentUser || currentUser.userType !== 'admin') {
-            alert("Only admin can access this panel");
-            return;
-        }
-        
-        loadAdminData();
-        document.getElementById('adminModal').style.display = 'flex';
-    }
-    
-    function closeAdminPanel() {
-        document.getElementById('adminModal').style.display = 'none';
-    }
-    
-    function loadAdminData() {
-        // Load users
-        const users = JSON.parse(localStorage.getItem('users')) || [];
-        const usersList = document.getElementById('adminUsersList');
-        usersList.innerHTML = '';
-        
-        if (users.length === 0) {
-            usersList.innerHTML = '<p style="color: var(--text-light); text-align: center;">No users found</p>';
-        } else {
-            users.forEach(user => {
-                const userDiv = document.createElement('div');
-                userDiv.style.cssText = `
-                        padding: 10px;
-                    border-bottom: 1px solid #eee;
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                `;
-                
-                userDiv.innerHTML = `
-                    <div>
-                        <strong>${user.name}</strong><br>
-                        <small>${user.email} | ${user.phone}</small><br>
-                        <small>Type: ${user.userType} | Status: ${user.isActive ? 'Active' : 'Blocked'}</small>
-                    </div>
-                    <div>
-                        ${user.userType !== 'admin' ? 
-                            `<button onclick="toggleUserStatus('${user.id}', ${!user.isActive})" 
-                             style="padding: 5px 10px; border: none; border-radius: 5px; background: ${user.isActive ? '#ff9800' : '#4caf50'}; color: white; cursor: pointer;">
-                                ${user.isActive ? 'Block' : 'Unblock'}
-                            </button>` : ''
-                        }
-                    </div>
-                `;
-                
-                usersList.appendChild(userDiv);
-            });
-        }
-        
-        // Load listings
-        const listingsList = document.getElementById('adminListingsList');
-        listingsList.innerHTML = '';
-        
-        if (listings.length === 0) {
-            listingsList.innerHTML = '<p style="color: var(--text-light); text-align: center;">No listings found</p>';
-        } else {
-            listings.forEach(listing => {
-                const listingDiv = document.createElement('div');
-                listingDiv.style.cssText = `
-                    padding: 10px;
-                    border-bottom: 1px solid #eee;
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                `;
-                
-                listingDiv.innerHTML = `
-                    <div>
-                        <strong>${listing.title}</strong><br>
-                        <small>रु ${listing.price.toLocaleString()} | ${listing.category} | ${listing.location}</small><br>
-                        <small>Seller: ${listing.sellerName} | Date: ${listing.date}</small>
-                    </div>
-                    <div>
-                        <button onclick="adminDeleteListing(${listing.id}, '${listing.title}')" 
-                         style="padding: 5px 10px; border: none; border-radius: 5px; background: #f44336; color: white; cursor: pointer;">
-                            Delete
-                        </button>
-                    </div>
-                `;
-                
-                listingsList.appendChild(listingDiv);
-            });
-        }
-    }
-    
-    function toggleUserStatus(userId, newStatus) {
-        if (!currentUser || currentUser.userType !== 'admin') {
-            alert("Only admin can perform this action");
-            return;
-        }
-        
-        const users = JSON.parse(localStorage.getItem('users')) || [];
-        const userIndex = users.findIndex(u => u.id === userId);
-        
-        if (userIndex !== -1) {
-            users[userIndex].isActive = newStatus;
-            localStorage.setItem('users', JSON.stringify(users));
-            
-            if (!newStatus) {
-                // Block user - also remove their listings
-                const initialCount = listings.length;
-                listings = listings.filter(l => l.sellerId !== userId);
-                localStorage.setItem('petListings', JSON.stringify(listings));
-                
-                showNotification(`User ${newStatus ? 'unblocked' : 'blocked'} and ${initialCount - listings.length} listings removed!`, 'success');
-            } else {
-                showNotification(`User ${newStatus ? 'unblocked' : 'blocked'}!`, 'success');
-            }
-            
-            loadAdminData();
-            loadListings();
-        }
-    }
-    
-    // ==================== FILTER FUNCTIONS ====================
-    function filterByCategory(category) {
-        document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
-        event.target.classList.add('active');
-        
-        const container = document.getElementById('listingsContainer');
-        container.innerHTML = '';
-        
-        const filtered = category === 'all' 
-            ? listings 
-            : listings.filter(listing => listing.category === category);
-        
-        if (filtered.length === 0) {
-            container.innerHTML = `
-                <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-light);">
-                    <i class="fas fa-paw" style="font-size: 50px; margin-bottom: 20px;"></i>
-                    <h3>No Pets in This Category</h3>
-                    <p>Check back soon or try another category</p>
-                    <button class="btn btn-primary" onclick="loadListings()" style="margin-top: 10px;">
-                        <i class="fas fa-redo"></i> Reset Filters
-                    </button>
-                </div>
-            `;
-            return;
-        }
-        
-        filtered.forEach(listing => {
-            const card = createListingCard(listing);
-            container.innerHTML += card;
-        });
-    }
-    
-    // ==================== UTILITY FUNCTIONS ====================
-    function getCategoryIcon(category) {
-        const icons = {
-            'dog': 'fas fa-dog',
-            'cat': 'fas fa-cat',
-            'fish': 'fas fa-fish',
-            'bird': 'fas fa-dove',
-              'other': 'fas fa-paw'
-        };
-        return icons[category] || 'fas fa-paw';
-    }
-    
-    function getCategoryColor(category) {
-        const colors = {
-            'dog': 'linear-gradient(45deg, #ffcc80, #ffb74d)',
-            'cat': 'linear-gradient(45deg, #b39ddb, #9575cd)',
-            'fish': 'linear-gradient(45deg, #80deea, #4fc3f7)',
-            'bird': 'linear-gradient(45deg, #a5d6a7, #81c784)',
-            'other': 'linear-gradient(45deg, #ffab91, #ff8a65)'
-        };
-        return colors[category] || 'linear-gradient(45deg, #e0e0e0, #bdbdbd)';
-    }
-    
-    function getCategoryName(category) {
-        const names = {
-            'dog': 'Dog',
-            'cat': 'Cat',
-            'fish': 'Fish',
-            'bird': 'Bird',
-            'other': 'Other'
-        };
-        return names[category] || 'Pet';
-    }
-    
-    function showNotification(message, type) {
-        const notification = document.createElement('div');
-        notification.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: ${type === 'success' ? '#4caf50' : type === 'info' ? '#2196f3' : '#ff9800'};
-            color: white;
-            padding: 15px 25px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            z-index: 3000;
-            animation: slideInRight 0.3s ease;
-            font-weight: 500;
-            max-width: 400px;
-        `;
-        notification.innerHTML = `
-            <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'info' ? 'info-circle' : 'exclamation-triangle'}"></i>
-            ${message}
-        `;
-        
-        document.body.appendChild(notification);
-        
-        setTimeout(() => {
-            notification.style.animation = 'slideOutRight 0.3s ease';
-            setTimeout(() => notification.remove(), 300);
-        }, 3000);
-        
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes slideInRight {
-                from { transform: translateX(100%); opacity: 0; }
-                to { transform: translateX(0); opacity: 1; }
-            }
-            @keyframes slideOutRight {
-                from { transform: translateX(0); opacity: 1; }
-                to { transform: translateX(100%); opacity: 0; }
-            }
-        `;
-        document.head.appendChild(style);
-    }
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes slideInRight {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+      }
+      @keyframes slideOutRight {
+        from { transform: translateX(0); opacity: 1; }
+        to { transform: translateX(100%); opacity: 0; }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  // Utility functions
+  function getCategoryIcon(category) {
+    const icons = {
+      'dog': 'fas fa-dog',
+      'cat': 'fas fa-cat',
+      'fish': 'fas fa-fish',
+      'bird': 'fas fa-dove',
+      'other': 'fas fa-paw'
+    };
+    return icons[category] || 'fas fa-paw';
+  }
+
+  function getCategoryColor(category) {
+    const colors = {
+      'dog': 'linear-gradient(45deg, #ffcc80, #ffb74d)',
+      'cat': 'linear-gradient(45deg, #b39ddb, #9575cd)',
+      'fish': 'linear-gradient(45deg, #80deea, #4fc3f7)',
+      'bird': 'linear-gradient(45deg, #a5d6a7, #81c784)',
+      'other': 'linear-gradient(45deg, #ffab91, #ff8a65)'
+    };
+    return colors[category] || 'linear-gradient(45deg, #e0e0e0, #bdbdbd)';
+  }
+
+  function getCategoryName(category) {
+    const names = {
+      'dog': 'Dog',
+      'cat': 'Cat',
+      'fish': 'Fish',
+      'bird': 'Bird',
+      'other': 'Other'
+    };
+    return names[category] || 'Pet';
+  }
+
+  // Make functions available globally
+  window.toggleAuthModal = toggleAuthModal;
+  window.switchAuthTab = switchAuthTab;
+  window.login = login;
+  window.register = register;
+  window.logout = logout;
+  window.submitListing = submitListing;
+  window.confirmDelete = confirmDelete;
+  window.openDeleteModal = openDeleteModal;
+  window.closeDeleteModal = closeDeleteModal;
+  window.openSellModal = openSellModal;
+  window.closeSellModal = closeSellModal;
+  window.handleImageUpload = handleImageUpload;
+  window.sendWhatsApp = sendWhatsApp;
+  window.callSeller = callSeller;
+  window.filterByCategory = filterByCategory;
+  window.showMyListings = showMyListings;
+  window.showUserMenu = showUserMenu;
+  window.showMyProfile = showMyProfile;
+  window.editListing = editListing;
+  window.placeOrder = placeOrder;
+
 </script>
 </body>
 </html>
+             
