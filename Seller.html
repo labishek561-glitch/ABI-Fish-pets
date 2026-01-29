@@ -1,0 +1,2775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Seller Panel - SABI Nepal-Pets markets</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+
+    <style>
+        :root {
+            /* Light Theme */
+            --seller-primary: #2c3e50;
+            --seller-secondary: #34495e;
+            --seller-accent: #3498db;
+            --seller-success: #27ae60;
+            --seller-warning: #f39c12;
+            --seller-danger: #e74c3c;
+            --seller-info: #1abc9c;
+            --seller-text: #2c3e50;
+            --seller-light-text: #ecf0f1;
+            --seller-bg: #ecf0f1;
+            --seller-card-bg: #ffffff;
+            --seller-sidebar: #2c3e50;
+            --seller-border: #bdc3c7;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.15);
+            --gradient-primary: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            --gradient-accent: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            --font-primary: 'Montserrat', sans-serif;
+            --font-secondary: 'Poppins', sans-serif;
+            --border-radius: 10px;
+            --transition: all 0.3s ease;
+        }
+
+        .dark-theme {
+            /* Dark Theme */
+            --seller-primary: #1a1a2e;
+            --seller-secondary: #16213e;
+            --seller-accent: #0ea5e9;
+            --seller-success: #10b981;
+            --seller-warning: #f59e0b;
+            --seller-danger: #ef4444;
+            --seller-info: #06b6d4;
+            --seller-text: #e2e8f0;
+            --seller-light-text: #f8fafc;
+            --seller-bg: #0f172a;
+            --seller-card-bg: #1e293b;
+            --seller-sidebar: #1e293b;
+            --seller-border: #334155;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.3);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.4);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.5);
+            --gradient-primary: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            --gradient-accent: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+        }
+
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            font-size: 16px;
+        }
+
+        body {
+            font-family: var(--font-secondary);
+            background: var(--seller-bg);
+            color: var(--seller-text);
+            min-height: 100vh;
+            transition: var(--transition);
+            overflow-x: hidden;
+            font-size: 0.9rem;
+        }
+
+        /* Landing Page */
+        .landing-container {
+            text-align: center;
+            color: white;
+            padding: 30px 20px;
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #2c3e50 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .landing-logo {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+            color: white;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .landing-title {
+            font-family: var(--font-primary);
+            font-size: 2rem;
+            margin-bottom: 10px;
+            font-weight: 800;
+            color: white;
+            line-height: 1.2;
+        }
+
+        .landing-subtitle {
+            font-size: 1rem;
+            margin-bottom: 40px;
+            opacity: 0.9;
+            max-width: 100%;
+            line-height: 1.5;
+            padding: 0 10px;
+        }
+
+        .landing-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            max-width: 400px;
+            z-index: 1;
+            padding: 0 10px;
+        }
+
+        .landing-btn {
+            padding: 16px 25px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            width: 100%;
+            max-width: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-login {
+            background: white;
+            color: var(--seller-primary);
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .btn-register {
+            background: var(--seller-accent);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .landing-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* Navigation to other panels */
+        .panel-links {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 10000;
+        }
+
+        .panel-link {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 15px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+            transition: var(--transition);
+        }
+
+        .panel-link:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Auth Container */
+        .auth-wrapper {
+            display: none;
+            width: 100%;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            transition: var(--transition);
+            overflow-y: auto;
+        }
+
+        .auth-container {
+            background: var(--seller-card-bg);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 450px;
+            display: flex;
+            flex-direction: column;
+            min-height: auto;
+            transition: var(--transition);
+        }
+
+        .auth-left {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 30px 25px;
+            display: none;
+        }
+
+        .auth-right {
+            padding: 30px 25px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .auth-title {
+            font-family: var(--font-primary);
+            font-size: 1.8rem;
+            color: var(--seller-primary);
+            margin-bottom: 25px;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--seller-text);
+            font-size: 0.95rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--seller-border);
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: var(--transition);
+            background: var(--seller-card-bg);
+            color: var(--seller-text);
+            font-family: var(--font-secondary);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--seller-accent);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .input-with-icon {
+            position: relative;
+        }
+
+        .input-with-icon i {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--seller-primary);
+            font-size: 1.1rem;
+        }
+
+        .btn-auth {
+            width: 100%;
+            padding: 16px;
+            background: var(--gradient-accent);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 15px;
+            position: relative;
+            overflow: hidden;
+            font-family: var(--font-primary);
+        }
+
+        .btn-auth:active {
+            transform: scale(0.98);
+        }
+
+        .auth-switch {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid var(--seller-border);
+            font-size: 0.95rem;
+        }
+
+        .auth-switch a {
+            color: var(--seller-accent);
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            padding: 6px 12px;
+            border-radius: 6px;
+            display: inline-block;
+            margin-top: 5px;
+        }
+
+        .auth-switch a:active {
+            background: rgba(52, 152, 219, 0.1);
+        }
+
+        .auth-message {
+            text-align: center;
+            margin-top: 12px;
+            padding: 12px;
+            border-radius: 8px;
+            display: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .auth-error {
+            color: var(--seller-danger);
+            background: rgba(231, 76, 60, 0.1);
+            border: 1px solid rgba(231, 76, 60, 0.2);
+        }
+
+        .auth-success {
+            color: var(--seller-success);
+            background: rgba(39, 174, 96, 0.1);
+            border: 1px solid rgba(39, 174, 96, 0.2);
+        }
+
+        /* Seller Dashboard */
+        .seller-wrapper {
+            display: none;
+            min-height: 100vh;
+            background: var(--seller-bg);
+            transition: var(--transition);
+            width: 100%;
+            overflow-x: hidden;
+        }
+
+        /* Mobile Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
+            height: 100vh;
+            background: var(--seller-sidebar);
+            color: var(--seller-light-text);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            box-shadow: 5px 0 15px rgba(0,0,0,0.2);
+            overflow-y: auto;
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar-header {
+            padding: 25px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0,0,0,0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sidebar-logo {
+            font-family: var(--font-primary);
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-logo i {
+            color: var(--seller-accent);
+            font-size: 1.8rem;
+        }
+
+        .close-sidebar {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: block;
+        }
+
+        .sidebar-nav {
+            list-style: none;
+            padding: 20px 0;
+        }
+
+        .nav-item {
+            margin-bottom: 5px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 16px 20px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-link.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-left: 4px solid var(--seller-accent);
+        }
+
+        .nav-link i {
+            width: 25px;
+            font-size: 1.2rem;
+            margin-right: 15px;
+        }
+
+        .nav-badge {
+            margin-left: auto;
+            background: var(--seller-accent);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            min-width: 25px;
+            text-align: center;
+        }
+
+        /* Mobile Header */
+        .mobile-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--seller-card-bg);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 999;
+            box-shadow: var(--shadow-md);
+            border-bottom: 1px solid var(--seller-border);
+        }
+
+        .mobile-menu-btn {
+            background: none;
+            border: none;
+            color: var(--seller-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .mobile-menu-btn:active {
+            background: rgba(52, 152, 219, 0.1);
+        }
+
+        .mobile-title {
+            font-family: var(--font-primary);
+            font-size: 1.4rem;
+            color: var(--seller-primary);
+            font-weight: 700;
+            text-align: center;
+            flex: 1;
+            margin: 0 10px;
+        }
+
+        .mobile-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .mobile-action-btn {
+            background: var(--seller-card-bg);
+            color: var(--seller-primary);
+            border: 2px solid var(--seller-border);
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .mobile-action-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 80px 15px 30px;
+            width: 100%;
+            transition: var(--transition);
+        }
+
+        /* Desktop Header */
+        .desktop-header {
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--seller-border);
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .page-title {
+            font-family: var(--font-primary);
+            font-size: 1.8rem;
+            color: var(--seller-primary);
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .seller-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--seller-card-bg);
+            padding: 10px 18px;
+            border-radius: 10px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .seller-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--gradient-accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: white;
+            font-size: 1.1rem;
+        }
+
+        .seller-name {
+            font-weight: 600;
+            color: var(--seller-primary);
+            font-size: 0.95rem;
+        }
+
+        .wallet-display {
+            background: var(--seller-card-bg);
+            padding: 12px 20px;
+            border-radius: 10px;
+            box-shadow: var(--shadow-md);
+            font-weight: 600;
+            color: var(--seller-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 2px solid transparent;
+            font-size: 0.95rem;
+        }
+
+        .wallet-display i {
+            color: var(--seller-success);
+            font-size: 1.1rem;
+        }
+
+        .btn-withdraw {
+            background: var(--gradient-accent);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: var(--shadow-md);
+            font-size: 0.95rem;
+        }
+
+        .btn-withdraw:active {
+            transform: scale(0.98);
+        }
+
+        .theme-toggle {
+            background: var(--seller-card-bg);
+            color: var(--seller-primary);
+            border: 2px solid var(--seller-border);
+            width: 45px;
+            height: 45px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .theme-toggle:active {
+            transform: rotate(30deg);
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: var(--seller-card-bg);
+            padding: 20px 15px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-md);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--seller-border);
+            text-align: center;
+        }
+
+        .stat-card:active {
+            transform: translateY(-3px);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gradient-accent);
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            margin-bottom: 12px;
+            color: var(--seller-accent);
+        }
+
+        .stat-value {
+            font-family: var(--font-primary);
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: var(--seller-accent);
+            line-height: 1;
+        }
+        .stat-label{
+         color: var(--seller-text);
+            opacity: 0.8;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .action-btn {
+            background: var(--seller-card-bg);
+            border: 2px solid var(--seller-border);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            padding: 20px 15px;
+            min-height: 120px;
+            justify-content: center;
+        }
+
+        .action-btn:active {
+            transform: translateY(-3px);
+            border-color: var(--seller-accent);
+        }
+
+        .action-btn i {
+            font-size: 1.8rem;
+            color: var(--seller-accent);
+            margin-bottom: 10px;
+        }
+
+        .action-btn strong {
+            color: var(--seller-primary);
+            font-size: 0.95rem;
+            margin-bottom: 5px;
+        }
+
+        .action-btn small {
+            color: var(--seller-text);
+            opacity: 0.7;
+            font-size: 0.8rem;
+            line-height: 1.3;
+        }
+
+        /* Product Cards for Marketplace */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .product-card {
+            background: var(--seller-card-bg);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition);
+            border: 1px solid var(--seller-border);
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-bottom: 1px solid var(--seller-border);
+        }
+
+        .product-info {
+            padding: 15px;
+        }
+
+        .product-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--seller-primary);
+            margin-bottom: 8px;
+        }
+
+        .product-description {
+            color: var(--seller-text);
+            opacity: 0.8;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
+        .product-price {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--seller-success);
+            margin-bottom: 15px;
+        }
+
+        .buy-btn {
+            width: 100%;
+            padding: 10px;
+            background: var(--gradient-accent);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .buy-btn:hover {
+            background: var(--seller-accent);
+        }
+
+        /* File Upload */
+        .file-upload {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .file-upload input[type="file"] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .file-upload-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            border: 2px dashed var(--seller-border);
+            border-radius: var(--border-radius);
+            background: var(--seller-bg);
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .file-upload-label:hover {
+            border-color: var(--seller-accent);
+            background: rgba(52, 152, 219, 0.05);
+        }
+
+        .file-upload-label i {
+            font-size: 2.5rem;
+            color: var(--seller-accent);
+            margin-bottom: 10px;
+        }
+
+        .file-preview {
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .preview-image {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 8px;
+            border: 1px solid var(--seller-border);
+        }
+
+        /* Withdraw Form */
+        .payment-methods {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .payment-method {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px;
+            border: 2px solid var(--seller-border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            background: var(--seller-card-bg);
+        }
+
+        .payment-method.active {
+            border-color: var(--seller-accent);
+            background: rgba(52, 152, 219, 0.1);
+        }
+
+        .payment-method i {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            color: var(--seller-primary);
+        }
+
+        /* Toast Notifications */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            width: calc(100% - 40px);
+            max-width: 400px;
+            padding: 15px 20px;
+            background: var(--seller-card-bg);
+            color: var(--seller-text);
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            z-index: 10000;
+            transition: transform 0.3s ease-out;
+            border-left: 5px solid var(--seller-accent);
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast-icon {
+            font-size: 1.3rem;
+            color: var(--seller-accent);
+            flex-shrink: 0;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            border: 2px solid rgba(52, 152, 219, 0.3);
+            border-radius: 50%;
+            border-top: 2px solid var(--seller-accent);
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Overlay */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Desktop Styles */
+        @media (min-width: 768px) {
+            .auth-container {
+                max-width: 900px;
+                flex-direction: row;
+                min-height: 550px;
+            }
+            
+            .auth-left {
+                display: flex;
+                flex: 1;
+                padding: 40px;
+            }
+            
+            .auth-right {
+                flex: 1;
+                padding: 40px;
+            }
+            
+            .sidebar {
+                left: 0;
+                width: 70px;
+            }
+            
+            .sidebar.active {
+                width: 280px;
+            }
+            
+            .sidebar-logo span,
+            .nav-text,
+            .nav-badge {
+                display: none;
+            }
+            
+            .sidebar.active .sidebar-logo span,
+            .sidebar.active .nav-text,
+            .sidebar.active .nav-badge {
+                display: flex;
+            }
+            
+            .nav-link {
+                padding: 15px;
+                justify-content: center;
+            }
+            
+            .sidebar.active .nav-link {
+                justify-content: flex-start;
+                padding: 16px 20px;
+            }
+            
+            .nav-link i {
+                margin-right: 0;
+            }
+            
+            .sidebar.active .nav-link i {
+                margin-right: 15px;
+            }
+            
+            .close-sidebar {
+                display: none;
+            }
+            
+            .mobile-header {
+                display: none;
+            }
+            
+            .desktop-header {
+                display: flex;
+            }
+            
+            .main-content {
+                margin-left: 70px;
+                padding: 30px;
+            }
+            
+            .sidebar.active + .main-content {
+                margin-left: 280px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 20px;
+            }
+            
+            .quick-actions {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 20px;
+            }
+            
+            .action-btn {
+                flex-direction: row;
+                text-align: left;
+                min-height: auto;
+                padding: 25px;
+            }
+            
+            .action-btn i {
+                margin-right: 15px;
+                margin-bottom: 0;
+                font-size: 2rem;
+            }
+            
+            .toast {
+                left: auto;
+                right: 20px;
+                transform: translateX(150%);
+                max-width: 350px;
+            }
+            
+            .toast.show {
+                transform: translateX(0);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .stats-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 25px;
+            }
+            
+            .quick-actions {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 25px;
+            }
+        }
+
+        @media (min-width: 1200px) {
+            .sidebar {
+                width: 280px;
+            }
+            
+            .sidebar-logo span,
+            .nav-text,
+            .nav-badge {
+                display: flex;
+            }
+            
+            .nav-link {
+                justify-content: flex-start;
+                padding: 16px 20px;
+            }
+            
+            .nav-link i {
+                margin-right: 15px;
+            }
+            
+            .main-content {
+                margin-left: 280px;
+            }
+            
+            .mobile-menu-btn {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+       <!-- Panel Navigation Links -->
+    <div class="panel-links">
+        <a href="E%20commerce%20admin%20(1).html" class="panel-link" target="_blank">
+            <i class="fas fa-user-shield"></i> Admin
+        </a>
+        <a href="E%20commerce%20user%20(1).html" class="panel-link" target="_blank">
+            <i class="fas fa-users"></i> User
+        </a>
+    </div>
+
+    <!-- Landing Page -->
+    <div class="landing-container" id="landing-page">
+        <div class="landing-logo">
+            <i class="fas fa-store"></i>
+        </div>
+        <h1 class="landing-title animate__animated animate__fadeInDown">SABI-Pets Seller</h1>
+        <p class="landing-subtitle animate__animated animate__fadeInUp">
+            Start selling pets with our powerful platform
+        </p>
+        
+        <div class="landing-buttons animate__animated animate__fadeInUp">
+            <button class="landing-btn btn-login" id="login-btn">
+                <i class="fas fa-sign-in-alt"></i>
+                Seller Login
+            </button>
+            <button class="landing-btn btn-register" id="register-btn">
+                <i class="fas fa-user-plus"></i>
+                Become a Seller
+            </button>
+        </div>
+    </div>
+
+    <!-- Auth Container -->
+    <div class="auth-wrapper" id="auth-wrapper">
+        <div class="auth-container">
+            <div class="auth-left">
+                <div>
+                    <h2>Welcome to SABI Pets-market</h2>
+                    <p>Join thousands of successful pet sellers. Manage your business easily from anywhere.</p>
+                    
+                    <div style="margin-top: 30px;">
+                        <div style="padding: 12px; margin-bottom: 15px; border-radius: 8px; background: rgba(255,255,255,0.1);">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>Secure Platform</span>
+                        </div>
+                        <div style="padding: 12px; margin-bottom: 15px; border-radius: 8px; background: rgba(255,255,255,0.1);">
+                            <i class="fas fa-bolt"></i>
+                            <span>Fast Payments</span>
+                        </div>
+                        <div style="padding: 12px; margin-bottom: 15px; border-radius: 8px; background: rgba(255,255,255,0.1);">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Sales Analytics</span>
+                        </div>
+                        <div style="padding: 12px; border-radius: 8px; background: rgba(255,255,255,0.1);">
+                            <i class="fas fa-headset"></i>
+                            <span>24/7 Support</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="auth-right">
+                <h2 class="auth-title" id="auth-title">Seller Login</h2>
+                <form id="auth-form">
+                    <div id="register-fields" style="display: none;">
+                        <div class="form-group">
+                            <label for="shop-name">Store Name *</label>
+                            <div class="input-with-icon">
+                                <input type="text" id="shop-name" class="form-control" placeholder="Your Pet Store" required>
+                                <i class="fas fa-store"></i>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="seller-name">Full Name *</label>
+                            <div class="input-with-icon">
+                                <input type="text" id="seller-name" class="form-control" placeholder="Your Name" required>
+                                <i class="fas fa-user"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="seller-email">Email Address *</label>
+                        <div class="input-with-icon">
+                            <input type="email" id="seller-email" class="form-control" placeholder="email@example.com" required>
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="seller-phone">Phone Number *</label>
+                        <div class="input-with-icon">
+                            <input type="tel" id="seller-phone" class="form-control" placeholder="9876543210" required>
+                            <i class="fas fa-phone"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="seller-password">Password *</label>
+                        <div class="input-with-icon">
+                            <input type="password" id="seller-password" class="form-control" placeholder="••••••••" required>
+                            <i class="fas fa-lock"></i>
+                        </div>
+                    </div>
+                    
+                    <div id="confirm-password-group" class="form-group" style="display: none;">
+                        <label for="seller-confirm-password">Confirm Password *</label>
+                        <div class="input-with-icon">
+                            <input type="password" id="seller-confirm-password" class="form-control" placeholder="••••••••" required>
+                            <i class="fas fa-lock"></i>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn-auth" id="auth-submit-btn">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </button>
+                    
+                    <div class="auth-message auth-error" id="auth-error"></div>
+                    <div class="auth-message auth-success" id="auth-success"></div>
+                </form>
+                
+                <div class="auth-switch">
+                    <span id="auth-switch-text">New to SABI-PETS? </span>
+                    <a href="#" id="auth-switch-link">Create Seller Account</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Seller Dashboard -->
+    <div class="seller-wrapper" id="seller-dashboard">
+        <!-- Mobile Header -->
+        <div class="mobile-header">
+            <button class="mobile-menu-btn" id="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="mobile-title" id="mobile-title">Dashboard</div>
+            <div class="mobile-actions">
+                <button class="mobile-action-btn" id="mobile-theme-toggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="mobile-action-btn" id="mobile-wallet-btn">
+                    <i class="fas fa-wallet"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Sidebar Overlay -->
+        <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <i class="fas fa-store"></i>
+                    <span>Seller Hub</span>
+                </div>
+                <button class="close-sidebar" id="close-sidebar">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <ul class="sidebar-nav">
+                <li class="nav-item">
+                    <a href="#dashboard" class="nav-link active" data-title="Dashboard">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#add-pet" class="nav-link" data-title="Add Pet">
+                        <i class="fas fa-plus-circle"></i>
+                        <span class="nav-text">Add New Pet</span>
+                        <span class="nav-badge">New</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#my-pets" class="nav-link" data-title="My Pets">
+                        <i class="fas fa-paw"></i>
+                        <span class="nav-text">My Pets</span>
+                        <span class="nav-badge" id="pets-count">0</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#market-view" class="nav-link" data-title="Market">
+                        <i class="fas fa-store"></i>
+                        <span class="nav-text">Market View</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#sales" class="nav-link" data-title="Sales">
+                        <i class="fas fa-chart-line"></i>
+                        <span class="nav-text">Sales Analytics</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#wallet" class="nav-link" data-title="Wallet">
+                        <i class="fas fa-wallet"></i>
+                        <span class="nav-text">Wallet</span>
+                        <span class="nav-badge" id="balance-badge">₹0</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#settings" class="nav-link" data-title="Settings">
+                        <i class="fas fa-cog"></i>
+                        <span class="nav-text">Settings</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" id="logout-btn" class="nav-link" data-title="Logout">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span class="nav-text">Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content" id="main-content">
+            <!-- Content will be loaded here -->
+        </main>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <div class="toast-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="toast-content">
+            <div class="toast-title" id="toast-title">Success!</div>
+            <div class="toast-message" id="toast-message">Operation completed successfully.</div>
+        </div>
+                      </div>
+  
+           <!-- Firebase SDK -->
+    <script type="module">
+        // Import Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { 
+            getAuth, 
+            createUserWithEmailAndPassword, 
+            signInWithEmailAndPassword, 
+            onAuthStateChanged, 
+            signOut 
+        } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+        import { 
+            getDatabase, 
+            ref, 
+            set, 
+            push, 
+            onValue, 
+            update, 
+            remove, 
+            get,
+            query,
+            orderByChild,
+            equalTo
+        } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAgrXYL1M-cO8LYTmJeEtfwhkp-ghXfNWY",
+            authDomain: "abi-fish-pets.firebaseapp.com",
+            databaseURL: "https://abi-fish-pets-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "abi-fish-pets",
+            storageBucket: "abi-fish-pets.firebasestorage.app",
+            messagingSenderId: "644115504257",
+            appId: "1:644115504257:web:278b713d235aa8938a0180",
+            measurementId: "G-2T3T8RTJKE"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+
+        // Global variables
+        let currentSellerId = null;
+        let isRegisterMode = false;
+        let currentTheme = localStorage.getItem('theme') || 'light';
+        let sellerDataCache = null;
+        let selectedPaymentMethod = 'esewa';
+
+        // DOM Elements
+        const landingPage = document.getElementById('landing-page');
+        const authWrapper = document.getElementById('auth-wrapper');
+        const sellerDashboard = document.getElementById('seller-dashboard');
+        const loginBtn = document.getElementById('login-btn');
+        const registerBtn = document.getElementById('register-btn');
+        const authForm = document.getElementById('auth-form');
+        const authTitle = document.getElementById('auth-title');
+        const authSubmitBtn = document.getElementById('auth-submit-btn');
+        const authSwitchLink = document.getElementById('auth-switch-link');
+        const authSwitchText = document.getElementById('auth-switch-text');
+        const authError = document.getElementById('auth-error');
+        const authSuccess = document.getElementById('auth-success');
+        const registerFields = document.getElementById('register-fields');
+        const confirmPasswordGroup = document.getElementById('confirm-password-group');
+        const logoutBtn = document.getElementById('logout-btn');
+        const toast = document.getElementById('toast');
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const closeSidebar = document.getElementById('close-sidebar');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebar-overlay');
+        const mobileTitle = document.getElementById('mobile-title');
+        const mobileThemeToggle = document.getElementById('mobile-theme-toggle');
+        const mobileWalletBtn = document.getElementById('mobile-wallet-btn');
+
+        // Initialize theme
+        function initTheme() {
+            if (currentTheme === 'dark') {
+                document.body.classList.add('dark-theme');
+                updateThemeIcons();
+            }
+        }
+
+        function updateThemeIcons() {
+            const themeIcons = document.querySelectorAll('.theme-toggle i, #mobile-theme-toggle i');
+            themeIcons.forEach(icon => {
+                icon.className = currentTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+            });
+        }
+
+        // Show toast notification
+        function showToast(title, message, type = 'success') {
+            document.getElementById('toast-title').textContent = title;
+            document.getElementById('toast-message').textContent = message;
+            
+            const icon = toast.querySelector('.toast-icon i');
+            if (type === 'success') {
+                icon.className = 'fas fa-check-circle';
+                toast.style.borderLeftColor = 'var(--seller-success)';
+            } else if (type === 'error') {
+                icon.className = 'fas fa-exclamation-circle';
+                toast.style.borderLeftColor = 'var(--seller-danger)';
+            } else if (type === 'warning') {
+                icon.className = 'fas fa-exclamation-triangle';
+                toast.style.borderLeftColor = 'var(--seller-warning)';
+            }
+            
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Button Click Handlers
+        loginBtn.addEventListener('click', () => showAuth('login'));
+        registerBtn.addEventListener('click', () => showAuth('register'));
+        
+        // Mobile sidebar controls
+        mobileMenuBtn.addEventListener('click', toggleSidebar);
+        closeSidebar.addEventListener('click', toggleSidebar);
+        sidebarOverlay.addEventListener('click', toggleSidebar);
+
+        // Mobile theme toggle
+        mobileThemeToggle.addEventListener('click', toggleTheme);
+
+        // Mobile wallet button
+        mobileWalletBtn.addEventListener('click', () => {
+            loadWalletPage();
+            toggleSidebar();
+        });
+
+        function toggleSidebar() {
+            sidebar.classList.toggle('active');
+            sidebarOverlay.classList.toggle('active');
+            document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : '';
+        }
+
+        // Show/Hide Functions
+        function showLandingPage() {
+            landingPage.style.display = 'flex';
+            authWrapper.style.display = 'none';
+            sellerDashboard.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+
+        function showAuth(mode = 'login') {
+            landingPage.style.display = 'none';
+            authWrapper.style.display = 'flex';
+            sellerDashboard.style.display = 'none';
+            document.body.style.overflow = '';
+            
+            if (mode === 'register') {
+                switchToRegisterMode();
+            } else {
+                switchToLoginMode();
+            }
+        }
+
+        async function showDashboard() {
+            landingPage.style.display = 'none';
+            authWrapper.style.display = 'none';
+            sellerDashboard.style.display = 'flex';
+            document.body.style.overflow = '';
+            await loadDashboard();
+            showToast('Welcome!', 'Successfully logged into your seller dashboard.');
+        }
+
+        // Auth Mode Toggle
+        function toggleAuthMode() {
+            if (isRegisterMode) {
+                switchToLoginMode();
+            } else {
+                switchToRegisterMode();
+            }
+        }
+
+        function switchToLoginMode() {
+            isRegisterMode = false;
+            authTitle.textContent = 'Seller Login';
+            authSubmitBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
+            authSwitchText.textContent = "New to SABI Pets? ";
+            authSwitchLink.textContent = 'Create Seller Account';
+            registerFields.style.display = 'none';
+            confirmPasswordGroup.style.display = 'none';
+            authError.style.display = 'none';
+            authSuccess.style.display = 'none';
+            authForm.reset();
+        }
+
+        function switchToRegisterMode() {
+            isRegisterMode = true;
+            authTitle.textContent = 'Seller Registration';
+            authSubmitBtn.innerHTML = '<i class="fas fa-user-plus"></i> Create Account';
+            authSwitchText.textContent = 'Already have an account? ';
+            authSwitchLink.textContent = 'Login here';
+            registerFields.style.display = 'block';
+            confirmPasswordGroup.style.display = 'block';
+            authError.style.display = 'none';
+            authSuccess.style.display = 'none';
+        }
+
+        // Auth switch link
+        authSwitchLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            toggleAuthMode();
+        });
+
+        // Form Submission - FIXED AUTH ERROR
+        authForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            authError.style.display = 'none';
+            authSuccess.style.display = 'none';
+            
+            // Show loading state
+            const originalText = authSubmitBtn.innerHTML;
+            authSubmitBtn.innerHTML = '<div class="spinner"></div>';
+            authSubmitBtn.disabled = true;
+            
+            const email = document.getElementById('seller-email').value.trim();
+            const password = document.getElementById('seller-password').value;
+            const phone = document.getElementById('seller-phone').value.trim();
+            
+            try {
+                if (isRegisterMode) {
+                    // Registration
+                    const shopName = document.getElementById('shop-name').value.trim();
+                    const sellerName = document.getElementById('seller-name').value.trim();
+                    const confirmPassword = document.getElementById('seller-confirm-password').value;
+                    
+                    // Validation
+                    if (!shopName || !sellerName || !email || !phone || !password) {
+                        throw new Error('All fields are required');
+                    }
+                    
+                    if (password.length < 6) {
+                        throw new Error('Password must be at least 6 characters long');
+                    }
+                    
+                    if (password !== confirmPassword) {
+                        throw new Error('Passwords do not match');
+                    }
+                    
+                    // Create user in Firebase Auth
+                    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                    const userId = userCredential.user.uid;
+                    
+                    // Create seller profile in database
+                    const sellerData = {
+                        shopName: shopName,
+                        sellerName: sellerName,
+                        email: email,
+                        phone: phone,
+                        walletBalance: 0,
+                        totalEarnings: 0,
+                        totalWithdrawn: 0,
+                        registrationDate: Date.now(),
+                        userId: userId,
+                        lastLogin: Date.now()
+                    };
+                    
+                    // Save seller data
+                    await set(ref(db, `sellers/${userId}`), sellerData);
+                    
+                    // Cache the seller data
+                    sellerDataCache = sellerData;
+                    currentSellerId = userId;
+                    
+                    // Show success
+                    authSuccess.style.display = 'block';
+                    authSuccess.textContent = 'Account created successfully!';
+                    
+                    // Auto-login after a short delay
+                    setTimeout(() => {
+                        showDashboard();
+                    }, 1500);
+                    
+                } else {
+                    // Login
+                    if (!email || !password) {
+                        throw new Error('Please enter email and password');
+                    }
+                    
+                    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                    currentSellerId = userCredential.user.uid;
+                    
+                    // Update last login time
+                    await update(ref(db, `sellers/${currentSellerId}`), {
+                        lastLogin: Date.now()
+                    });
+                    
+                    showDashboard();
+                }
+            } catch (error) {
+                console.error('Auth error:', error);
+                authError.style.display = 'block';
+                authError.textContent = error.message || 'Authentication failed. Please try again.';
+                showToast('Error', error.message || 'Authentication failed', 'error');
+            } finally {
+                // Reset button state
+                authSubmitBtn.innerHTML = originalText;
+                authSubmitBtn.disabled = false;
+            }
+        });
+
+        // Logout
+        logoutBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            toggleSidebar();
+            signOut(auth).then(() => {
+                sellerDataCache = null;
+                showLandingPage();
+                showToast('Logged Out', 'You have been successfully logged out.', 'success');
+            });
+        });
+
+        // Auth State Listener
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentSellerId = user.uid;
+                
+                try {
+                    // Check cache first
+                    if (sellerDataCache && sellerDataCache.userId === user.uid) {
+                        showDashboard();
+                        return;
+                    }
+                    
+                    // Check database
+                    const sellerRef = ref(db, `sellers/${user.uid}`);
+                    const snapshot = await get(sellerRef);
+                    
+                    if (snapshot.exists()) {
+                        sellerDataCache = snapshot.val();
+                        showDashboard();
+                    } else {
+                        await signOut(auth);
+                        showToast('Access Denied', 'Please register as a seller first.', 'warning');
+                    }
+                } catch (error) {
+                    console.error('Error checking seller:', error);
+                    signOut(auth);
+                }
+            } else {
+                currentSellerId = null;
+                sellerDataCache = null;
+                showLandingPage();
+            }
+        });
+
+        // Toggle Theme
+        function toggleTheme() {
+            if (currentTheme === 'light') {
+                currentTheme = 'dark';
+                document.body.classList.add('dark-theme');
+            } else {
+                currentTheme = 'light';
+                document.body.classList.remove('dark-theme');
+            }
+            localStorage.setItem('theme', currentTheme);
+            updateThemeIcons();
+            
+            showToast('Theme Changed', `Switched to ${currentTheme} mode`, 'success');
+        }
+
+        // Update mobile title
+        function updateMobileTitle(title) {
+            mobileTitle.textContent = title;
+        }
+
+        // Dashboard Functions
+        async function loadDashboard() {
+            const mainContent = document.getElementById('main-content');
+            
+            // Show loading
+            mainContent.innerHTML = `
+                <div style="text-align: center; padding: 50px 20px;">
+                    <div class="spinner" style="width: 40px; height: 40px;"></div>
+                    <p style="margin-top: 20px; color: var(--seller-text);">Loading dashboard...</p>
+                </div>
+            `;
+            
+            // Get seller info
+            let sellerData = sellerDataCache || {};
+            if (currentSellerId && !sellerDataCache) {
+                try {
+                    const sellerSnapshot = await get(ref(db, `sellers/${currentSellerId}`));
+                    if (sellerSnapshot.exists()) {
+                        sellerData = sellerSnapshot.val();
+                        sellerDataCache = sellerData;
+                    }
+                } catch (error) {
+                    console.error('Error loading seller data:', error);
+                }
+            }
+                   // Get pets count
+            let petsCount = 0;
+            let approvedPets = 0;
+            let pendingPets = 0;
+            try {
+                const petsSnapshot = await get(ref(db, 'pets'));
+                if (petsSnapshot.exists()) {
+                    const pets = petsSnapshot.val();
+                    const myPets = Object.values(pets).filter(pet => pet.sellerId === currentSellerId);
+                    petsCount = myPets.length;
+                    approvedPets = myPets.filter(pet => pet.status === 'approved').length;
+                    pendingPets = myPets.filter(pet => pet.status === 'pending').length;
+                }
+            } catch (error) {
+                console.error('Error loading pets:', error);
+            }
+            
+            // Update badges
+            document.getElementById('pets-count').textContent = petsCount;
+            document.getElementById('balance-badge').textContent = `₹${sellerData.walletBalance || 0}`;
+            
+            // Dashboard HTML
+            mainContent.innerHTML = `
+                <div class="desktop-header">
+                    <h1 class="page-title">Dashboard</h1>
+                    <div class="header-controls">
+                        <div class="seller-info">
+                            <div class="seller-avatar">
+                                ${sellerData.shopName ? sellerData.shopName.charAt(0).toUpperCase() : 'S'}
+                            </div>
+                            <div>
+                                <div class="seller-name">${sellerData.shopName || 'Seller'}</div>
+                                <small style="color: var(--seller-text); opacity: 0.7;">${sellerData.email || ''}</small>
+                            </div>
+                        </div>
+                        
+                        <div class="wallet-display">
+                            <i class="fas fa-wallet"></i>
+                            ₹${(sellerData.walletBalance || 0).toFixed(2)}
+                        </div>
+                        
+                        <button class="btn-withdraw" id="withdraw-btn">
+                            <i class="fas fa-money-bill-wave"></i> Withdraw
+                        </button>
+                        
+                        <button class="theme-toggle" id="theme-toggle">
+                            <i class="fas fa-${currentTheme === 'dark' ? 'sun' : 'moon'}"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-paw"></i>
+                        </div>
+                        <div class="stat-value">${petsCount}</div>
+                        <div class="stat-label">Total Pets</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-value">${approvedPets}</div>
+                        <div class="stat-label">Approved</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-value">${pendingPets}</div>
+                        <div class="stat-label">Pending</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fa fa-rupee-sign"></i>
+                        </div>
+                        <div class="stat-value">₹${sellerData.totalEarnings || 0}</div>
+                        <div class="stat-label">Earnings</div>
+                    </div>
+                </div>
+                
+                <div class="quick-actions">
+                    <button class="action-btn" onclick="loadAddPetPage()">
+                        <i class="fas fa-plus-circle"></i>
+                        <div>
+                            <strong>Add New Pet</strong>
+                            <small>List a new pet</small>
+                        </div>
+                    </button>
+                    
+                    <button class="action-btn" onclick="loadMyPetsPage()">
+                        <i class="fas fa-paw"></i>
+                        <div>
+                            <strong>My Pets</strong>
+                            <small>Manage listings</small>
+                        </div>
+                    </button>
+                    
+                    <button class="action-btn" onclick="loadMarketViewPage()">
+                        <i class="fas fa-store"></i>
+                        <div>
+                            <strong>Market View</strong>
+                            <small>Browse market</small>
+                        </div>
+                    </button>
+                    
+                    <button class="action-btn" onclick="loadWalletPage()">
+                        <i class="fas fa-wallet"></i>
+                        <div>
+                            <strong>Wallet</strong>
+                            <small>Manage funds</small>
+                        </div>
+                    </button>
+                </div>
+                
+                <div class="recent-activity">
+                    <h2 style="color: var(--seller-primary); margin-bottom: 15px;">Recent Activity</h2>
+                    <div class="activity-list">
+                        <div class="activity-item">
+                            <div style="width: 36px; height: 36px; border-radius: 8px; background: var(--gradient-accent); display: flex; align-items: center; justify-content: center; color: white; font-size: 1rem; flex-shrink: 0;">
+                                <i class="fas fa-user-plus"></i>
+                            </div>
+                            <div>
+                                <strong>Account Created</strong>
+                                <div style="color: var(--seller-text); opacity: 0.8; font-size: 0.85rem;">
+                                    Welcome to SABI pets-seller panel.
+                if you have any problem contact:9703710719
+                                </div>
+                            </div>
+                            <div style="margin-left: auto; color: var(--seller-text); opacity: 0.7; font-size: 0.8rem;">
+                                Just now
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Add event listeners
+            document.getElementById('withdraw-btn')?.addEventListener('click', () => loadWalletPage());
+            document.getElementById('theme-toggle')?.addEventListener('click', toggleTheme);
+            
+            // Setup navigation
+            setupNavigation();
+            
+            // Update mobile title
+            updateMobileTitle('Dashboard');
+        }
+
+        // Navigation setup
+        function setupNavigation() {
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.addEventListener('click', async function(e) {
+                    if (this.getAttribute('href') === '#') return;
+                    
+                    e.preventDefault();
+                    const target = this.getAttribute('href').substring(1);
+                    const title = this.getAttribute('data-title');
+                    
+                    // Update active class
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Close sidebar on mobile
+                    if (window.innerWidth < 768) {
+                        toggleSidebar();
+                    }
+                    
+                    // Update mobile title
+                    updateMobileTitle(title);
+                    
+                    // Load page
+                    await loadPage(target);
+                });
+            });
+        }
+
+        // Load specific page
+        async function loadPage(page) {
+            const mainContent = document.getElementById('main-content');
+            
+            switch(page) {
+                case 'add-pet':
+                    await loadAddPetPage();
+                    break;
+                case 'my-pets':
+                    await loadMyPetsPage();
+                    break;
+                case 'market-view':
+                    await loadMarketViewPage();
+                    break;
+                case 'sales':
+                    await loadSalesPage();
+                    break;
+                case 'wallet':
+                    await loadWalletPage();
+                    break;
+                case 'settings':
+                    await loadSettingsPage();
+                    break;
+                case 'dashboard':
+                default:
+                    await loadDashboard();
+            }
+        }
+
+        // Add Pet Page with File Upload
+        async function loadAddPetPage() {
+            const mainContent = document.getElementById('main-content');
+            
+            mainContent.innerHTML = `
+                <div class="desktop-header">
+                    <h1 class="page-title">Add New Pet</h1>
+                    <button class="btn-withdraw" onclick="loadDashboard()">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </button>
+                </div>
+                
+                <div style="max-width: 800px; margin: 0 auto;">
+                    <form id="pet-form" style="background: var(--seller-card-bg); padding: 25px 20px; border-radius: var(--border-radius); box-shadow: var(--shadow-md);">
+                        <h2 style="color: var(--seller-primary); margin-bottom: 20px; font-family: var(--font-primary); font-size: 1.4rem;">
+                            <i class="fas fa-paw"></i> Pet Information
+                        </h2>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 20px;">
+                            <div>
+                                <label style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.95rem;">Pet Name *</label>
+                                <input type="text" id="pet-name" class="form-control" placeholder="e.g., Max, Luna" required>
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.95rem;">Pet Type *</label>
+                                <select id="pet-type" class="form-control" required style="height: 48px;">
+                                    <option value="">Select type</option>
+                                    <option value="dog">🐶 Dog</option>
+                                    <option value="cat">🐱 Cat</option>
+                                    <option value="bird">🐦 Bird</option>
+                                    <option value="fish">🐠 Fish</option>
+                                    <option value="accessories">🎋accessories</option>
+                                <option value="other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+<div style="display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 20px;">
+                            <div>
+                                <label style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.95rem;">Breed</label>
+                                <input type="text" id="pet-breed" class="form-control" placeholder="e.g., Golden Retriever">
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.95rem;">Age (months)</label>
+                                <input type="number" id="pet-age" class="form-control" placeholder="e.g., 6" min="0">
+                            </div>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 20px;">
+                            <div>
+                                <label style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.95rem;">Price (₹) *</label>
+                                <input type="number" id="pet-price" class="form-control" placeholder="e.g., 5000" step="0.01" required>
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.95rem;">Weight (kg)</label>
+                                <input type="number" id="pet-weight" class="form-control" placeholder="e.g., 5.2" step="0.1">
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.95rem;">Description *</label>
+                            <textarea id="pet-description" class="form-control" placeholder="Describe the pet..." rows="4" required></textarea>
+                        </div>
+                        
+                        <!-- File Upload Section -->
+                        <div class="file-upload" style="margin-bottom: 20px;">
+                            <label class="file-upload-label" for="pet-image-upload">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <span style="font-weight: 600; margin-bottom: 5px; color: var(--seller-primary);">Upload Pet Image</span>
+                                <span style="color: var(--seller-text); opacity: 0.7; font-size: 0.9rem;">Click to browse or drag & drop</span>
+                                <span style="color: var(--seller-text); opacity: 0.7; font-size: 0.8rem; margin-top: 5px;">Supports: JPG, PNG, GIF (Max 5MB)</span>
+                            </label>
+                            <input type="file" id="pet-image-upload" accept="image/*" style="display: none;">
+                        </div>
+                        
+                        <div id="image-preview" class="file-preview" style="display: none;">
+                            <img id="preview-image" class="preview-image" src="" alt="Preview">
+                            <div style="margin-top: 10px;">
+                                <button type="button" id="remove-image" style="padding: 8px 15px; background: var(--seller-danger); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.9rem;">
+                                    <i class="fas fa-trash"></i> Remove Image
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Image URL Fallback -->
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.95rem;">Or Enter Image URL</label>
+                            <input type="url" id="pet-image-url" class="form-control" placeholder="https://example.com/pet.jpg">
+                            <small style="color: var(--seller-text); opacity: 0.7; display: block; margin-top: 5px; font-size: 0.85rem;">
+                                If you don't upload image, you can enter URL here
+                            </small>
+                        </div>
+                        
+                        <div style="margin-bottom: 25px;">
+                            <label style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.95rem;">Vaccination Status</label>
+                            <select id="pet-vaccination" class="form-control" style="height: 48px;">
+                                <option value="fully">✅ Fully Vaccinated</option>
+                                <option value="partially">⚠️ Partially Vaccinated</option>
+                                <option value="none">❌ Not Vaccinated</option>
+                            </select>
+                        </div>
+                        
+                        <button type="submit" class="btn-auth" style="font-size: 1rem;">
+                            <i class="fas fa-paper-plane"></i> Submit for Admin Approval
+                        </button>
+                        <div id="form-message" style="margin-top: 15px; text-align: center;"></div>
+                    </form>
+                </div>
+            `;
+            
+            // File upload functionality
+            const fileUpload = document.getElementById('pet-image-upload');
+            const previewContainer = document.getElementById('image-preview');
+            const previewImage = document.getElementById('preview-image');
+            const removeImageBtn = document.getElementById('remove-image');
+            
+            fileUpload.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    if (file.size > 5 * 1024 * 1024) {
+                        showToast('Error', 'File size too large (max 5MB)', 'error');
+                        return;
+                    }
+                    
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        previewImage.src = e.target.result;
+                        previewContainer.style.display = 'block';
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+            
+            removeImageBtn.addEventListener('click', function() {
+                fileUpload.value = '';
+                previewContainer.style.display = 'none';
+                previewImage.src = '';
+            });
+            
+            // Form submit handler
+            document.getElementById('pet-form').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const submitBtn = this.querySelector('.btn-auth');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<div class="spinner" style="width: 20px; height: 20px; border-width: 2px; display: inline-block;"></div>';
+                submitBtn.disabled = true;
+                
+                const petData = {
+                    name: document.getElementById('pet-name').value,
+                    type: document.getElementById('pet-type').value,
+                    breed: document.getElementById('pet-breed').value || 'Mixed',
+                    age: parseInt(document.getElementById('pet-age').value) || 0,
+                    price: parseFloat(document.getElementById('pet-price').value),
+                    weight: parseFloat(document.getElementById('pet-weight').value) || 0,
+                    description: document.getElementById('pet-description').value,
+                    vaccination: document.getElementById('pet-vaccination').value,
+                    sellerId: currentSellerId,
+                    status: 'pending',
+                    date: Date.now(),
+                    adminApproved: false
+                };
+                
+                try {
+                    // Get seller info
+                    if (sellerDataCache) {
+                        petData.sellerName = sellerDataCache.shopName;
+             petData.sellerEmail = sellerDataCache.email;
+                        petData.sellerPhone = sellerDataCache.phone;
+                    }
+                    
+                    // Handle image
+                    const imageUrl = document.getElementById('pet-image-url').value;
+                    if (fileUpload.files[0]) {
+                        // In real app, upload to storage and get URL
+                        // For now, use base64 or URL
+                        petData.imageUrl = previewImage.src;
+                    } else if (imageUrl) {
+                        petData.imageUrl = imageUrl;
+                    } else {
+                        petData.imageUrl = 'https://via.placeholder.com/400x300?text=Pet+Image';
+                    }
+                    
+                    // Save pet to database
+                    const newPetRef = push(ref(db, 'pets'));
+                    await set(newPetRef, petData);
+                    
+                    // Also save to admin approval queue
+                    const adminRef = push(ref(db, 'admin/pendingPets'));
+                    await set(adminRef, {
+                        ...petData,
+                        petId: newPetRef.key,
+                        submissionDate: Date.now()
+                    });
+                    
+                    // Show success message
+                    const formMessage = document.getElementById('form-message');
+                    formMessage.innerHTML = `
+                        <div style="background: rgba(39, 174, 96, 0.1); padding: 12px; border-radius: 8px; border: 1px solid rgba(39, 174, 96, 0.2); font-size: 0.9rem;">
+                            <i class="fas fa-check-circle"></i> 
+                            <strong>Submitted for Admin Approval!</strong><br>
+                            Your pet listing has been sent to admin for review.
+                        </div>
+                    `;
+                    
+                    // Reset form
+                    this.reset();
+                    previewContainer.style.display = 'none';
+                    previewImage.src = '';
+                    fileUpload.value = '';
+                    
+                    showToast('Success!', 'Pet submitted for admin approval.', 'success');
+                    
+                } catch (error) {
+                    console.error('Error adding pet:', error);
+                    const formMessage = document.getElementById('form-message');
+                    formMessage.innerHTML = `
+                        <div style="background: rgba(231, 76, 60, 0.1); padding: 12px; border-radius: 8px; border: 1px solid rgba(231, 76, 60, 0.2); font-size: 0.9rem;">
+                            <i class="fas fa-exclamation-circle"></i> 
+                            <strong>Error:</strong> ${error.message}
+                        </div>
+                    `;
+                    
+                    showToast('Error', 'Failed to submit pet.', 'error');
+                } finally {
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }
+            });
+        }
+
+              // My Pets Page
+        async function loadMyPetsPage() {
+            const mainContent = document.getElementById('main-content');
+            
+            mainContent.innerHTML = `
+                <div class="desktop-header">
+                    <h1 class="page-title">My Pets</h1>
+                    <button class="btn-withdraw" onclick="loadDashboard()">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </button>
+                </div>
+                <div style="background: var(--seller-card-bg); padding: 30px 20px; border-radius: var(--border-radius); box-shadow: var(--shadow-md);">
+                    <div id="my-pets-content">
+                        <div class="spinner" style="width: 40px; height: 40px;"></div>
+                        <p style="text-align: center; margin-top: 15px; color: var(--seller-text);">Loading your pets...</p>
+                    </div>
+                </div>
+            `;
+            
+            // Load pets
+            try {
+                const petsSnapshot = await get(ref(db, 'pets'));
+                const myPetsContent = document.getElementById('my-pets-content');
+                
+                if (petsSnapshot.exists()) {
+                    const pets = petsSnapshot.val();
+                    const myPets = Object.entries(pets).filter(([key, pet]) => pet.sellerId === currentSellerId);
+                    
+                    if (myPets.length === 0) {
+                        myPetsContent.innerHTML = `
+                            <div style="text-align: center; padding: 40px 20px;">
+                                <i class="fas fa-paw" style="font-size: 3rem; color: var(--seller-accent); opacity: 0.5; margin-bottom: 15px;"></i>
+                                <h2 style="color: var(--seller-primary); margin-bottom: 10px; font-size: 1.3rem;">No Pets Listed</h2>
+                                <p style="color: var(--seller-text); opacity: 0.8; max-width: 400px; margin: 0 auto 20px; font-size: 0.95rem;">
+                                    You haven't listed any pets yet.
+                                </p>
+                                <button onclick="loadAddPetPage()" style="padding: 12px 25px; background: var(--gradient-accent); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; font-size: 0.95rem;">
+                                    <i class="fas fa-plus"></i> Add Your First Pet
+                                </button>
+                            </div>
+                        `;
+                    } else {
+                        myPetsContent.innerHTML = `
+                            <h2 style="color: var(--seller-primary); margin-bottom: 20px;">Your Pet Listings (${myPets.length})</h2>
+                            <div class="products-grid">
+                                ${myPets.map(([key, pet]) => `
+                                    <div class="product-card">
+                                        <img src="${pet.imageUrl || 'https://via.placeholder.com/400x300?text=Pet+Image'}" alt="${pet.name}" class="product-image">
+                                        <div class="product-info">
+                                            <div class="product-name">${pet.name}</div>
+                                            <div class="product-description">${pet.description.substring(0, 100)}...</div>
+                                            <div class="product-price">₹${pet.price}</div>
+                                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                                <span style="padding: 4px 10px; background: ${pet.status === 'approved' ? 'var(--seller-success)' : 'var(--seller-warning)'}; color: white; border-radius: 15px; font-size: 0.8rem; font-weight: 600;">
+                                                    ${pet.status === 'approved' ? 'Approved' : 'Pending'}
+                                                </span>
+                                                <button onclick="deletePet('${key}')" style="padding: 6px 12px; background: var(--seller-danger); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.9rem;">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `;
+                    }
+                } else {
+                    myPetsContent.innerHTML = `
+                        <div style="text-align: center; padding: 40px 20px;">
+                            <i class="fas fa-paw" style="font-size: 3rem; color: var(--seller-accent); opacity: 0.5; margin-bottom: 15px;"></i>
+                            <h2 style="color: var(--seller-primary); margin-bottom: 10px; font-size: 1.3rem;">No Pets Listed</h2>
+                            <p style="color: var(--seller-text); opacity: 0.8; max-width: 400px; margin: 0 auto 20px; font-size: 0.95rem;">
+                                You haven't listed any pets yet.
+                            </p>
+                            <button onclick="loadAddPetPage()" style="padding: 12px 25px; background: var(--gradient-accent); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; font-size: 0.95rem;">
+                                <i class="fas fa-plus"></i> Add Your First Pet
+                            </button>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading pets:', error);
+                document.getElementById('my-pets-content').innerHTML = `
+                    <div style="text-align: center; padding: 40px 20px; color: var(--seller-danger);">
+                        <i class="fas fa-exclamation-circle" style="font-size: 2rem; margin-bottom: 15px;"></i>
+                        <p>Error loading pets. Please try again.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Delete pet function
+        window.deletePet = async function(petId) {
+            if (confirm('Are you sure you want to delete this pet?')) {
+                try {
+                    await remove(ref(db, `pets/${petId}`));
+                    showToast('Success', 'Pet deleted successfully.', 'success');
+                    loadMyPetsPage();
+                } catch (error) {
+                    showToast('Error', 'Failed to delete pet.', 'error');
+                }
+            }
+        };
+
+        // Market View Page - View and Buy Products
+        async function loadMarketViewPage() {
+            const mainContent = document.getElementById('main-content');
+            
+            mainContent.innerHTML = `
+                <div class="desktop-header">
+                    <h1 class="page-title">Market View</h1>
+                    <button class="btn-withdraw" onclick="loadDashboard()">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </button>
+                </div>
+                <div style="background: var(--seller-card-bg); padding: 30px 20px; border-radius: var(--border-radius); box-shadow: var(--shadow-md);">
+                    <h2 style="color: var(--seller-primary); margin-bottom: 20px; font-size: 1.3rem;">Browse Marketplace</h2>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; margin-bottom: 25px;">
+                        <div style="background: rgba(52, 152, 219, 0.1); padding: 20px; border-radius: 10px; border: 1px solid rgba(52, 152, 219, 0.2); text-align: center;">
+                            <div style="font-size: 1.5rem; font-weight: 700; color: var(--seller-accent);" id="total-pets">0</div>
+                            <div style="color: var(--seller-text); margin-top: 8px; font-size: 0.9rem;">Available Pets</div>
+                        </div>
+                        <div style="background: rgba(46, 204, 113, 0.1); padding: 20px; border-radius: 10px; border: 1px solid rgba(46, 204, 113, 0.2); text-align: center;">
+                            <div style="font-size: 1.5rem; font-weight: 700; color: var(--seller-success);" id="avg-price">₹0</div>
+                            <div style="color: var(--seller-text); margin-top: 8px; font-size: 0.9rem;">Average Price</div>
+                        </div>
+                    </div>
+                    
+                    <div id="marketplace-content">
+                        <div class="spinner" style="width: 40px; height: 40px; margin: 20px auto;"></div>
+                        <p style="text-align: center; color: var(--seller-text);">Loading marketplace...</p>
+                    </div>
+                </div>
+            `;
+            
+            // Load marketplace pets
+            try {
+                const petsSnapshot = await get(ref(db, 'pets'));
+                const marketplaceContent = document.getElementById('marketplace-content');
+                
+                if (petsSnapshot.exists()) {
+                    const pets = petsSnapshot.val();
+                    const approvedPets = Object.entries(pets).filter(([key, pet]) => 
+                        pet.status === 'approved' && pet.sellerId !== currentSellerId
+                    );
+                    
+                    // Update stats
+                    document.getElementById('total-pets').textContent = approvedPets.length;
+                    
+                    if (approvedPets.length > 0) {
+                        const totalPrice = approvedPets.reduce((sum, [key, pet]) => sum + (parseFloat(pet.price) || 0), 0);
+                        const avgPrice = Math.round(totalPrice / approvedPets.length);
+                        document.getElementById('avg-price').textContent = `₹${avgPrice}`;
+                    }
+                    
+                    if (approvedPets.length === 0) {
+                        marketplaceContent.innerHTML = `
+                            <div style="text-align: center; padding: 40px 20px;">
+                                <i class="fas fa-store" style="font-size: 3rem; color: var(--seller-accent); opacity: 0.5; margin-bottom: 15px;"></i>
+                                <h2 style="color: var(--seller-primary); margin-bottom: 10px; font-size: 1.3rem;">No Pets Available</h2>
+                                <p style="color: var(--seller-text); opacity: 0.8; max-width: 400px; margin: 0 auto; font-size: 0.95rem;">
+                                    No approved pets available in the marketplace yet.
+                                </p>
+                            </div>
+                        `;
+                    } else {
+                        marketplaceContent.innerHTML = `
+                            <h3 style="color: var(--seller-primary); margin-bottom: 15px;">Available Pets (${approvedPets.length})</h3>
+                            <div class="products-grid">
+                                ${approvedPets.map(([key, pet]) => `
+                                    <div class="product-card">
+                                        <img src="${pet.imageUrl || 'https://via.placeholder.com/400x300?text=Pet+Image'}" alt="${pet.name}" class="product-image">
+                                        <div class="product-info">
+                                            <div class="product-name">${pet.name}</div>
+                                            <div style="color: var(--seller-text); opacity: 0.7; font-size: 0.85rem; margin-bottom: 8px;">
+                                                <i class="fas fa-store"></i> ${pet.sellerName || 'Seller'}
+                                            </div>
+                                            <div class="product-description">${pet.description.substring(0, 80)}...</div>
+                                            <div class="product-price">₹${pet.price}</div>
+                                            <button class="buy-btn" onclick="buyPet('${key}', '${pet.name}', ${pet.price})">
+                                                <i class="fas fa-shopping-cart"></i> Buy Now
+                                            </button>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `;
+                    }
+                } else {
+                    marketplaceContent.innerHTML = `
+                        <div style="text-align: center; padding: 40px 20px;">
+                            <i class="fas fa-store" style="font-size: 3rem; color: var(--seller-accent); opacity: 0.5; margin-bottom: 15px;"></i>
+                            <h2 style="color: var(--seller-primary); margin-bottom: 10px; font-size: 1.3rem;">Marketplace Empty</h2>
+                            <p style="color: var(--seller-text); opacity: 0.8; max-width: 400px; margin: 0 auto; font-size: 0.95rem;">
+                                No pets available in the marketplace yet.
+                            </p>
+                        </div>
+                    `;
+                }
+        } catch (error) {
+                console.error('Error loading marketplace:', error);
+                document.getElementById('marketplace-content').innerHTML = `
+                    <div style="text-align: center; padding: 40px 20px; color: var(--seller-danger);">
+                        <i class="fas fa-exclamation-circle" style="font-size: 2rem; margin-bottom: 15px;"></i>
+                        <p>Error loading marketplace. Please try again.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Buy pet function
+        window.buyPet = async function(petId, petName, price) {
+            if (!sellerDataCache) {
+                showToast('Error', 'Please complete your seller profile first.', 'error');
+                return;
+            }
+            
+            if (confirm(`Buy ${petName} for ₹${price}?`)) {
+                try {
+                    // Create order
+                    const orderData = {
+                        petId: petId,
+                        petName: petName,
+                        price: price,
+                        buyerId: currentSellerId,
+                        buyerName: sellerDataCache.shopName,
+                        buyerEmail: sellerDataCache.email,
+                        purchaseDate: Date.now(),
+                        status: 'pending',
+                        paymentMethod: 'cash_on_delivery' // Default
+                    };
+                    
+                    // Save order
+                    const orderRef = push(ref(db, 'orders'));
+                    await set(orderRef, orderData);
+                    
+                    showToast('Success', `Order placed for ${petName}!`, 'success');
+                    
+                    // In real app, you would:
+                    // 1. Process payment
+                    // 2. Update seller wallet
+                    // 3. Send notifications
+                    
+                } catch (error) {
+                    showToast('Error', 'Failed to place order.', 'error');
+                }
+            }
+        };
+
+        // Wallet Page with Withdraw Functionality
+        async function loadWalletPage() {
+            const mainContent = document.getElementById('main-content');
+            
+            mainContent.innerHTML = `
+                <div class="desktop-header">
+                    <h1 class="page-title">Wallet</h1>
+                    <button class="btn-withdraw" onclick="loadDashboard()">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </button>
+                </div>
+                <div style="background: var(--seller-card-bg); padding: 30px 20px; border-radius: var(--border-radius); box-shadow: var(--shadow-md);">
+                    <h2 style="color: var(--seller-primary); margin-bottom: 20px; font-size: 1.3rem;">Wallet Management</h2>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr; gap: 20px; margin-top: 20px;">
+                        <div style="background: var(--gradient-primary); color: white; padding: 25px; border-radius: 12px;">
+                            <h3 style="margin-bottom: 15px; display: flex; align-items: center; gap: 10px; font-size: 1.1rem;">
+                                <i class="fas fa-wallet"></i> Available Balance
+                            </h3>
+                            <div style="font-size: 2.5rem; font-weight: 700; margin-bottom: 8px;">₹${sellerDataCache?.walletBalance || 0}.00</div>
+                            <p style="opacity: 0.9; font-size: 0.9rem;">Total funds available for withdrawal</p>
+                        </div>
+                        
+                        <div style="padding: 25px; background: rgba(52, 152, 219, 0.1); border-radius: 12px; border: 1px solid rgba(52, 152, 219, 0.2);">
+                            <h3 style="color: var(--seller-primary); margin-bottom: 15px; font-size: 1.1rem;">Withdraw Funds</h3>
+                            
+                            <div style="margin-bottom: 20px;">
+                                <label style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.95rem;">Amount (₹) *</label>
+                                <input type="number" id="withdraw-amount" class="form-control" placeholder="Enter amount" style="margin-bottom: 12px; height: 48px;" min="1" max="${sellerDataCache?.walletBalance || 0}">
+                            </div>
+                            
+                            <div style="margin-bottom: 20px;">
+                                <label style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.95rem;">Full Name *</label>
+                                <input type="text" id="withdraw-name" class="form-control" placeholder="Enter your full name" style="margin-bottom: 12px; height: 48px;" value="${sellerDataCache?.sellerName || ''}">
+                            </div>
+                            
+                            <div style="margin-bottom: 20px;">
+                                <label style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.95rem;">Phone Number *</label>
+                                <input type="tel" id="withdraw-phone" class="form-control" placeholder="Enter phone number" style="margin-bottom: 12px; height: 48px;" value="${sellerDataCache?.phone || ''}">
+                            </div>
+                            
+                            <div style="margin-bottom: 20px;">
+                                <label style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.95rem;">Payment Method *</label>
+                                <div class="payment-methods">
+                                    <div class="payment-method ${selectedPaymentMethod === 'esewa' ? 'active' : ''}" data-method="esewa">
+                                        <i class="fas fa-mobile-alt"></i>
+                                        <span style="font-size: 0.9rem; font-weight: 600;">eSewa</span>
+                                    </div>
+                                    <div class="payment-method ${selectedPaymentMethod === 'khalti' ? 'active' : ''}" data-method="khalti">
+                                        <i class="fas fa-wallet"></i>
+                                        <span style="font-size: 0.9rem; font-weight: 600;">Khalti</span>
+                                    </div>
+                                    <div class="payment-method ${selectedPaymentMethod === 'esewa' ? 'active' : ''}" data-method="esewa">
+                                        <i class="fas fa-mobile-alt"></i>
+                                        <span style="font-size: 0.9rem; font-weight: 600;">eSewa</span>
+                                    </div>
+                                    <div class="payment-method ${selectedPaymentMethod === 'khalti' ? 'active' : ''}" data-method="khalti">
+                                        <i class="fas fa-wallet"></i>
+                                        <span style="font-size: 0.9rem; font-weight: 600;">Khalti</span>
+                                    </div>
+                                    <div class="payment-method ${selectedPaymentMethod === 'bank' ? 'active' : ''}" data-method="bank">
+                                        <i class="fas fa-university"></i>
+                                        <span style="font-size: 0.9rem; font-weight: 600;">Bank</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- eSewa/Khalti Details -->
+                            <div id="digital-wallet-details" style="${selectedPaymentMethod === 'esewa' || selectedPaymentMethod === 'khalti' ? '' : 'display: none;'} margin-bottom: 20px;">
+                                <label style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.95rem;">${selectedPaymentMethod === 'esewa' ? 'eSewa' : 'Khalti'} ID *</label>
+                                <input type="text" id="wallet-id" class="form-control" placeholder="Enter ${selectedPaymentMethod === 'esewa' ? 'eSewa' : 'Khalti'} ID" style="height: 48px;">
+                            </div>
+                            
+                            <!-- Bank Details -->
+                            <div id="bank-details" style="${selectedPaymentMethod === 'bank' ? '' : 'display: none;'} margin-bottom: 20px;">
+                                <div style="display: grid; grid-template-columns: 1fr; gap: 15px;">
+                                    <div>
+                                        <label style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.95rem;">Bank Name *</label>
+                                        <input type="text" id="bank-name" class="form-control" placeholder="Enter bank name" style="height: 48px;">
+                                    </div>
+                                    <div>
+                                        <label style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.95rem;">Account Number *</label>
+                                        <input type="text" id="account-number" class="form-control" placeholder="Enter account number" style="height: 48px;">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <button class="btn-auth" id="submit-withdraw" style="background: var(--seller-success); font-size: 1rem;">
+                                <i class="fas fa-money-bill-wave"></i> Request Withdrawal
+                            </button>
+                            <div id="withdraw-message" style="margin-top: 15px; text-align: center;"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Payment method selection
+            document.querySelectorAll('.payment-method').forEach(method => {
+                method.addEventListener('click', function() {
+                    selectedPaymentMethod = this.dataset.method;
+                    
+                    // Update active class
+                    document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Show/hide details
+                    const digitalWallet = document.getElementById('digital-wallet-details');
+                    const bankDetails = document.getElementById('bank-details');
+                    
+                    if (selectedPaymentMethod === 'esewa' || selectedPaymentMethod === 'khalti') {
+                        digitalWallet.style.display = 'block';
+                        bankDetails.style.display = 'none';
+                        document.getElementById('wallet-id').placeholder = `Enter ${selectedPaymentMethod} ID`;
+                    } else if (selectedPaymentMethod === 'bank') {
+                        digitalWallet.style.display = 'none';
+                        bankDetails.style.display = 'block';
+                    }
+                });
+            });
+            
+            // Withdraw form submission
+            document.getElementById('submit-withdraw').addEventListener('click', async function() {
+                const amount = parseFloat(document.getElementById('withdraw-amount').value);
+                const name = document.getElementById('withdraw-name').value.trim();
+                const phone = document.getElementById('withdraw-phone').value.trim();
+                
+                // Validation
+                if (!amount || amount <= 0) {
+                    showToast('Error', 'Please enter valid amount', 'error');
+                    return;
+                }
+                
+                if (amount > (sellerDataCache?.walletBalance || 0)) {
+                    showToast('Error', 'Insufficient balance', 'error');
+                    return;
+                }
+                
+                if (!name) {
+                    showToast('Error', 'Please enter your name', 'error');
+                    return;
+                }
+                
+                if (!phone) {
+                    showToast('Error', 'Please enter phone number', 'error');
+                    return;
+                }
+                
+                let paymentDetails = {};
+                if (selectedPaymentMethod === 'esewa' || selectedPaymentMethod === 'khalti') {
+                    const walletId = document.getElementById('wallet-id').value.trim();
+                    if (!walletId) {
+                        showToast('Error', `Please enter ${selectedPaymentMethod} ID`, 'error');
+                        return;
+                    }
+                    paymentDetails = { walletId };
+                } else if (selectedPaymentMethod === 'bank') {
+                    const bankName = document.getElementById('bank-name').value.trim();
+                    const accountNumber = document.getElementById('account-number').value.trim();
+                    if (!bankName || !accountNumber) {
+                        showToast('Error', 'Please enter bank details', 'error');
+                        return;
+                    }
+                    paymentDetails = { bankName, accountNumber };
+                }
+                
+                // Show loading
+                const originalText = this.innerHTML;
+                this.innerHTML = '<div class="spinner" style="width: 20px; height: 20px; border-width: 2px; display: inline-block;"></div>';
+                this.disabled = true;
+                
+                try {
+                    // Create withdrawal request
+                    const withdrawData = {
+                        sellerId: currentSellerId,
+                        sellerName: sellerDataCache?.shopName || name,
+                        sellerEmail: sellerDataCache?.email,
+                        amount: amount,
+                        paymentMethod: selectedPaymentMethod,
+                        paymentDetails: paymentDetails,
+                        name: name,
+                        phone: phone,
+                        requestDate: Date.now(),
+                        status: 'pending',
+                        adminApproved: false
+                    };
+                    
+                    // Save to withdrawals
+                    const withdrawRef = push(ref(db, 'withdrawals'));
+                    await set(withdrawRef, withdrawData);
+                    
+                    // Also save to admin for approval
+                    const adminRef = push(ref(db, 'admin/pendingWithdrawals'));
+                    await set(adminRef, {
+                        ...withdrawData,
+                        withdrawId: withdrawRef.key
+                    });
+                    
+                    // Show success
+                    const messageDiv = document.getElementById('withdraw-message');
+                    messageDiv.innerHTML = `
+                        <div style="background: rgba(39, 174, 96, 0.1); padding: 12px; border-radius: 8px; border: 1px solid rgba(39, 174, 96, 0.2); font-size: 0.9rem;">
+                            <i class="fas fa-check-circle"></i> 
+                            <strong>Withdrawal Request Submitted!</strong><br>
+                            Your request for ₹${amount} has been sent to admin for approval.
+                        </div>
+                    `;
+                    
+                    // Reset form
+                    document.getElementById('withdraw-amount').value = '';
+                    if (selectedPaymentMethod === 'esewa' || selectedPaymentMethod === 'khalti') {
+                        document.getElementById('wallet-id').value = '';
+                    } else if (selectedPaymentMethod === 'bank') {
+                        document.getElementById('bank-name').value = '';
+                        document.getElementById('account-number').value = '';
+                    }
+                    
+                    showToast('Success', 'Withdrawal request sent for admin approval.', 'success');
+                    
+                } catch (error) {
+                    console.error('Withdraw error:', error);
+                    showToast('Error', 'Failed to process withdrawal', 'error');
+                } finally {
+                    this.innerHTML = originalText;
+                    this.disabled = false;
+                }
+            });
+        }
+
+        // Other pages (simplified)
+        async function loadSalesPage() {
+            const mainContent = document.getElementById('main-content');
+            mainContent.innerHTML = `
+                <div class="desktop-header">
+                    <h1 class="page-title">Sales Analytics</h1>
+                    <button class="btn-withdraw" onclick="loadDashboard()">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </button>
+                </div>
+                <div style="background: var(--seller-card-bg); padding: 30px 20px; border-radius: var(--border-radius); box-shadow: var(--shadow-md);">
+                    <h2 style="color: var(--seller-primary); margin-bottom: 15px; font-size: 1.3rem;">Sales Performance</h2>
+                    <div style="text-align: center; padding: 30px; background: rgba(52, 152, 219, 0.05); border-radius: 10px; border: 2px dashed rgba(52, 152, 219, 0.3);">
+                        <i class="fas fa-chart-line" style="font-size: 2.5rem; color: var(--seller-accent); opacity: 0.5; margin-bottom: 15px;"></i>
+                        <h3 style="color: var(--seller-primary); margin-bottom: 10px; font-size: 1.1rem;">Coming Soon</h3>
+                        <p style="color: var(--seller-text); opacity: 0.8; font-size: 0.9rem;">
+                            Sales analytics dashboard coming soon
+                        </p>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function loadSettingsPage() {
+            const mainContent = document.getElementById('main-content');
+            mainContent.innerHTML = `
+                <div class="desktop-header">
+                    <h1 class="page-title">Settings</h1>
+                    <button class="btn-withdraw" onclick="loadDashboard()">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </button>
+                </div>
+                <div style="background: var(--seller-card-bg); padding: 30px 20px; border-radius: var(--border-radius); box-shadow: var(--shadow-md);">
+                    <h2 style="color: var(--seller-primary); margin-bottom: 20px; font-size: 1.3rem;">Account Settings</h2>
+                    
+                    <div style="margin-bottom: 25px;">
+                        <h3 style="color: var(--seller-primary); margin-bottom: 15px; font-size: 1.1rem;">
+                            <i class="fas fa-user-cog"></i> Profile
+                        </h3>
+                        <div style="display: grid; grid-template-columns: 1fr; gap: 15px;">
+                            <div>
+                                <label style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.95rem;">Shop Name</label>
+                                <input type="text" class="form-control" value="${sellerDataCache?.shopName || ''}" disabled>
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.95rem;">Email</label>
+                                <input type="email" class="form-control" value="${sellerDataCache?.email || ''}" disabled>
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.95rem;">Phone</label>
+                                <input type="tel" class="form-control" value="${sellerDataCache?.phone || ''}" disabled>
+                            </div>
+                        </div>
+                    </div>
+                    
+<button class="btn-auth" style="background: var(--seller-primary); font-size: 1rem;">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                </div>
+            `;
+        }
+
+        // Initialize
+        initTheme();
+        showLandingPage();
+        
+        // Auto-hide toast
+        toast.addEventListener('click', () => {
+            toast.classList.remove('show');
+        });
+
+        // Prevent form submission on Enter
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && e.target.tagName === 'INPUT' && e.target.type !== 'submit') {
+                e.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html>
+
+        
