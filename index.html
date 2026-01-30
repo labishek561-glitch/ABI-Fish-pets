@@ -1,9 +1,9 @@
-  <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SABI- Pet Marketplace</title>
+    <title>ABI- Pet Marketplace</title>
     
     <!-- Google Fonts: Poppins -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -326,8 +326,8 @@
         #product-detail-modal .price { font-size: 1.5rem; color: var(--primary-color); font-weight: bold; }
         #product-detail-modal p { margin: 15px 0; }
         #product-detail-modal .modal-actions { display: flex; gap: 10px; }
-        
-        #auth-modal .form-container { display: none; }
+
+         #auth-modal .form-container { display: none; }
         #auth-modal .form-container.active { display: block; }
         #auth-modal .toggle-link {
             color: var(--primary-color);
@@ -376,6 +376,7 @@
             border-radius: var(--border-radius);
             margin-right: 15px;
         }
+       
         .item-details { flex-grow: 1; }
         .item-actions { display: flex; align-items: center; gap: 10px; }
         .quantity-controls button {
@@ -383,6 +384,40 @@
             height: 30px;
             border-radius: 50%;
         }
+        /* Full screen loader */
+#loader {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+/* Spinner animation */
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 6px solid #ddd;
+  border-top: 6px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Hide mia content initially */
+#cont {
+  display: none;
+  font-size: 10px;
+}
+
         .cart-total {
             margin-top: 20px;
             text-align: right;
@@ -492,6 +527,16 @@
     </style>
 </head>
 <body>
+      <!-- Loader -->
+  <div id="loader">
+      <div class="spinner"></div>
+      <p>“कृपया केही बेर पर्खनुहोस्, तपाईंको वेबसाइट लोड हुँदैछ।🙏💐”</p>
+  </div> 
+  <!--mia content -->
+  <div id="cont">
+      <h1></h>
+      <p>Thankyou for choosing us🙏💐</p>
+  </div>
 
     <!-- Toast Notification -->
     <div id="toast" class="toast"></div>
@@ -499,19 +544,19 @@
     <!-- Header -->
     <div class="sidebar-header">
     <div class="logo-container">
-        <img src="logo1.png" alt="Admin Logo" class="admin-round-logo">
+        <img src="logo.png" alt="Admin Logo" class="admin-round-logo">
     </div>
-    <span style="display: block; margin-top: 10px;">SABI Nepal is an online marketplace for buying and selling pets, aquarium fish, and pet accessories with a secure buyer–seller–admin system.</span>
+    <span style="display: block; margin-top: 10px;">Sasto Masto-petssa Nepal is an online marketplace for buying and selling pets, aquarium fish, and pet accessories with a secure buyer–seller–admin system.</span>
 </div>
 
     <header class="header">
-        <div class="logo">SABI-pets marketplace</div>
+        <div class="logo">ABI-pets marketplace</div>
         <div class="header-icons">
             <div class="panel-links">
                 <a href="seller.html" class="panel-link" target="_blank">
                     <i class="fas fa-store"></i> Seller
                 </a>
-                <a href="admin.html" class="panel-link" target="_blank">
+                <a href="Admin.html" class="panel-link" target="_blank">
                     <i class="fas fa-user-shield"></i> Admin
                 </a>
             </div>
@@ -582,8 +627,8 @@
         <section id="about" class="page">
             <div class="page-content">
                 <h1>About Us</h1>
-                <p>Welcome to SABI-Pets, your number one source for all pet needs. We're dedicated to giving you the very best of pets, with a focus on quality, customer service and uniqueness.</p>
-                <p>Founded in 2023, SABI pets has come a long way from its beginnings. When we first started out, our passion for providing the best pets drove us to start our own business.</p>
+                <p>Welcome to ABI-Pets, your number one source for all pet needs. We're dedicated to giving you the very best of pets, with a focus on quality, customer service and uniqueness.</p>
+                <p>Founded in 2021, ABI-pets has come a long way from its beginnings. When we first started out, our passion for providing the best pets drove us to start our own business.</p>
             </div>
         </section>
         <section id="contact" class="page">
@@ -682,7 +727,7 @@
             </form>
         </div>
     </div>
-
+<button id="darkModeToggle" aria-label="Toggle dark mode">🌙</button>
      <!-- Firebase SDK -->
     <script type="module">
         // Import the functions you need from the SDKs you need
@@ -1126,7 +1171,7 @@ const setupOrdersListener = () => {
                 container.innerHTML = `
                     <div class="empty-state">
                         <i class="fas fa-box"></i>
-              <p>You have no orders yet</p>
+                          <p>You have no orders yet</p>
                         <a href="#home" style="display: inline-block; margin-top: 10px; color: var(--primary-color);">Browse Pets</a>
                     </div>
                 `;
@@ -1327,7 +1372,8 @@ const setupOrdersListener = () => {
                 set(productRef, { quantity: newQuantity });
             }
         };
-      const handleAddToWishlist = async (productId) => {
+
+        const handleAddToWishlist = async (productId) => {
              if (!currentUser) {
                 openModal(authModal);
                 return;
@@ -1502,8 +1548,28 @@ const setupOrdersListener = () => {
                 showToast("Failed to place order.", 'error');
             }
         });
+        window.addEventListener("load", function () {
+  document.getElementById("loader").style.display = "none";
+  document.getElementById("cont").style.display = "block";
+});
+  const toggle = document.getElementById("darkModeToggle");
+
+  // Load saved preference
+  if (localStorage.getItem("darkMode") === "enabled") {
+    document.body.classList.add("dark-mode");
+    toggle.textContent = "☀️";
+  }
+
+  toggle.addEventListener("click", () => {
+    document.body.classList.toggle("dark-mode");
+
+    const enabled = document.body.classList.contains("dark-mode");
+    localStorage.setItem("darkMode", enabled ? "enabled" : "disabled");
+    toggle.textContent = enabled ? "☀️" : "🌙";
+  });
 
     </script>
 </body>
 </html>
+
 
