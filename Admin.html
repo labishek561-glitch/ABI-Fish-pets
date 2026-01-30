@@ -1,1 +1,1831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Sasto masto-pets marketplace</title>
+    
+    <!-- Google Fonts: Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --admin-primary: #1a237e;
+            --admin-secondary: #f8f9fa;
+            --admin-accent: #283593;
+            --admin-success: #27ae60;
+            --admin-warning: #f39c12;
+            --admin-danger: #e74c3c;
+            --admin-info: #3498db;
+            --admin-text: #333;
+            --admin-light-text: #f8f9fa;
+            --font-family: 'Poppins', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: var(--font-family);
+            background-color: #f4f7f6;
+            color: var(--admin-text);
+        }
+        
+        .admin-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: var(--admin-primary);
+            color: var(--admin-light-text);
+            transition: width 0.3s;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        .sidebar-header {
+            padding: 20px;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 600;
+            border-bottom: 1px solid #3949ab;
+        }
+        .sidebar-nav {
+            list-style: none;
+            padding: 20px 0;
+        }
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: var(--admin-light-text);
+            text-decoration: none;
+            transition: background-color 0.2s;
+        }
+        .sidebar-nav a.active, .sidebar-nav a:hover { 
+            background-color: #3949ab; 
+            border-left: 4px solid var(--admin-info);
+        }
+        .sidebar-nav a i {
+            margin-right: 15px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .main-content {
+            flex-grow: 1;
+            margin-left: 250px;
+            padding: 20px;
+            overflow-x: auto;
+            min-height: 100vh;
+        }
+        
+        .admin-page { 
+            display: none; 
+            animation: fadeIn 0.3s ease;
+        }
+        .admin-page.active { 
+            display: block; 
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Login Screen */
+        #login-screen {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        #login-box {
+            padding: 40px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            width: 90%;
+            max-width: 400px;
+        }
+        #login-box h2 { 
+            text-align: center; 
+            margin-bottom: 30px;
+            color: var(--admin-primary);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+        input:focus {
+            outline: none;
+            border-color: var(--admin-accent);
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            background: var(--admin-accent);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #1c2872;
+        }
+        #admin-login-error { 
+            color: var(--admin-danger); 
+            text-align: center; 
+            margin-top: 15px;
+            padding: 10px;
+            background: rgba(231, 76, 60, 0.1);
+            border-radius: 5px;
+            display: none;
+        }
+
+        /* Dashboard */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        .stat-card h3 { 
+            color: #6c757d; 
+            font-size: 1rem;
+            margin-bottom: 10px;
+        }
+        .stat-card .count { 
+            font-size: 2.5rem; 
+            font-weight: 700; 
+            color: var(--admin-primary);
+            margin-bottom: 10px;
+        }
+        .stat-change {
+            font-size: 0.9rem;
+            padding: 4px 10px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+        .positive { background: rgba(39, 174, 96, 0.1); color: var(--admin-success); }
+        .negative { background: rgba(231, 76, 60, 0.1); color: var(--admin-danger); }
+
+        /* Tables */
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        .content-header h1 {
+            color: var(--admin-primary);
+            font-size: 1.8rem;
+        }
+        .btn-add {
+            background-color: var(--admin-success);
+            width: auto;
+            padding: 10px 20px;
+        }
+        .btn-add:hover {
+            background-color: #219a52;
+        }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .data-table th, .data-table td {
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+            text-align: left;
+        }
+        .data-table th { 
+            background-color: #f8f9fa; 
+            font-weight: 600;
+            color: var(--admin-primary);
+        }
+        .data-table tr:hover {
+            background-color: #f9f9f9;
+        }
+        .data-table img { 
+            width: 60px; 
+            height: 60px; 
+            object-fit: cover; 
+            border-radius: 6px;
+            border: 1px solid #ddd;
+        }
+        .action-btns {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .action-btns button {
+            margin: 0;
+            padding: 8px 15px;
+            font-size: 0.85rem;
+            width: auto;
+            border-radius: 4px;
+        }
+        .btn-view { background-color: var(--admin-info); }
+        .btn-edit { background-color: var(--admin-warning); }
+        .btn-delete { background-color: var(--admin-danger); }
+        .btn-approve { background-color: var(--admin-success); }
+        .btn-reject { background-color: #dc3545; }
+        .status-select { 
+            padding: 8px 12px; 
+            border-radius: 6px; 
+            border: 2px solid #ddd;
+            background: white;
+            min-width: 120px;
+        }
+         /* Status Badges */
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-approved { background: #d4edda; color: #155724; }
+        .status-rejected { background: #f8d7da; color: #721c24; }
+        .status-completed { background: #d1ecf1; color: #0c5460; }
+
+        /* Modal */
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 1000; 
+            left: 0; 
+            top: 0; 
+            width: 100%; 
+            height: 100%;
+            overflow: auto; 
+            background-color: rgba(0,0,0,0.5); 
+            justify-content: center; 
+            align-items: center;
+        }
+        .modal.active { display: flex; }
+        .modal-content {
+            background-color: #fff; 
+            padding: 30px; 
+            border-radius: 12px;
+            width: 90%; 
+            max-width: 600px; 
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalSlide 0.3s ease;
+        }
+        @keyframes modalSlide {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .close-btn { 
+            position: absolute; 
+            top: 15px; 
+            right: 20px; 
+            font-size: 28px; 
+            cursor: pointer;
+            color: #999;
+        }
+        .close-btn:hover { color: #333; }
+        textarea { 
+            width: 100%; 
+            padding: 12px; 
+            border: 2px solid #ddd; 
+            border-radius: 6px; 
+            resize: vertical; 
+            min-height: 120px;
+        }
+
+        /* Approval Grid */
+        .approval-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+        }
+
+        .approval-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .approval-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+        }
+
+        .approval-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-bottom: 1px solid #eee;
+        }
+
+        .approval-card-body {
+            padding: 20px;
+        }
+
+        .approval-card-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--admin-primary);
+        }
+
+        .approval-card-price {
+            color: var(--admin-success);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .approval-card-seller {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .approval-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        /* Seller Details Modal */
+        .seller-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .detail-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .detail-item strong {
+            display: block;
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+        .detail-item span {
+            font-size: 1.1rem;
+            color: #333;
+        }
+
+        /* Navigation Links */
+        .panel-links {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 10000;
+        }
+
+        .panel-link {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 15px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+        }
+
+        .panel-link:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 200px;
+            }
+            .main-content {
+                margin-left: 200px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .admin-wrapper { 
+                flex-direction: column; 
+            }
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 15px;
+            }
+            .sidebar-nav {
+                display: flex;
+                justify-content: space-around;
+                flex-wrap: wrap;
+                padding: 10px 0;
+            }
+            .sidebar-nav a {
+                padding: 10px 15px;
+                flex-direction: column;
+                text-align: center;
+                font-size: 0.9rem;
+            }
+            .sidebar-nav a i {
+                margin-right: 0;
+                margin-bottom: 5px;
+                font-size: 1.2rem;
+            }
+            .sidebar-header { 
+                display: none; 
+            }
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+            .approval-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .content-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            .action-btns {
+                flex-direction: column;
+                width: 100%;
+            }
+            .action-btns button {
+                width: 100%;
+            }
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            border: 3px solid rgba(52, 152, 219, 0.3);
+            border-radius: 50%;
+            border-top: 3px solid var(--admin-info);
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+        .empty-state i {
+            font-size: 3rem;
+            color: #ddd;
+            margin-bottom: 20px;
+        }
+
+        /* Filter Controls */
+        .filter-controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+        .filter-controls select,
+        .filter-controls input {
+            padding: 10px 15px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            min-width: 200px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Panel Navigation Links -->
+    <div class="panel-links">
+        <a href="seller.html" class="panel-link" target="_blank">
+            <i class="fas fa-store"></i> Seller
+        </a>
+        <a href="index.html" class="panel-link" target="_blank">
+            <i class="fas fa-users"></i> User
+        </a>
+    </div>
+
+    <div id="login-screen">
+        <div id="login-box">
+            <h2><i class="fas fa-lock"></i> Admin Login</h2>
+            <form id="admin-login-form">
+                <div class="form-group">
+                    <label for="admin-email"><i class="fas fa-envelope"></i> Email</label>
+                    <input type="email" id="admin-email" placeholder="admin@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="admin-password"><i class="fas fa-key"></i> Password</label>
+                    <input type="password" id="admin-password" placeholder="Enter password" required>
+                </div>
+                <button type="submit"><i class="fas fa-sign-in-alt"></i> Login</button>
+            </form>
+            <div id="admin-login-error"></div>
+        </div>
+    </div>
+
+    <div class="admin-wrapper" id="admin-dashboard-wrapper" style="display: none;">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-cogs"></i> Admin Panel
+            </div>
+            <ul class="sidebar-nav">
+                <li><a href="#dashboard" class="nav-link active"><i class="fas fa-tachometer-alt"></i> <span class="nav-text">Dashboard</span></a></li>
+                <li><a href="#products" class="nav-link"><i class="fas fa-box-open"></i> <span class="nav-text">Products</span></a></li>
+                <li><a href="#orders" class="nav-link"><i class="fas fa-shopping-cart"></i> <span class="nav-text">Orders</span></a></li>
+                <li><a href="#sellers" class="nav-link"><i class="fas fa-users"></i> <span class="nav-text">Sellers</span></a></li>
+                <li><a href="#seller-products" class="nav-link"><i class="fas fa-check-circle"></i> <span class="nav-text">Product Approval</span></a></li>
+                <li><a href="#withdrawals" class="nav-link"><i class="fas fa-money-bill-wave"></i> <span class="nav-text">Withdrawals</span></a></li>
+                <li><a href="#users" class="nav-link"><i class="fas fa-user-friends"></i> <span class="nav-text">Users</span></a></li>
+                <li><a href="#messages" class="nav-link"><i class="fas fa-envelope"></i> <span class="nav-text">Messages</span></a></li>
+                <li><a href="#" id="admin-logout-btn"><i class="fas fa-sign-out-alt"></i> <span class="nav-text">Logout</span></a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Page -->
+            <section id="dashboard" class="admin-page active">
+                <h1><i class="fas fa-tachometer-alt"></i> Dashboard</h1>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>Total Products</h3>
+                        <p class="count" id="total-products">0</p>
+                        <span class="stat-change positive">+12%</span>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Total Orders</h3>
+                        <p class="count" id="total-orders">0</p>
+                        <span class="stat-change positive">+8%</span>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Active Sellers</h3>
+                        <p class="count" id="total-sellers">0</p>
+                        <span class="stat-change positive">+15%</span>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Pending Approvals</h3>
+                        <p class="count" id="pending-approvals">0</p>
+                        <span class="stat-change negative">+5</span>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Total Revenue</h3>
+                        <p class="count" id="total-revenue">₹0</p>
+                        <span class="stat-change positive">+18%</span>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Withdrawal Requests</h3>
+                        <p class="count" id="total-withdrawals">0</p>
+                        <span class="stat-change negative">+3</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Product Management -->
+            <section id="products" class="admin-page">
+                <div class="content-header">
+                    <h1><i class="fas fa-box-open"></i> Manage Products</h1>
+                    <button class="btn-add" id="add-product-btn">
+                        <i class="fas fa-plus"></i> Add Product
+                    </button>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="products-table-body">
+                        <tr>
+                            <td colspan="6" class="empty-state">
+                                <i class="fas fa-box-open"></i>
+                                <p>No products found</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- Order Management -->
+            <section id="orders" class="admin-page">
+                <div class="content-header">
+                    <h1><i class="fas fa-shopping-cart"></i> Manage Orders</h1>
+                    <div class="filter-controls">
+                        <select id="order-filter">
+                            <option value="all">All Orders</option>
+                            <option value="pending">Pending</option>
+                            <option value="processing">Processing</option>
+                            <option value="completed">Completed</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+                    </div>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Amount</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orders-table-body">
+                        <tr>
+                            <td colspan="6" class="empty-state">
+                                <i class="fas fa-shopping-cart"></i>
+                                <p>No orders found</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- Sellers Management -->
+            <section id="sellers" class="admin-page">
+                <div class="content-header">
+                    <h1><i class="fas fa-users"></i> Manage Sellers</h1>
+                    <div class="filter-controls">
+                        <input type="text" id="seller-search" placeholder="Search sellers...">
+                    </div>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Shop</th>
+                            <th>Seller</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Balance</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sellers-table-body">
+                        <tr>
+                            <td colspan="7" class="empty-state">
+                                <i class="fas fa-users"></i>
+                                <p>No sellers found</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- Product Approval -->
+            <section id="seller-products" class="admin-page">
+                <div class="content-header">
+                    <h1><i class="fas fa-check-circle"></i> Product Approval Queue</h1>
+                    <div class="filter-controls">
+                        <select id="approval-filter" class="form-control">
+                            <option value="pending">Pending Review</option>
+                            <option value="approved">Approved</option>
+                            <option value="rejected">Rejected</option>
+                            <option value="all">All Products</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="approval-products-list" class="approval-grid">
+                    <div class="empty-state">
+                        <i class="fas fa-check-circle"></i>
+                        <p>No products pending approval</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Withdrawal Requests -->
+            <section id="withdrawals" class="admin-page">
+                <div class="content-header">
+                    <h1><i class="fas fa-money-bill-wave"></i> Withdrawal Requests</h1>
+                    <div class="filter-controls">
+                        <select id="withdrawal-filter">
+                            <option value="pending">Pending</option>
+                            <option value="approved">Approved</option>
+                            <option value="rejected">Rejected</option>
+                            <option value="all">All</option>
+                        </select>
+                    </div>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Seller</th>
+                            <th>Amount</th>
+                            <th>Method</th>
+                            <th>Details</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="withdrawals-table-body">
+                        <tr>
+                            <td colspan="7" class="empty-state">
+                                <i class="fas fa-money-bill-wave"></i>
+                                <p>No withdrawal requests</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- Users Management -->
+            <section id="users" class="admin-page">
+                <div class="content-header">
+                    <h1><i class="fas fa-user-friends"></i> Manage Users</h1>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Joined</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-table-body">
+                        <tr>
+                            <td colspan="6" class="empty-state">
+                                <i class="fas fa-user-friends"></i>
+                                <p>No users found</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- Messages Page -->
+            <section id="messages" class="admin-page">
+                <div class="content-header">
+                    <h1><i class="fas fa-envelope"></i> User Messages</h1>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Message</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="messages-table-body">
+                        <tr>
+                            <td colspan="6" class="empty-state">
+                                <i class="fas fa-envelope"></i>
+                                <p>No messages yet</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+
+    <!-- Product Modal -->
+    <div id="product-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2 id="product-modal-title"><i class="fas fa-box"></i> Add Product</h2>
+            <form id="product-form">
+                <input type="hidden" id="product-id">
+                <div class="form-group">
+                    <label for="product-name">Product Name</label>
+                    <input type="text" id="product-name" placeholder="Enter product name" required>
+                </div>
+                <div class="form-group">
+                    <label for="product-category">Category</label>
+                    <input type="text" id="product-category" placeholder="Enter category" required>
+                </div>
+                <div class="form-group">
+                    <label for="product-price">Price (₹)</label>
+                    <input type="number" id="product-price" placeholder="Enter price" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="product-description">Description</label>
+                    <textarea id="product-description" placeholder="Enter description" rows="4"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="product-image-url">Image URL</label>
+                    <input type="url" id="product-image-url" placeholder="Enter image URL" required>
+                </div>
+                <button type="submit" class="btn-add">
+                    <i class="fas fa-save"></i> Save Product
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Seller Details Modal -->
+    <div id="seller-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2><i class="fas fa-user-tie"></i> Seller Details</h2>
+            <div id="seller-details-content" class="seller-details">
+                <!-- Seller details will be loaded here -->
+            </div>
+            <div class="action-btns" style="margin-top: 20px;">
+                <button class="btn-approve" id="approve-seller-btn">Approve Seller</button>
+                <button class="btn-reject" id="reject-seller-btn">Reject Seller</button>
+                <button class="btn-delete" id="delete-seller-btn">Delete Seller</button>
+            </div>
+        </div>
+    </div>
+     <!-- Firebase SDK -->
+    <script type="module">
+        // Import Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { 
+            getAuth, 
+            onAuthStateChanged, 
+            signInWithEmailAndPassword, 
+            signOut 
+        } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+        import { 
+            getDatabase, 
+            ref, 
+            onValue, 
+            set, 
+            push, 
+            remove, 
+            update,
+            get,
+            query,
+            orderByChild,
+            equalTo
+        } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+
+        // Firebase Configuration (Same as seller panel)
+        const firebaseConfig = {
+            apiKey: "AIzaSyAgrXYL1M-cO8LYTmJeEtfwhkp-ghXfNWY",
+            authDomain: "abi-fish-pets.firebaseapp.com",
+            databaseURL: "https://abi-fish-pets-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "abi-fish-pets",
+            storageBucket: "abi-fish-pets.firebasestorage.app",
+            messagingSenderId: "644115504257",
+            appId: "1:644115504257:web:278b713d235aa8938a0180",
+            measurementId: "G-2T3T8RTJKE"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+        
+        // DOM Elements
+        const loginScreen = document.getElementById('login-screen');
+        const dashboardWrapper = document.getElementById('admin-dashboard-wrapper');
+        let currentEditingProductId = null;
+        let currentSellerId = null;
+
+        // --- AUTHENTICATION ---
+        onAuthStateChanged(auth, user => {
+    if (user) {
+        // Yo part update gara
+        document.getElementById('login-screen').style.display = 'none'; 
+        document.getElementById('admin-dashboard-wrapper').style.display = 'flex';
+        initAdminPanel(); 
+    } else {
+        document.getElementById('login-screen').style.display = 'flex';
+        document.getElementById('admin-dashboard-wrapper').style.display = 'none';
+    }
+});
+
+
+        document.getElementById('admin-login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('admin-email').value;
+            const password = document.getElementById('admin-password').value;
+            
+            // Show loading
+            const submitBtn = e.target.querySelector('button');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<div class="spinner" style="width: 20px; height: 20px; border-width: 2px; margin: 0 auto;"></div>';
+            
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                document.getElementById('admin-login-error').style.display = 'none';
+            } catch (error) {
+                document.getElementById('admin-login-error').textContent = error.message;
+                document.getElementById('admin-login-error').style.display = 'block';
+            } finally {
+                submitBtn.innerHTML = originalText;
+            }
+        });
+
+        document.getElementById('admin-logout-btn').addEventListener('click', () => {
+            if (confirm('Are you sure you want to logout?')) {
+                signOut(auth);
+            }
+        });
+
+        // --- NAVIGATION ---
+        const adminPages = document.querySelectorAll('.admin-page');
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        const navigateAdmin = (hash) => {
+            const targetId = hash.substring(1);
+            adminPages.forEach(p => p.classList.toggle('active', p.id === targetId));
+            navLinks.forEach(l => l.classList.toggle('active', l.getAttribute('href') === hash));
+        };
+        
+        window.addEventListener('hashchange', () => navigateAdmin(location.hash));
+        window.addEventListener('DOMContentLoaded', () => {
+            if (!location.hash) location.hash = '#dashboard';
+            navigateAdmin(location.hash);
+        });
+        
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                if (link.getAttribute('href').startsWith('#')) {
+                    e.preventDefault();
+                    location.hash = link.getAttribute('href');
+                }
+            });
+        });
+
+        // --- INITIALIZE ADMIN PANEL ---
+        const initAdminPanel = () => {
+            loadDashboardStats();
+            loadProducts();
+            loadOrders();
+            loadSellers();
+            loadApprovalProducts();
+            loadWithdrawals();
+            loadUsers();
+            loadMessages();
+            setupEventListeners();
+        };
+
+        // --- DASHBOARD STATISTICS ---
+        const loadDashboardStats = () => {
+            // Total Products
+            onValue(ref(db, 'pets'), snapshot => {
+                const count = snapshot.exists() ? Object.keys(snapshot.val()).length : 0;
+                document.getElementById('total-products').textContent = count;
+            });
+
+            // Total Orders
+            onValue(ref(db, 'orders'), snapshot => {
+                let count = 0;
+                if (snapshot.exists()) {
+                    Object.values(snapshot.val()).forEach(userOrders => {
+                        count += Object.keys(userOrders).length;
+                    });
+                }
+                document.getElementById('total-orders').textContent = count;
+                
+                // Calculate total revenue
+                let revenue = 0;
+                if (snapshot.exists()) {
+                    Object.values(snapshot.val()).forEach(userOrders => {
+                        Object.values(userOrders).forEach(order => {
+                            revenue += parseFloat(order.totalAmount) || 0;
+                        });
+                    });
+                }
+                document.getElementById('total-revenue').textContent = `₹${revenue.toFixed(2)}`;
+            });
+
+            // Total Sellers
+            onValue(ref(db, 'sellers'), snapshot => {
+                const count = snapshot.exists() ? Object.keys(snapshot.val()).length : 0;
+                document.getElementById('total-sellers').textContent = count;
+            });
+
+            // Pending Approvals
+            onValue(ref(db, 'pets'), snapshot => {
+                let pendingCount = 0;
+                if (snapshot.exists()) {
+                    snapshot.forEach(childSnapshot => {
+                        const pet = childSnapshot.val();
+                        if (pet.status === 'pending') pendingCount++;
+                    });
+                }
+                document.getElementById('pending-approvals').textContent = pendingCount;
+            });
+
+            // Withdrawal Requests
+            onValue(ref(db, 'withdrawals'), snapshot => {
+                let withdrawalCount = 0;
+                if (snapshot.exists()) {
+                    snapshot.forEach(childSnapshot => {
+                        const withdrawal = childSnapshot.val();
+                        if (withdrawal.status === 'pending') withdrawalCount++;
+                    });
+                }
+                document.getElementById('total-withdrawals').textContent = withdrawalCount;
+            });
+        };
+
+        // --- PRODUCT MANAGEMENT ---
+        const loadProducts = () => {
+            onValue(ref(db, 'pets'), snapshot => {
+                const tableBody = document.getElementById('products-table-body');
+                if (!snapshot.exists() || snapshot.size === 0) {
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="6" class="empty-state">
+                                <i class="fas fa-box-open"></i>
+                                <p>No products found</p>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+                
+                let rows = '';
+                snapshot.forEach(childSnapshot => {
+                    const product = childSnapshot.val();
+                    const productId = childSnapshot.key;
+                    
+                    rows += `
+                        <tr>
+                            <td><img src="${product.imageUrl || 'https://via.placeholder.com/100'}" alt="${product.name}" onerror="this.src='https://via.placeholder.com/100'"></td>
+                            <td><strong>${product.name}</strong><br><small>${product.type || 'Pet'}</small></td>
+                            <td>${product.breed || 'N/A'}</td>
+                            <td>₹${parseFloat(product.price || 0).toFixed(2)}</td>
+                            <td><span class="status-badge status-${product.status || 'pending'}">${product.status || 'pending'}</span></td>
+                            <td class="action-btns">
+                                <button class="btn-view" onclick="viewProduct('${productId}')">View</button>
+                                <button class="btn-delete" onclick="deleteProduct('${productId}')">Delete</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                tableBody.innerHTML = rows;
+            });
+        };
+
+        // --- ORDER MANAGEMENT ---
+        const loadOrders = () => {
+            const filter = document.getElementById('order-filter').value;
+            
+            onValue(ref(db, 'orders'), snapshot => {
+                const tableBody = document.getElementById('orders-table-body');
+                
+                if (!snapshot.exists() || snapshot.size === 0) {
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="6" class="empty-state">
+                                <i class="fas fa-shopping-cart"></i>
+                                <p>No orders found</p>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+                
+                let rows = '';
+                snapshot.forEach(userSnapshot => {
+                    const userId = userSnapshot.key;
+                    userSnapshot.forEach(orderSnapshot => {
+                        const order = orderSnapshot.val();
+                        const orderId = orderSnapshot.key;
+                        
+                        // Apply filter
+                        if (filter !== 'all' && order.status !== filter) return;
+                        
+                        rows += `
+                            <tr>
+                                <td><small>${orderId.slice(-8)}</small></td>
+                                <td>
+                                    <strong>${order.shippingName || 'Customer'}</strong><br>
+                                    <small>${order.userEmail || 'No email'}</small>
+                                </td>
+                                <td>₹${parseFloat(order.totalAmount || 0).toFixed(2)}</td>
+                                <td>${new Date(order.date || Date.now()).toLocaleDateString()}</td>
+                                <td>
+                                    <select class="status-select" data-user-id="${userId}" data-order-id="${orderId}" onchange="updateOrderStatus('${userId}', '${orderId}', this.value)">
+                                        <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>Pending</option>
+                                        <option value="processing" ${order.status === 'processing' ? 'selected' : ''}>Processing</option>
+                                        <option value="completed" ${order.status === 'completed' ? 'selected' : ''}>Completed</option>
+                                        <option value="cancelled" ${order.status === 'cancelled' ? 'selected' : ''}>Cancelled</option>
+                                    </select>
+                                </td>
+                                <td class="action-btns">
+                                    <button class="btn-view" onclick="viewOrder('${userId}', '${orderId}')">View</button>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                });
+                tableBody.innerHTML = rows || `
+                    <tr>
+                        <td colspan="6" class="empty-state">
+                            <i class="fas fa-shopping-cart"></i>
+                            <p>No orders matching filter</p>
+                        </td>
+                    </tr>
+                `;
+            });
+        };
+
+        // --- SELLER MANAGEMENT ---
+        const loadSellers = () => {
+            const searchTerm = document.getElementById('seller-search').value.toLowerCase();
+            
+            onValue(ref(db, 'sellers'), snapshot => {
+                const tableBody = document.getElementById('sellers-table-body');
+                
+                if (!snapshot.exists() || snapshot.size === 0) {
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="7" class="empty-state">
+                                <i class="fas fa-users"></i>
+                                <p>No sellers found</p>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+                
+                let rows = '';
+                let sellerCount = 0;
+                
+                snapshot.forEach(childSnapshot => {
+                    const seller = childSnapshot.val();
+                    const sellerId = childSnapshot.key;
+                    
+                    // Apply search filter
+                    if (searchTerm && !seller.shopName.toLowerCase().includes(searchTerm) && 
+                        !seller.sellerName.toLowerCase().includes(searchTerm) &&
+                        !seller.email.toLowerCase().includes(searchTerm)) {
+                        return;
+                    }
+                    
+                    // Count seller's pets
+                    let petCount = 0;
+                    onValue(ref(db, 'pets'), petSnapshot => {
+                        if (petSnapshot.exists()) {
+                            petSnapshot.forEach(pet => {
+                                if (pet.val().sellerId === sellerId) petCount++;
+                            });
+                        }
+                    }, { onlyOnce: true });
+                    
+                    rows += `
+                        <tr>
+                            <td><strong>${seller.shopName || 'No Shop Name'}</strong></td>
+                            <td>${seller.sellerName}</td>
+                            <td>${seller.email}</td>
+                            <td>${seller.phone || 'N/A'}</td>
+                            <td>₹${parseFloat(seller.walletBalance || 0).toFixed(2)}</td>
+                            <td><span class="status-badge status-${seller.status || 'active'}">${seller.status || 'active'}</span></td>
+                            <td class="action-btns">
+                                <button class="btn-view" onclick="viewSellerDetails('${sellerId}')">View</button>
+                                <button class="btn-delete" onclick="deleteSeller('${sellerId}')">Delete</button>
+                            </td>
+                        </tr>
+                    `;
+                    sellerCount++;
+                });
+                
+                tableBody.innerHTML = rows || `
+                    <tr>
+                        <td colspan="7" class="empty-state">
+                            <i class="fas fa-users"></i>
+                            <p>No sellers matching search</p>
+                        </td>
+                    </tr>
+                `;
+            });
+        };
+
+        // --- PRODUCT APPROVAL ---
+        const loadApprovalProducts = () => {
+            const filter = document.getElementById('approval-filter').value;
+            
+            onValue(ref(db, 'pets'), snapshot => {
+                const container = document.getElementById('approval-products-list');
+                
+                if (!snapshot.exists() || snapshot.size === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-check-circle"></i>
+                            <p>No products found</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                let cards = '';
+                let productCount = 0;
+                
+                snapshot.forEach(childSnapshot => {
+                    const pet = childSnapshot.val();
+                    const petId = childSnapshot.key;
+                    
+                    // Apply filter
+                    if (filter !== 'all' && pet.status !== filter) return;
+                    
+                    cards += `
+                        <div class="approval-card">
+                            <img src="${pet.imageUrl || 'https://via.placeholder.com/400x300?text=No+Image'}" 
+                                 alt="${pet.name}"
+                                 onerror="this.src='https://via.placeholder.com/400x300?text=No+Image'">
+                            <div class="approval-card-body">
+                                <div class="approval-card-title">${pet.name}</div>
+                                <div class="approval-card-price">₹${parseFloat(pet.price || 0).toFixed(2)}</div>
+                                <div class="approval-card-seller">
+                                    <strong>Seller:</strong> ${pet.sellerName || 'Unknown'}<br>
+                                    <strong>Type:</strong> ${pet.type || 'N/A'} | <strong>Breed:</strong> ${pet.breed || 'Mixed'}<br>
+                                    <strong>Age:</strong> ${pet.age || 'N/A'} months | <strong>Weight:</strong> ${pet.weight || 'N/A'} kg<br>
+                                    <strong>Vaccination:</strong> ${pet.vaccination || 'Not specified'}<br>
+                                    <strong>Status:</strong> <span class="status-badge status-${pet.status || 'pending'}">${pet.status || 'pending'}</span>
+                                </div>
+                                <div class="approval-actions">
+                                    ${pet.status === 'pending' ? `
+                                        <button class="btn-approve" onclick="approveProduct('${petId}')">
+                                            <i class="fas fa-check"></i> Approve
+                                        </button>
+                                        <button class="btn-reject" onclick="rejectProduct('${petId}')">
+                                            <i class="fas fa-times"></i> Reject
+                                        </button>
+                                    ` : ''}
+                                    <button class="btn-view" onclick="viewProductDetails('${petId}')">
+                                        <i class="fas fa-eye"></i> Details
+                                    </button>
+                                    <button class="btn-delete" onclick="deleteProduct('${petId}')">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    productCount++;
+                });
+                
+                container.innerHTML = cards || `
+                    <div class="empty-state">
+                        <i class="fas fa-check-circle"></i>
+                                                 <p>No products matching filter</p>
+                    </div>
+`;
+            });
+        };
+
+        // --- WITHDRAWAL MANAGEMENT ---
+        const loadWithdrawals = () => {
+            const filter = document.getElementById('withdrawal-filter').value;
+            
+            onValue(ref(db, 'withdrawals'), snapshot => {
+                const tableBody = document.getElementById('withdrawals-table-body');
+                
+                if (!snapshot.exists() || snapshot.size === 0) {
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="7" class="empty-state">
+                                <i class="fas fa-money-bill-wave"></i>
+                                <p>No withdrawal requests</p>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+                
+                let rows = '';
+                
+                snapshot.forEach(childSnapshot => {
+                    const withdrawal = childSnapshot.val();
+                    const withdrawalId = childSnapshot.key;
+                    
+                    // Apply filter
+                    if (filter !== 'all' && withdrawal.status !== filter) return;
+                    
+                    // Format payment details
+                    let paymentDetails = '';
+                    if (withdrawal.paymentMethod === 'esewa' || withdrawal.paymentMethod === 'khalti') {
+                        paymentDetails = `${withdrawal.paymentMethod.charAt(0).toUpperCase() + withdrawal.paymentMethod.slice(1)} ID: ${withdrawal.paymentDetails?.walletId || 'N/A'}`;
+                    } else if (withdrawal.paymentMethod === 'bank') {
+                        paymentDetails = `${withdrawal.paymentDetails?.bankName || 'Bank'}: ${withdrawal.paymentDetails?.accountNumber || 'N/A'}`;
+                    }
+                    
+                    rows += `
+                        <tr>
+                            <td>
+                                <strong>${withdrawal.sellerName}</strong><br>
+                                <small>${withdrawal.sellerEmail || 'No email'}</small>
+                            </td>
+                            <td><strong>₹${parseFloat(withdrawal.amount || 0).toFixed(2)}</strong></td>
+                            <td>${withdrawal.paymentMethod?.toUpperCase() || 'N/A'}</td>
+                            <td><small>${paymentDetails}</small></td>
+                            <td>${new Date(withdrawal.requestDate || Date.now()).toLocaleDateString()}</td>
+                            <td><span class="status-badge status-${withdrawal.status || 'pending'}">${withdrawal.status || 'pending'}</span></td>
+                            <td class="action-btns">
+                                ${withdrawal.status === 'pending' ? `
+                                    <button class="btn-approve" onclick="processWithdrawal('${withdrawalId}', 'approve')">
+                                        <i class="fas fa-check"></i> Approve
+                                    </button>
+                                    <button class="btn-reject" onclick="processWithdrawal('${withdrawalId}', 'reject')">
+                                        <i class="fas fa-times"></i> Reject
+                                    </button>
+                                ` : 'Processed'}
+                            </td>
+                        </tr>
+                    `;
+                });
+                
+                tableBody.innerHTML = rows || `
+                    <tr>
+                        <td colspan="7" class="empty-state">
+                            <i class="fas fa-money-bill-wave"></i>
+                            <p>No withdrawals matching filter</p>
+                        </td>
+                    </tr>
+                `;
+            });
+        };
+
+        // --- USER MANAGEMENT ---
+        const loadUsers = () => {
+            onValue(ref(db, 'users'), snapshot => {
+                const tableBody = document.getElementById('users-table-body');
+                
+                if (!snapshot.exists() || snapshot.size === 0) {
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="6" class="empty-state">
+                                <i class="fas fa-user-friends"></i>
+                                <p>No users found</p>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+                
+                let rows = '';
+                snapshot.forEach(childSnapshot => {
+                    const user = childSnapshot.val();
+                    const userId = childSnapshot.key;
+                    
+                    rows += `
+                        <tr>
+                            <td>${user.name || 'Unknown'}</td>
+                            <td>${user.email || 'No email'}</td>
+                            <td>${user.phone || 'N/A'}</td>
+                            <td>${new Date(user.joinedDate || Date.now()).toLocaleDateString()}</td>
+                            <td><span class="status-badge status-active">Active</span></td>
+                            <td class="action-btns">
+                                <button class="btn-view" onclick="viewUser('${userId}')">View</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                tableBody.innerHTML = rows;
+            });
+        };
+
+        // --- MESSAGE MANAGEMENT ---
+        const loadMessages = () => {
+            onValue(ref(db, 'messages'), snapshot => {
+                const tableBody = document.getElementById('messages-table-body');
+                
+                if (!snapshot.exists() || snapshot.size === 0) {
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="6" class="empty-state">
+                                <i class="fas fa-envelope"></i>
+                                <p>No messages yet</p>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+                
+                let rows = '';
+                snapshot.forEach(childSnapshot => {
+                    const message = childSnapshot.val();
+                    const messageId = childSnapshot.key;
+                    
+                    rows += `
+                        <tr>
+                            <td><small>${new Date(message.date || Date.now()).toLocaleString()}</small></td>
+                            <td>${message.name}</td>
+                            <td>${message.email}</td>
+                            <td><small>${message.message.substring(0, 100)}${message.message.length > 100 ? '...' : ''}</small></td>
+                            <td><span class="status-badge status-${message.read ? 'read' : 'unread'}">${message.read ? 'Read' : 'Unread'}</span></td>
+                            <td class="action-btns">
+                                <button class="btn-view" onclick="viewMessage('${messageId}')">View</button>
+                                <button class="btn-delete" onclick="deleteMessage('${messageId}')">Delete</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                tableBody.innerHTML = rows;
+            });
+        };
+
+        // --- ACTION FUNCTIONS ---
+        // Product Actions
+        window.viewProduct = function(productId) {
+            alert(`View product ${productId} - This would show detailed view`);
+        };
+
+        window.deleteProduct = function(productId) {
+            if (confirm('Are you sure you want to delete this product?')) {
+                remove(ref(db, `pets/${productId}`))
+                    .then(() => alert('Product deleted successfully!'))
+                    .catch(error => alert('Error: ' + error.message));
+            }
+        };
+
+        window.approveProduct = function(productId) {
+            update(ref(db, `pets/${productId}`), { 
+                status: 'approved',
+                approvedDate: Date.now(),
+                approvedBy: auth.currentUser.email
+            })
+            .then(() => alert('Product approved successfully!'))
+            .catch(error => alert('Error: ' + error.message));
+        };
+
+        window.rejectProduct = function(productId) {
+            update(ref(db, `pets/${productId}`), { 
+                status: 'rejected',
+                rejectedDate: Date.now(),
+                rejectedBy: auth.currentUser.email
+            })
+            .then(() => alert('Product rejected!'))
+            .catch(error => alert('Error: ' + error.message));
+        };
+
+        window.viewProductDetails = function(productId) {
+            get(ref(db, `pets/${productId}`))
+                .then(snapshot => {
+                    const product = snapshot.val();
+                    const modalContent = `
+                        <h3>${product.name}</h3>
+                        <div class="seller-details">
+                            <div class="detail-item">
+                                <strong>Type:</strong>
+                                <span>${product.type || 'N/A'}</span>
+                            </div>
+                            <div class="detail-item">
+                                <strong>Breed:</strong>
+                                <span>${product.breed || 'Mixed'}</span>
+                            </div>
+                            <div class="detail-item">
+                                <strong>Price:</strong>
+                                <span>₹${parseFloat(product.price || 0).toFixed(2)}</span>
+                            </div>
+                            <div class="detail-item">
+                                <strong>Age:</strong>
+                                <span>${product.age || 'N/A'} months</span>
+                            </div>
+                            <div class="detail-item">
+                                <strong>Seller:</strong>
+                                <span>${product.sellerName || 'Unknown'}</span>
+                            </div>
+                            <div class="detail-item">
+                                <strong>Status:</strong>
+                                <span class="status-badge status-${product.status || 'pending'}">${product.status || 'pending'}</span>
+                            </div>
+                        </div>
+                        <div style="margin-top: 20px;">
+                            <strong>Description:</strong>
+                            <p>${product.description || 'No description'}</p>
+                        </div>
+                    `;
+                    alert(modalContent.replace(/<[^>]*>/g, ''));
+                });
+        };
+
+        // Seller Actions
+        window.viewSellerDetails = async function(sellerId) {
+            currentSellerId = sellerId;
+            
+            try {
+                const sellerSnapshot = await get(ref(db, `sellers/${sellerId}`));
+                if (!sellerSnapshot.exists()) {
+                    alert('Seller not found!');
+                    return;
+                }
+                
+                const seller = sellerSnapshot.val();
+                
+                // Count seller's pets
+                let petCount = 0;
+                let approvedPets = 0;
+                let pendingPets = 0;
+                
+                const petsSnapshot = await get(ref(db, 'pets'));
+                if (petsSnapshot.exists()) {
+                    petsSnapshot.forEach(pet => {
+                        if (pet.val().sellerId === sellerId) {
+                            petCount++;
+                            if (pet.val().status === 'approved') approvedPets++;
+                            if (pet.val().status === 'pending') pendingPets++;
+                        }
+                    });
+                }
+                
+                const detailsContent = document.getElementById('seller-details-content');
+                detailsContent.innerHTML = `
+                    <div class="detail-item">
+                        <strong>Shop Name:</strong>
+                        <span>${seller.shopName}</span>
+                    </div>
+                    <div class="detail-item">
+                        <strong>Seller Name:</strong>
+                        <span>${seller.sellerName}</span>
+                    </div>
+                    <div class="detail-item">
+                        <strong>Email:</strong>
+                        <span>${seller.email}</span>
+                    </div>
+                    <div class="detail-item">
+                        <strong>Phone:</strong>
+                        <span>${seller.phone || 'N/A'}</span>
+                    </div>
+                    <div class="detail-item">
+                        <strong>Registration Date:</strong>
+                        <span>${new Date(seller.registrationDate).toLocaleDateString()}</span>
+                    </div>
+                    <div class="detail-item">
+                        <strong>Wallet Balance:</strong>
+                        <span>₹${parseFloat(seller.walletBalance || 0).toFixed(2)}</span>
+                    </div>
+                    <div class="detail-item">
+                        <strong>Total Earnings:</strong>
+                        <span>₹${parseFloat(seller.totalEarnings || 0).toFixed(2)}</span>
+                    </div>
+                    <div class="detail-item">
+                        <strong>Total Withdrawn:</strong>
+                        <span>₹${parseFloat(seller.totalWithdrawn || 0).toFixed(2)}</span>
+                    </div>
+                    <div class="detail-item">
+                        <strong>Total Pets:</strong>
+                        <span>${petCount} (${approvedPets} approved, ${pendingPets} pending)</span>
+                    </div>
+                    <div class="detail-item">
+                        <strong>Status:</strong>
+                        <span class="status-badge status-${seller.status || 'active'}">${seller.status || 'active'}</span>
+                    </div>
+                `;
+                
+                document.getElementById('seller-modal').classList.add('active');
+                
+            } catch (error) {
+                alert('Error loading seller details: ' + error.message);
+            }
+        };
+
+        window.deleteSeller = function(sellerId) {
+            if (confirm('Are you sure you want to delete this seller? This will also delete all their products.')) {
+                // First delete seller's products
+                get(ref(db, 'pets')).then(snapshot => {
+                    if (snapshot.exists()) {
+                        snapshot.forEach(pet => {
+                            if (pet.val().sellerId === sellerId) {
+                                remove(ref(db, `pets/${pet.key}`));
+                            }
+                        });
+                    }
+                    
+                    // Then delete seller
+                    return remove(ref(db, `sellers/${sellerId}`));
+                })
+                .then(() => alert('Seller and their products deleted successfully!'))
+                .catch(error => alert('Error: ' + error.message));
+            }
+        };
+
+        // Withdrawal Actions
+        window.processWithdrawal = async function(withdrawalId, action) {
+            try {
+                const withdrawalRef = ref(db, `withdrawals/${withdrawalId}`);
+                const withdrawalSnapshot = await get(withdrawalRef);
+                
+                if (!withdrawalSnapshot.exists()) {
+                    alert('Withdrawal request not found!');
+                    return;
+                }
+                
+                const withdrawal = withdrawalSnapshot.val();
+                
+                if (action === 'approve') {
+                    // Update withdrawal status
+                    await update(withdrawalRef, { 
+                        status: 'completed',
+                        processedDate: Date.now(),
+                        processedBy: auth.currentUser.email
+                    });
+                    
+                    // Update seller's wallet balance
+                    const sellerRef = ref(db, `sellers/${withdrawal.sellerId}`);
+                    const sellerSnapshot = await get(sellerRef);
+                    
+                    if (sellerSnapshot.exists()) {
+                        const seller = sellerSnapshot.val();
+                        const newBalance = parseFloat(seller.walletBalance || 0) - parseFloat(withdrawal.amount || 0);
+                        
+                        await update(sellerRef, {
+                            walletBalance: newBalance >= 0 ? newBalance : 0,
+                            totalWithdrawn: parseFloat(seller.totalWithdrawn || 0) + parseFloat(withdrawal.amount || 0)
+                        });
+                    }
+                    
+                    alert('Withdrawal approved and processed successfully!');
+                    
+                } else if (action === 'reject') {
+                    await update(withdrawalRef, { 
+                        status: 'rejected',
+                        rejectedDate: Date.now(),
+                        rejectedBy: auth.currentUser.email
+                    });
+                    
+                    alert('Withdrawal request rejected!');
+                }
+                
+                // Reload withdrawals
+                loadWithdrawals();
+                
+            } catch (error) {
+                alert('Error processing withdrawal: ' + error.message);
+            }
+        };
+
+        // Order Actions
+        window.updateOrderStatus = function(userId, orderId, newStatus) {
+            update(ref(db, `orders/${userId}/${orderId}`), { status: newStatus })
+                .then(() => console.log('Order status updated'))
+                .catch(error => console.error('Error:', error));
+        };
+
+        window.viewOrder = function(userId, orderId) {
+            get(ref(db, `orders/${userId}/${orderId}`))
+                .then(snapshot => {
+                    const order = snapshot.val();
+                    alert(`Order Details:\n\nOrder ID: ${orderId}\nCustomer: ${order.shippingName}\nEmail: ${order.userEmail}\nTotal: ₹${order.totalAmount}\nStatus: ${order.status}`);
+                });
+        };
+
+        // Message Actions
+        window.viewMessage = function(messageId) {
+            get(ref(db, `messages/${messageId}`))
+                .then(snapshot => {
+                    const message = snapshot.val();
+                    alert(`Message Details:\n\nFrom: ${message.name} (${message.email})\nDate: ${new Date(message.date).toLocaleString()}\n\nMessage:\n${message.message}`);
+                    
+                    // Mark as read
+                    update(ref(db, `messages/${messageId}`), { read: true });
+                });
+        };
+
+        window.deleteMessage = function(messageId) {
+            if (confirm('Are you sure you want to delete this message?')) {
+                remove(ref(db, `messages/${messageId}`))
+                    .then(() => alert('Message deleted!'))
+                    .catch(error => alert('Error: ' + error.message));
+            }
+        };
+
+        // --- EVENT LISTENERS SETUP ---
+        const setupEventListeners = () => {
+            // Product modal
+            const productModal = document.getElementById('product-modal');
+            document.getElementById('add-product-btn').addEventListener('click', () => {
+                productModal.classList.add('active');
+            });
+
+            // Seller modal buttons
+            document.getElementById('approve-seller-btn').addEventListener('click', () => {
+          if (currentSellerId) {
+                    update(ref(db, `sellers/${currentSellerId}`), { status: 'approved' })
+                        .then(() => {
+                            alert('Seller approved!');
+                            document.getElementById('seller-modal').classList.remove('active');
+                            loadSellers();
+                        });
+                }
+            });
+
+            document.getElementById('reject-seller-btn').addEventListener('click', () => {
+                if (currentSellerId) {
+                    update(ref(db, `sellers/${currentSellerId}`), { status: 'rejected' })
+                        .then(() => {
+                            alert('Seller rejected!');
+                            document.getElementById('seller-modal').classList.remove('active');
+                            loadSellers();
+                        });
+                }
+            });
+
+            document.getElementById('delete-seller-btn').addEventListener('click', () => {
+                if (currentSellerId) {
+                    deleteSeller(currentSellerId);
+                    document.getElementById('seller-modal').classList.remove('active');
+                }
+            });
+
+            // Filter changes
+            document.getElementById('order-filter').addEventListener('change', loadOrders);
+            document.getElementById('approval-filter').addEventListener('change', loadApprovalProducts);
+            document.getElementById('withdrawal-filter').addEventListener('change', loadWithdrawals);
+            document.getElementById('seller-search').addEventListener('input', loadSellers);
+
+            // Modal close buttons
+            document.querySelectorAll('.close-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    btn.closest('.modal').classList.remove('active');
+                });
+            });
+
+            // Click outside modal to close
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.classList.remove('active');
+                    }
+                });
+            });
+        };
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            if (auth.currentUser) {
+                loginScreen.style.display = 'none';
+                dashboardWrapper.style.display = 'flex';
+                initAdminPanel();
+            }
+        });
+var password = prompt("Admin Password Entry:");
+  if (password !== "abishek123") {
+    alert("Wrong Password! Access Denied.");
+    window.location.href = "index.html"; // Thikka nabhaye home page ma pathaidinchha
+  }
+
+    </script>
+</body>
+</html>
 
