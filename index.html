@@ -1073,7 +1073,7 @@ body.dark-mode {
                     <img src="${p.imageUrl || 'https://via.placeholder.com/150?text=Pet'}" alt="${p.name}">
                     <div class="product-info">
                         <h3>${p.name}</h3>
-                        <p class="price">₹${parseFloat(p.price).toFixed(2)}</p>
+                        <p class="price">NPR${parseFloat(p.price).toFixed(2)}</p>
                         <small style="color: var(--secondary-color);">${p.type || 'Pet'} • ${p.breed || 'Mixed'}</small>
                     </div>
                     <div class="product-actions">
@@ -1124,7 +1124,7 @@ body.dark-mode {
                             <img src="${product.imageUrl || 'https://via.placeholder.com/80?text=Pet'}" alt="${product.name}">
                             <div class="item-details">
                                 <h3>${product.name}</h3>
-                                <p>₹${itemTotal.toFixed(2)}</p>
+                                <p>NPR${itemTotal.toFixed(2)}</p>
                                 <small>${product.type || 'Pet'}</small>
                             </div>
                             <div class="item-actions">
@@ -1140,7 +1140,7 @@ body.dark-mode {
             });
             
             cartHTML += `
-                <div class="cart-total">Total: ₹${totalPrice.toFixed(2)}</div>
+                <div class="cart-total">Total: NPR${totalPrice.toFixed(2)}</div>
                 <button class="checkout-btn">Proceed to Checkout</button>
             `;
             
@@ -1174,7 +1174,7 @@ body.dark-mode {
                         <img src="${product.imageUrl || 'https://via.placeholder.com/80?text=Pet'}" alt="${product.name}">
                         <div class="item-details">
                             <h3>${product.name}</h3>
-                            <p>₹${parseFloat(product.price).toFixed(2)}</p>
+                            <p>NPR${parseFloat(product.price).toFixed(2)}</p>
                             <small>${product.type || 'Pet'}</small>
                         </div>
                         <div class="item-actions">
@@ -1242,7 +1242,7 @@ const setupOrdersListener = () => {
                         <p><strong>Name:</strong> ${order.shippingName}</p>
                         <p><strong>Mobile:</strong> ${order.shippingMobile || 'N/A'}</p>
                         <p><strong>Address:</strong> ${order.shippingAddress}</p>
-                        <p><strong>Total:</strong> ₹${order.totalAmount?.toFixed(2) || '0.00'}</p>
+                        <p><strong>Total:</strong> NPR${order.totalAmount?.toFixed(2) || '0.00'}</p>
                         <p><strong>Status:</strong> <span class="order-status ${order.status}">${order.status}</span></p>
                         <p><strong>Items:</strong> ${(order.items || []).map(item => `${item.name} (x${item.quantity})`).join(', ')}</p>
                     </div>
@@ -1381,7 +1381,7 @@ const setupOrdersListener = () => {
             modalContent.innerHTML = `
                 <img src="${product.imageUrl || 'https://via.placeholder.com/300?text=Pet'}" alt="${product.name}">
                 <h2>${product.name}</h2>
-                <p class="price">₹${parseFloat(product.price).toFixed(2)}</p>
+                <p class="price">NPR${parseFloat(product.price).toFixed(2)}</p>
                 <p><strong>Type:</strong> ${product.type || 'Pet'}</p>
                 <p><strong>Breed:</strong> ${product.breed || 'Mixed'}</p>
                 <p><strong>Age:</strong> ${product.age || 'Not specified'} months</p>
