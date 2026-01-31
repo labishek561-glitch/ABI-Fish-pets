@@ -1344,7 +1344,7 @@
                     <a href="#wallet" class="nav-link" data-title="Wallet">
                         <i class="fas fa-wallet"></i>
                         <span class="nav-text">Wallet</span>
-                        <span class="nav-badge" id="balance-badge">₹0</span>
+                        <span class="nav-badge" id="balance-badge">NPR0</span>
                     </a>
                 </li>
                 <li class="nav-item">
@@ -1792,7 +1792,7 @@
             
             // Update badges
             document.getElementById('pets-count').textContent = petsCount;
-            document.getElementById('balance-badge').textContent = `₹${sellerData.walletBalance || 0}`;
+            document.getElementById('balance-badge').textContent = `NPR${sellerData.walletBalance || 0}`;
             
             // Dashboard HTML
             mainContent.innerHTML = `
@@ -1811,7 +1811,7 @@
                         
                         <div class="wallet-display">
                             <i class="fas fa-wallet"></i>
-                            ₹${(sellerData.walletBalance || 0).toFixed(2)}
+                            NPR${(sellerData.walletBalance || 0).toFixed(2)}
                         </div>
                         
                         <button class="btn-withdraw" id="withdraw-btn">
@@ -1853,7 +1853,7 @@
                         <div class="stat-icon">
                             <i class="fa fa-rupee-sign"></i>
                         </div>
-                        <div class="stat-value">₹${sellerData.totalEarnings || 0}</div>
+                        <div class="stat-value">NPR${sellerData.totalEarnings || 0}</div>
                         <div class="stat-label">Earnings</div>
                     </div>
                 </div>
@@ -2033,7 +2033,7 @@
                         
                         <div style="display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 20px;">
                             <div>
-                                <label style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.95rem;">Price (₹) *</label>
+                                <label style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.95rem;">Price (NPR) *</label>
                                 <input type="number" id="pet-price" class="form-control" placeholder="e.g., 5000" step="0.01" required>
                             </div>
                             <div>
@@ -2265,7 +2265,7 @@
                                         <div class="product-info">
                                             <div class="product-name">${pet.name}</div>
                                             <div class="product-description">${pet.description.substring(0, 100)}...</div>
-                                            <div class="product-price">₹${pet.price}</div>
+                                            <div class="product-price">NPR${pet.price}</div>
                                             <div style="display: flex; justify-content: space-between; align-items: center;">
                                                 <span style="padding: 4px 10px; background: ${pet.status === 'approved' ? 'var(--seller-success)' : 'var(--seller-warning)'}; color: white; border-radius: 15px; font-size: 0.8rem; font-weight: 600;">
                                                     ${pet.status === 'approved' ? 'Approved' : 'Pending'}
@@ -2337,7 +2337,7 @@
                             <div style="color: var(--seller-text); margin-top: 8px; font-size: 0.9rem;">Available Pets</div>
                         </div>
                         <div style="background: rgba(46, 204, 113, 0.1); padding: 20px; border-radius: 10px; border: 1px solid rgba(46, 204, 113, 0.2); text-align: center;">
-                            <div style="font-size: 1.5rem; font-weight: 700; color: var(--seller-success);" id="avg-price">₹0</div>
+                            <div style="font-size: 1.5rem; font-weight: 700; color: var(--seller-success);" id="avg-price">NPR0</div>
                             <div style="color: var(--seller-text); margin-top: 8px; font-size: 0.9rem;">Average Price</div>
                         </div>
                     </div>
@@ -2366,7 +2366,7 @@
                     if (approvedPets.length > 0) {
                         const totalPrice = approvedPets.reduce((sum, [key, pet]) => sum + (parseFloat(pet.price) || 0), 0);
                         const avgPrice = Math.round(totalPrice / approvedPets.length);
-                        document.getElementById('avg-price').textContent = `₹${avgPrice}`;
+                        document.getElementById('avg-price').textContent = `NPR${avgPrice}`;
                     }
                     
                     if (approvedPets.length === 0) {
@@ -2392,7 +2392,7 @@
                                                 <i class="fas fa-store"></i> ${pet.sellerName || 'Seller'}
                                             </div>
                                             <div class="product-description">${pet.description.substring(0, 80)}...</div>
-                                            <div class="product-price">₹${pet.price}</div>
+                                            <div class="product-price">NPR${pet.price}</div>
                                             <button class="buy-btn" onclick="buyPet('${key}', '${pet.name}', ${pet.price})">
                                                 <i class="fas fa-shopping-cart"></i> Buy Now
                                             </button>
@@ -2431,7 +2431,7 @@
                 return;
             }
             
-            if (confirm(`Buy ${petName} for ₹${price}?`)) {
+            if (confirm(`Buy ${petName} for NPR${price}?`)) {
                 try {
                     // Create order
                     const orderData = {
@@ -2482,7 +2482,7 @@
                             <h3 style="margin-bottom: 15px; display: flex; align-items: center; gap: 10px; font-size: 1.1rem;">
                                 <i class="fas fa-wallet"></i> Available Balance
                             </h3>
-                            <div style="font-size: 2.5rem; font-weight: 700; margin-bottom: 8px;">₹${sellerDataCache?.walletBalance || 0}.00</div>
+                            <div style="font-size: 2.5rem; font-weight: 700; margin-bottom: 8px;">NPR${sellerDataCache?.walletBalance || 0}.00</div>
                             <p style="opacity: 0.9; font-size: 0.9rem;">Total funds available for withdrawal</p>
                         </div>
                         
@@ -2490,7 +2490,7 @@
                             <h3 style="color: var(--seller-primary); margin-bottom: 15px; font-size: 1.1rem;">Withdraw Funds</h3>
                             
                             <div style="margin-bottom: 20px;">
-                                <label style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.95rem;">Amount (₹) *</label>
+                                <label style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.95rem;">Amount (NPR) *</label>
                                 <input type="number" id="withdraw-amount" class="form-control" placeholder="Enter amount" style="margin-bottom: 12px; height: 48px;" min="1" max="${sellerDataCache?.walletBalance || 0}">
                             </div>
                             
@@ -2666,7 +2666,7 @@
                         <div style="background: rgba(39, 174, 96, 0.1); padding: 12px; border-radius: 8px; border: 1px solid rgba(39, 174, 96, 0.2); font-size: 0.9rem;">
                             <i class="fas fa-check-circle"></i> 
                             <strong>Withdrawal Request Submitted!</strong><br>
-                            Your request for ₹${amount} has been sent to admin for approval.
+                            Your request for NPR${amount} has been sent to admin for approval.
                         </div>
                     `;
                     
