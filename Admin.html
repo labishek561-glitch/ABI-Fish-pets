@@ -630,7 +630,7 @@
                     </div>
                     <div class="stat-card">
                         <h3>Total Revenue</h3>
-                        <p class="count" id="total-revenue">₹0</p>
+                        <p class="count" id="total-revenue">NPR0</p>
                         <span class="stat-change positive">+18%</span>
                     </div>
                     <div class="stat-card">
@@ -867,7 +867,7 @@
                     <input type="text" id="product-category" placeholder="Enter category" required>
                 </div>
                 <div class="form-group">
-                    <label for="product-price">Price (₹)</label>
+                    <label for="product-price">Price (NPR)</label>
                     <input type="number" id="product-price" placeholder="Enter price" step="0.01" required>
                 </div>
                 <div class="form-group">
@@ -1053,7 +1053,7 @@
                         });
                     });
                 }
-                document.getElementById('total-revenue').textContent = `₹${revenue.toFixed(2)}`;
+                document.getElementById('total-revenue').textContent = `NPR${revenue.toFixed(2)}`;
             });
 
             // Total Sellers
@@ -1113,7 +1113,7 @@
                             <td><img src="${product.imageUrl || 'https://via.placeholder.com/100'}" alt="${product.name}" onerror="this.src='https://via.placeholder.com/100'"></td>
                             <td><strong>${product.name}</strong><br><small>${product.type || 'Pet'}</small></td>
                             <td>${product.breed || 'N/A'}</td>
-                            <td>₹${parseFloat(product.price || 0).toFixed(2)}</td>
+                            <td>NPR${parseFloat(product.price || 0).toFixed(2)}</td>
                             <td><span class="status-badge status-${product.status || 'pending'}">${product.status || 'pending'}</span></td>
                             <td class="action-btns">
                                 <button class="btn-view" onclick="viewProduct('${productId}')">View</button>
@@ -1162,7 +1162,7 @@
                                     <strong>${order.shippingName || 'Customer'}</strong><br>
                                     <small>${order.userEmail || 'No email'}</small>
                                 </td>
-                                <td>₹${parseFloat(order.totalAmount || 0).toFixed(2)}</td>
+                                <td>NPR${parseFloat(order.totalAmount || 0).toFixed(2)}</td>
                                 <td>${new Date(order.date || Date.now()).toLocaleDateString()}</td>
                                 <td>
                                     <select class="status-select" data-user-id="${userId}" data-order-id="${orderId}" onchange="updateOrderStatus('${userId}', '${orderId}', this.value)">
@@ -1239,7 +1239,7 @@
                             <td>${seller.sellerName}</td>
                             <td>${seller.email}</td>
                             <td>${seller.phone || 'N/A'}</td>
-                            <td>₹${parseFloat(seller.walletBalance || 0).toFixed(2)}</td>
+                            <td>NPR${parseFloat(seller.walletBalance || 0).toFixed(2)}</td>
                             <td><span class="status-badge status-${seller.status || 'active'}">${seller.status || 'active'}</span></td>
                             <td class="action-btns">
                                 <button class="btn-view" onclick="viewSellerDetails('${sellerId}')">View</button>
@@ -1295,7 +1295,7 @@
                                  onerror="this.src='https://via.placeholder.com/400x300?text=No+Image'">
                             <div class="approval-card-body">
                                 <div class="approval-card-title">${pet.name}</div>
-                                <div class="approval-card-price">₹${parseFloat(pet.price || 0).toFixed(2)}</div>
+                                <div class="approval-card-price">NPR${parseFloat(pet.price || 0).toFixed(2)}</div>
                                 <div class="approval-card-seller">
                                     <strong>Seller:</strong> ${pet.sellerName || 'Unknown'}<br>
                                     <strong>Type:</strong> ${pet.type || 'N/A'} | <strong>Breed:</strong> ${pet.breed || 'Mixed'}<br>
@@ -1376,7 +1376,7 @@
                                 <strong>${withdrawal.sellerName}</strong><br>
                                 <small>${withdrawal.sellerEmail || 'No email'}</small>
                             </td>
-                            <td><strong>₹${parseFloat(withdrawal.amount || 0).toFixed(2)}</strong></td>
+                            <td><strong>NPR${parseFloat(withdrawal.amount || 0).toFixed(2)}</strong></td>
                             <td>${withdrawal.paymentMethod?.toUpperCase() || 'N/A'}</td>
                             <td><small>${paymentDetails}</small></td>
                             <td>${new Date(withdrawal.requestDate || Date.now()).toLocaleDateString()}</td>
@@ -1536,7 +1536,7 @@
                             </div>
                             <div class="detail-item">
                                 <strong>Price:</strong>
-                                <span>₹${parseFloat(product.price || 0).toFixed(2)}</span>
+                                <span>NPR${parseFloat(product.price || 0).toFixed(2)}</span>
                             </div>
                             <div class="detail-item">
                                 <strong>Age:</strong>
@@ -1613,15 +1613,15 @@
                     </div>
                     <div class="detail-item">
                         <strong>Wallet Balance:</strong>
-                        <span>₹${parseFloat(seller.walletBalance || 0).toFixed(2)}</span>
+                        <span>NPR${parseFloat(seller.walletBalance || 0).toFixed(2)}</span>
                     </div>
                     <div class="detail-item">
                         <strong>Total Earnings:</strong>
-                        <span>₹${parseFloat(seller.totalEarnings || 0).toFixed(2)}</span>
+                        <span>NPR${parseFloat(seller.totalEarnings || 0).toFixed(2)}</span>
                     </div>
                     <div class="detail-item">
                         <strong>Total Withdrawn:</strong>
-                        <span>₹${parseFloat(seller.totalWithdrawn || 0).toFixed(2)}</span>
+                        <span>NPR${parseFloat(seller.totalWithdrawn || 0).toFixed(2)}</span>
                     </div>
                     <div class="detail-item">
                         <strong>Total Pets:</strong>
@@ -1726,7 +1726,7 @@
             get(ref(db, `orders/${userId}/${orderId}`))
                 .then(snapshot => {
                     const order = snapshot.val();
-                    alert(`Order Details:\n\nOrder ID: ${orderId}\nCustomer: ${order.shippingName}\nEmail: ${order.userEmail}\nTotal: ₹${order.totalAmount}\nStatus: ${order.status}`);
+                    alert(`Order Details:\n\nOrder ID: ${orderId}\nCustomer: ${order.shippingName}\nEmail: ${order.userEmail}\nTotal: NPR${order.totalAmount}\nStatus: ${order.status}`);
                 });
         };
 
