@@ -659,6 +659,7 @@ export async function initThree() {
     heroCanvas.height = heroStage.clientHeight || window.innerHeight;
 
     Aquarium3D.hero = new Aquarium(heroCanvas, THREE, Aquarium3D.quality, 'hero');
+    Aquarium3D.hero.buildFish([]); 
 
     const hc = new OrbitControls(Aquarium3D.hero.camera, heroCanvas);
     hc.enableDamping = true; hc.dampingFactor = .06;
