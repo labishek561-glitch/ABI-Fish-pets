@@ -305,7 +305,7 @@
             font-size: 1.1rem;
         }
 
-        .btn-auth {
+          .btn-auth {
             width: 100%;
             padding: 16px;
             background: var(--gradient-accent);
@@ -406,7 +406,7 @@
             left: 0;
         }
 
-         .sidebar-header {
+        .sidebar-header {
             padding: 25px 20px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             background: rgba(0, 0, 0, 0.2);
@@ -1426,7 +1426,7 @@
         </div>
     </div>
 
-     <!-- Firebase SDK -->
+         <!-- Firebase SDK -->
     <script type="module">
         // Import Firebase
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
@@ -1740,7 +1740,7 @@
             }
         });
 
-        // === PAGE LOADERS ===
+                // === PAGE LOADERS ===
 
         // Dashboard
         async function loadDashboard() {
@@ -2007,6 +2007,7 @@
                     vaccination: document.getElementById('pet-vaccination').value,
                     sellerId: currentSellerId,
                     status: 'pending',
+                    createdAt: Date.now()),
                     date: Date.now(),
                     adminApproved: false
                 };
@@ -2099,7 +2100,7 @@
                 loadMyPetsPage();
             } catch (e) { showToast('Error', 'Failed to delete.', 'error'); }
         };
-           // === MARKET VIEW ===
+   // === MARKET VIEW ===
         async function loadMarketViewPage() {
             const main = document.getElementById('main-content');
             main.innerHTML = `
@@ -2156,28 +2157,36 @@
         }
 
         window.buyPet = async function(petId, petName, price) {
-            if (!sellerDataCache) { showToast('Error', 'Complete your profile first.', 'error'); return; }
-            if (!confirm(`Buy ${petName} for NPR${price}?`)) return;
-            try {
-                const orderData = {
-                    petId,
-                    petName,
-                    price,
-                    buyerId: currentSellerId,
-                    buyerName: sellerDataCache.shopName,
-                    buyerEmail: sellerDataCache.email,
-                    sellerId: currentSellerId,
-                    sellerName: sellerDataCache.shopName,
-                    purchaseDate: Date.now(),
-                    status: 'pending',
-                    paymentMethod: 'cash_on_delivery'
-                };
-                const orderRef = push(ref(db, 'orders'));
-                await set(orderRef, orderData);
-                showToast('Success', `Order placed for ${petName}!`, 'success');
-            } catch (e) { showToast('Error', 'Failed to place order.', 'error'); }
+    if (!sellerDataCache) { showToast('Error', 'Complete your profile first.', 'error'); return; }
+    if (!confirm(`Buy ${petName} for NPR${price}?`)) return;
+    try {
+        const orderData = {
+            date: Date.now(),
+            userEmail: sellerDataCache.email,
+            items: [{
+                productId: petId,
+                name: petName,
+                quantity: 1,
+                price: price
+            }],
+            totalAmount: price,
+            status: 'pending',
+            shippingName: sellerDataCache.shopName,
+            shippingMobile: sellerDataCache.phone || '',
+            shippingAddress: 'Market purchase',
+            /* seller's own purchase */
+            buyerId: currentSellerId,
+            sellerId: currentSellerId
         };
-
+        /* MATCH index.html structure — nested by userId */
+        const orderRef = push(ref(db, `orders/${currentSellerId}`));
+        await set(orderRef, orderData);
+        showToast('Success', `Order placed for ${petName}!`, 'success');
+    } catch (e) {
+        console.error(e);
+        showToast('Error', 'Failed to place order.', 'error');
+    }
+};
         window.whatsappContact = function(phone, petName) {
             if (!phone) { showToast('Info', 'Seller phone not available', 'warning'); return; }
             const msg = encodeURIComponent(`Hi, I'm interested in your pet "${petName}" from ABI Pets.`);
@@ -2307,7 +2316,7 @@
                     `<div style="text-align:center;padding:40px;color:var(--seller-danger);">Error loading analytics</div>`;
             }
         }
-            // === WALLET ===
+    // === WALLET ===
         async function loadWalletPage() {
             const main = document.getElementById('main-content');
             const balance = sellerDataCache?.walletBalance || 0;
