@@ -1,1 +1,1670 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#02101d" />
+<title>ABI Fish Pets — Admin Panel</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+<style>
+:root{
+  --abyss:#01070f; --deep:#03121f; --ocean:#062a45; --ocean-2:#0a3a5c;
+  --cyan:#22d3ee; --aqua:#7dd3fc; --glow:#38bdf8; --gold:#f5c451;
+  --coral:#fb7185; --green:#34d399; --violet:#a78bfa;
+  --text:#e9f6ff; --text-2:#a8c8dd; --muted:#6f96ad;
+  --glass:rgba(8,32,52,.55); --glass-2:rgba(7,27,45,.86);
+  --line:rgba(125,211,252,.15); --line-2:rgba(125,211,252,.34);
+  --shadow:0 20px 60px rgba(0,0,0,.55); --shadow-sm:0 8px 26px rgba(0,0,0,.4);
+  --radius:18px; --radius-sm:12px; --sidebar-w:260px;
+  --ease:cubic-bezier(.22,.68,.28,1); --t:.32s var(--ease);
+}
+html[data-theme="light"]{
+  --abyss:#f0f7fc; --deep:#e2eef8; --ocean:#c8dff0; --ocean-2:#a9cde6;
+  --text:#05253d; --text-2:#3d6b8c; --muted:#6b93ab;
+  --glass:rgba(255,255,255,.72); --glass-2:rgba(255,255,255,.95);
+  --line:rgba(5,37,61,.12); --line-2:rgba(5,37,61,.24);
+  --shadow:0 20px 60px rgba(5,37,61,.12); --shadow-sm:0 8px 26px rgba(5,37,61,.08);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100%}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--abyss);color:var(--text);
+  line-height:1.55;overflow-x:hidden;transition:background .3s,color .3s;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4,.display{font-family:'Outfit',sans-serif;line-height:1.18;letter-spacing:-.01em}
+img{max-width:100%;display:block}
+button,input,select,textarea{font:inherit;color:inherit;border:none;background:none;outline:none}
+button{cursor:pointer}
+a{color:inherit;text-decoration:none}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:linear-gradient(var(--cyan),var(--ocean-2));border-radius:20px}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:2px;border-radius:6px}
+
+/* animated backdrop */
+.water-bg{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+.water-bg::before{content:"";position:absolute;inset:-20%;
+  background:
+    radial-gradient(60% 45% at 15% 8%,rgba(34,211,238,.12),transparent 60%),
+    radial-gradient(50% 40% at 88% 12%,rgba(139,92,246,.10),transparent 62%),
+    radial-gradient(70% 60% at 50% 108%,rgba(6,42,69,.85),transparent 70%),
+    linear-gradient(180deg,var(--abyss),var(--deep) 55%,var(--abyss));
+  animation:drift 26s ease-in-out infinite alternate}
+@keyframes drift{to{transform:translate3d(-2%,1%,0) scale(1.06)}}
+
+/* ============= LOGIN ============= */
+.login-screen{position:fixed;inset:0;display:grid;place-items:center;padding:20px;
+  background:radial-gradient(60% 50% at 50% 40%,#062038,#01070f 75%);z-index:900}
+.login-card{width:100%;max-width:420px;padding:36px 32px;border-radius:var(--radius);
+  background:linear-gradient(170deg,rgba(9,36,58,.92),rgba(3,14,25,.96));
+  border:1px solid var(--line-2);box-shadow:var(--shadow);backdrop-filter:blur(20px);
+  animation:slideUp .5s var(--ease)}
+@keyframes slideUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+.login-brand{display:flex;align-items:center;gap:12px;margin-bottom:28px;justify-content:center}
+.login-brand .mark{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;
+  background:linear-gradient(150deg,rgba(34,211,238,.24),rgba(139,92,246,.22));
+  border:1px solid var(--line-2);box-shadow:0 0 26px rgba(34,211,238,.3) inset}
+.login-brand .mark svg{width:26px;height:26px;filter:drop-shadow(0 0 8px rgba(34,211,238,.8))}
+.login-brand h1{font-size:1.15rem;font-weight:800;letter-spacing:.12em}
+.login-brand h1 small{display:block;font-family:'Inter';font-size:.62rem;letter-spacing:.32em;
+  color:var(--muted);font-weight:500;margin-top:2px}
+.login-card h2{font-size:1.45rem;font-weight:700;margin-bottom:6px}
+.login-card>p{font-size:.85rem;color:var(--text-2);margin-bottom:24px}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:8px;font-weight:600}
+.input-wrap{position:relative;display:flex;align-items:center;gap:10px;padding:0 16px;
+  height:52px;border-radius:var(--radius-sm);background:rgba(6,25,42,.7);
+  border:1px solid var(--line);transition:var(--t)}
+html[data-theme="light"] .input-wrap{background:rgba(255,255,255,.9)}
+.input-wrap:focus-within{border-color:var(--cyan);box-shadow:0 0 0 4px rgba(34,211,238,.12)}
+.input-wrap i{color:var(--muted);font-size:.95rem;flex-shrink:0}
+.input-wrap input,.input-wrap textarea,.input-wrap select{width:100%;height:100%;font-size:.92rem;background:transparent}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;
+  padding:13px 24px;border-radius:12px;font-weight:600;font-size:.88rem;
+  letter-spacing:.03em;transition:transform .25s var(--ease),box-shadow .25s var(--ease),background .25s;
+  position:relative;overflow:hidden}
+.btn:disabled{opacity:.6;cursor:not-allowed}
+.btn-primary{background:linear-gradient(120deg,#0ea5e9,#22d3ee 45%,#8b5cf6);color:#01131f;
+  box-shadow:0 12px 32px rgba(34,211,238,.3);width:100%}
+.btn-primary:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 16px 42px rgba(34,211,238,.42)}
+.btn-ghost{border:1px solid var(--line-2);color:var(--text);background:rgba(8,32,52,.4)}
+.btn-ghost:hover{background:rgba(34,211,238,.1)}
+.btn-sm{padding:8px 16px;font-size:.78rem;border-radius:9px}
+.btn-danger{background:linear-gradient(120deg,#e11d48,#fb7185);color:#fff}
+.btn-danger:hover{transform:translateY(-1px);box-shadow:0 10px 28px rgba(251,113,133,.35)}
+.btn-success{background:linear-gradient(120deg,#059669,#34d399);color:#02160e}
+.btn-success:hover{transform:translateY(-1px);box-shadow:0 10px 28px rgba(52,211,153,.35)}
+.btn-warning{background:linear-gradient(120deg,#b45309,#f5c451);color:#211200}
+.btn-block{width:100%}
+.login-msg{margin-top:14px;padding:11px 14px;border-radius:10px;font-size:.85rem;display:none;
+  animation:shake .4s}
+.login-msg.error{display:block;background:rgba(251,113,133,.1);color:var(--coral);
+  border:1px solid rgba(251,113,133,.25)}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.spinner{width:18px;height:18px;border:2.4px solid rgba(255,255,255,.3);border-top-color:#fff;
+  border-radius:50%;animation:spin .7s linear infinite;display:inline-block;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ============= LAYOUT ============= */
+.admin-shell{display:flex;min-height:100vh;padding:16px;gap:16px;max-width:1600px;margin:0 auto}
+
+/* sidebar */
+.sidebar{flex-shrink:0;width:var(--sidebar-w);background:linear-gradient(180deg,rgba(9,36,58,.85),rgba(4,17,30,.92));
+  border:1px solid var(--line);border-radius:var(--radius);backdrop-filter:blur(20px);
+  display:flex;flex-direction:column;position:sticky;top:16px;height:calc(100vh - 32px);overflow:hidden}
+.side-head{padding:22px 20px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:11px}
+.side-head .mark{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;flex-shrink:0;
+  background:linear-gradient(150deg,rgba(34,211,238,.22),rgba(139,92,246,.2));
+  border:1px solid var(--line-2);box-shadow:0 0 20px rgba(34,211,238,.26) inset}
+.side-head .mark svg{width:22px;height:22px}
+.side-head .title{font-family:'Outfit';font-weight:800;font-size:.92rem;letter-spacing:.12em;line-height:1.1}
+.side-head .title small{display:block;font-family:'Inter';font-size:.58rem;color:var(--muted);
+  letter-spacing:.28em;font-weight:500;margin-top:2px}
+.side-nav{flex:1;overflow-y:auto;padding:14px 12px}
+.side-nav a{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:11px;
+  font-size:.85rem;font-weight:500;color:var(--text-2);transition:var(--t);position:relative}
+.side-nav a i{width:18px;text-align:center;font-size:.95rem;flex-shrink:0}
+.side-nav a:hover{color:var(--text);background:rgba(125,211,252,.08)}
+.side-nav a.active{color:#fff;background:linear-gradient(100deg,rgba(34,211,238,.18),rgba(139,92,246,.14));
+  border:1px solid var(--line-2);box-shadow:0 6px 18px rgba(34,211,238,.12)}
+.side-nav a.active::before{content:"";position:absolute;left:-12px;top:50%;transform:translateY(-50%);
+  width:3px;height:22px;border-radius:0 4px 4px 0;background:linear-gradient(var(--cyan),var(--violet))}
+.side-nav .badge{margin-left:auto;padding:2px 8px;border-radius:20px;font-size:.63rem;font-weight:700;
+  background:rgba(251,113,133,.9);color:#fff;min-width:22px;text-align:center}
+.side-foot{padding:14px;border-top:1px solid var(--line)}
+.side-foot .who{padding:10px 12px;border-radius:11px;background:rgba(6,25,42,.6);
+  border:1px solid var(--line);margin-bottom:10px;font-size:.78rem;overflow:hidden}
+.side-foot .who b{display:block;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.side-foot .who span{color:var(--muted);font-size:.7rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+
+/* main */
+.main{flex:1;min-width:0;display:flex;flex-direction:column;gap:16px}
+.topbar{display:flex;align-items:center;gap:14px;padding:14px 18px;border-radius:var(--radius);
+  background:var(--glass);border:1px solid var(--line);backdrop-filter:blur(20px);position:sticky;top:16px;z-index:50}
+.topbar .hamburger{display:none;width:40px;height:40px;border-radius:10px;place-items:center;
+  background:rgba(6,25,42,.6);border:1px solid var(--line);color:var(--aqua)}
+.topbar h1{font-size:1.15rem;font-weight:700;letter-spacing:.01em;flex:1;min-width:0;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topbar h1 span{display:block;font-family:'Inter';font-size:.7rem;color:var(--muted);
+  letter-spacing:.14em;text-transform:uppercase;font-weight:500;margin-top:2px}
+.topbar-actions{display:flex;gap:8px;align-items:center}
+.icon-btn{width:40px;height:40px;border-radius:11px;display:grid;place-items:center;position:relative;
+  background:rgba(6,25,42,.6);border:1px solid var(--line);color:var(--text-2);transition:var(--t)}
+.icon-btn:hover{color:#fff;border-color:var(--line-2);transform:translateY(-1px)}
+.page{display:none;animation:fadeUp .35s var(--ease)}
+.page.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+/* cards / stats */
+.grid{display:grid;gap:14px}
+.grid-4{grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr))}
+.grid-3{grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))}
+.grid-2{grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr))}
+.card{background:linear-gradient(170deg,rgba(9,36,58,.72),rgba(4,17,30,.85));
+  border:1px solid var(--line);border-radius:var(--radius);backdrop-filter:blur(14px);
+  transition:border-color .3s,transform .3s}
+html[data-theme="light"] .card{background:linear-gradient(170deg,rgba(255,255,255,.9),rgba(240,249,255,.95))}
+.card:hover{border-color:var(--line-2)}
+.stat{padding:22px;display:flex;align-items:flex-start;gap:16px;position:relative;overflow:hidden}
+.stat::after{content:"";position:absolute;right:-30px;top:-30px;width:130px;height:130px;border-radius:50%;
+  background:radial-gradient(circle,rgba(34,211,238,.14),transparent 70%);pointer-events:none}
+.stat .ic{width:52px;height:52px;border-radius:14px;display:grid;place-items:center;flex-shrink:0;
+  font-size:1.3rem;background:linear-gradient(140deg,rgba(34,211,238,.2),rgba(139,92,246,.16));
+  border:1px solid var(--line-2);color:var(--cyan)}
+.stat .ic.gold{background:linear-gradient(140deg,rgba(245,196,81,.2),rgba(245,196,81,.06));color:var(--gold);border-color:rgba(245,196,81,.3)}
+.stat .ic.coral{background:linear-gradient(140deg,rgba(251,113,133,.2),rgba(251,113,133,.06));color:var(--coral);border-color:rgba(251,113,133,.3)}
+.stat .ic.green{background:linear-gradient(140deg,rgba(52,211,153,.2),rgba(52,211,153,.06));color:var(--green);border-color:rgba(52,211,153,.3)}
+.stat .ic.violet{background:linear-gradient(140deg,rgba(167,139,250,.22),rgba(167,139,250,.08));color:var(--violet);border-color:rgba(167,139,250,.3)}
+.stat .meta small{font-size:.7rem;color:var(--muted);letter-spacing:.14em;text-transform:uppercase;font-weight:600}
+.stat .meta .num{font-family:'Outfit';font-size:1.7rem;font-weight:800;margin-top:2px;line-height:1.1}
+.stat .meta .delta{display:inline-block;font-size:.7rem;padding:2px 8px;border-radius:20px;
+  margin-top:8px;font-weight:600}
+.delta.up{background:rgba(52,211,153,.14);color:var(--green)}
+.delta.down{background:rgba(251,113,133,.14);color:var(--coral)}
+
+.panel{padding:20px}
+.panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;
+  margin-bottom:16px;flex-wrap:wrap}
+.panel-head h2{font-size:1.05rem;font-weight:700;display:flex;align-items:center;gap:9px}
+.panel-head h2 i{color:var(--cyan);font-size:.95rem}
+.panel-head .sub{font-size:.76rem;color:var(--muted);margin-top:2px}
+/* toolbar */
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:16px}
+.search{position:relative;display:flex;align-items:center;gap:10px;padding:0 14px;height:44px;
+  border-radius:12px;background:rgba(6,25,42,.65);border:1px solid var(--line);
+  transition:var(--t);flex:1;min-width:200px}
+html[data-theme="light"] .search{background:rgba(255,255,255,.9)}
+.search:focus-within{border-color:var(--cyan);box-shadow:0 0 0 4px rgba(34,211,238,.1)}
+.search i{color:var(--muted);flex-shrink:0;font-size:.9rem}
+.search input{width:100%;height:100%;font-size:.88rem}
+select.select{padding:0 14px;height:44px;border-radius:12px;background:rgba(6,25,42,.65);
+  border:1px solid var(--line);font-size:.85rem;cursor:pointer;transition:var(--t);appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236f96ad' stroke-width='2.4'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center;padding-right:34px}
+html[data-theme="light"] select.select{background-color:rgba(255,255,255,.9)}
+select.select:focus{border-color:var(--cyan)}
+
+/* table */
+.table-wrap{border-radius:var(--radius-sm);overflow:hidden;border:1px solid var(--line)}
+table.data{width:100%;border-collapse:collapse;font-size:.86rem}
+table.data thead{background:rgba(6,25,42,.7)}
+html[data-theme="light"] table.data thead{background:rgba(240,249,255,.9)}
+table.data th{padding:13px 16px;text-align:left;font-weight:600;color:var(--aqua);
+  font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;white-space:nowrap;border-bottom:1px solid var(--line)}
+table.data td{padding:14px 16px;border-bottom:1px solid var(--line);vertical-align:middle}
+table.data tr:last-child td{border-bottom:none}
+table.data tr:hover{background:rgba(34,211,238,.04)}
+table.data img.thumb{width:52px;height:52px;border-radius:10px;object-fit:cover;border:1px solid var(--line);background:var(--ocean)}
+.actions{display:flex;gap:6px;flex-wrap:wrap}
+.icon-act{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;font-size:.85rem;
+  border:1px solid var(--line);color:var(--text-2);transition:var(--t);background:rgba(6,25,42,.5)}
+.icon-act:hover{transform:translateY(-2px);color:#fff}
+.icon-act.view:hover{border-color:var(--cyan);color:var(--cyan)}
+.icon-act.approve:hover{border-color:var(--green);color:var(--green);background:rgba(52,211,153,.1)}
+.icon-act.reject:hover{border-color:var(--coral);color:var(--coral);background:rgba(251,113,133,.1)}
+.icon-act.del:hover{border-color:#e11d48;color:#e11d48;background:rgba(225,29,72,.1)}
+.icon-act.edit:hover{border-color:var(--gold);color:var(--gold);background:rgba(245,196,81,.1)}
+
+/* status pill */
+.pill{padding:4px 11px;border-radius:20px;font-size:.68rem;font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;white-space:nowrap;display:inline-block}
+.pill.pending{background:rgba(245,196,81,.16);color:var(--gold)}
+.pill.approved,.pill.active,.pill.completed,.pill.delivered{background:rgba(52,211,153,.16);color:var(--green)}
+.pill.rejected,.pill.cancelled{background:rgba(251,113,133,.16);color:var(--coral)}
+.pill.processing,.pill.shipped{background:rgba(34,211,238,.16);color:var(--cyan)}
+.pill.packed{background:rgba(167,139,250,.18);color:var(--violet)}
+.pill.read{background:rgba(125,211,252,.14);color:var(--aqua)}
+.pill.unread{background:rgba(245,196,81,.16);color:var(--gold)}
+
+  /* empty / loading */
+.empty{padding:52px 22px;text-align:center;color:var(--muted)}
+.empty i{font-size:2.4rem;opacity:.28;display:block;margin-bottom:12px}
+.empty p{font-size:.86rem}
+.skeleton{background:linear-gradient(90deg,rgba(125,211,252,.06) 0%,rgba(125,211,252,.14) 50%,rgba(125,211,252,.06) 100%);
+  background-size:200% 100%;animation:shim 1.4s linear infinite;border-radius:8px;height:14px}
+@keyframes shim{0%{background-position:100% 0}100%{background-position:-100% 0}}
+
+/* approval cards */
+.approval-grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr))}
+.approval-card{background:linear-gradient(170deg,rgba(9,36,58,.75),rgba(4,17,30,.9));
+  border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;
+  transition:transform .3s var(--ease),border-color .3s;display:flex;flex-direction:column}
+.approval-card:hover{transform:translateY(-4px);border-color:var(--line-2)}
+.approval-card .cover{position:relative;aspect-ratio:16/10;overflow:hidden;background:radial-gradient(60% 60% at 50% 40%,#0a3a5c,#041525)}
+.approval-card .cover img{width:100%;height:100%;object-fit:cover;transition:transform .6s var(--ease)}
+.approval-card:hover .cover img{transform:scale(1.06)}
+.approval-card .cover .pill{position:absolute;top:10px;right:10px}
+.approval-card .cover input[type="checkbox"]{position:absolute;top:10px;left:10px;width:20px;height:20px;
+  accent-color:var(--cyan);cursor:pointer;z-index:2}
+.approval-card .body{padding:16px;display:flex;flex-direction:column;gap:10px;flex:1}
+.approval-card .body h3{font-size:1rem;font-weight:700;line-height:1.25}
+.approval-card .body .price{font-family:'Outfit';font-size:1.3rem;font-weight:800;color:var(--cyan);margin-top:-2px}
+.approval-card .body .seller{font-size:.8rem;color:var(--text-2);line-height:1.7}
+.approval-card .body .seller b{color:var(--text);font-weight:600}
+.approval-card .body .acts{display:flex;gap:8px;margin-top:auto;flex-wrap:wrap}
+.approval-card .body .acts .btn{flex:1;padding:9px 12px;font-size:.78rem}
+
+/* detail rows (used inside modals) */
+.kv-grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr))}
+.kv{padding:12px 14px;border-radius:var(--radius-sm);background:rgba(6,25,42,.55);border:1px solid var(--line)}
+html[data-theme="light"] .kv{background:rgba(240,249,255,.9)}
+.kv small{display:block;font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:5px;font-weight:600}
+.kv b{font-size:.92rem;font-weight:600;word-break:break-word}
+
+/* modal */
+.modal{position:fixed;inset:0;z-index:2000;display:grid;place-items:center;padding:16px;
+  background:rgba(1,7,15,.72);backdrop-filter:blur(10px);opacity:0;visibility:hidden;
+  transition:opacity .3s var(--ease),visibility .3s}
+.modal.on{opacity:1;visibility:visible}
+.modal-box{width:100%;max-width:640px;max-height:92svh;overflow-y:auto;border-radius:var(--radius);
+  background:linear-gradient(175deg,rgba(10,40,64,.98),rgba(3,14,25,.99));
+  border:1px solid var(--line-2);box-shadow:var(--shadow);padding:24px;
+  transform:translateY(24px) scale(.97);transition:transform .35s var(--ease);position:relative}
+html[data-theme="light"] .modal-box{background:linear-gradient(175deg,rgba(255,255,255,.99),rgba(240,249,255,.99))}
+.modal.on .modal-box{transform:none}
+.modal-box.wide{max-width:900px}
+.modal-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:18px}
+.modal-head h3{font-size:1.2rem;font-weight:700}
+.modal-head p{font-size:.8rem;color:var(--muted);margin-top:3px}
+.x-btn{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;flex-shrink:0;
+  border:1px solid var(--line);color:var(--text-2);transition:var(--t)}
+.x-btn:hover{color:#fff;transform:rotate(90deg);border-color:var(--line-2)}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-top:22px;
+  padding-top:18px;border-top:1px solid var(--line)}
+
+/* confirm modal */
+.confirm-box{max-width:420px;text-align:center}
+.confirm-box .ic{width:60px;height:60px;border-radius:50%;display:grid;place-items:center;margin:0 auto 16px;
+  font-size:1.5rem;background:rgba(251,113,133,.14);color:var(--coral);border:1px solid rgba(251,113,133,.3)}
+.confirm-box h3{font-size:1.15rem;margin-bottom:8px}
+.confirm-box p{font-size:.88rem;color:var(--text-2);margin-bottom:4px}
+
+/* toasts */
+.toasts{position:fixed;right:16px;bottom:16px;z-index:3000;display:flex;flex-direction:column;
+  gap:10px;width:min(380px,92vw);pointer-events:none}
+.toast{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:12px;
+  background:var(--glass-2);border:1px solid var(--line-2);backdrop-filter:blur(18px);
+  box-shadow:var(--shadow);pointer-events:auto;animation:tIn .4s var(--ease)}
+@keyframes tIn{from{opacity:0;transform:translateX(24px) scale(.96)}to{opacity:1;transform:none}}
+.toast.out{animation:tOut .3s var(--ease) forwards}
+@keyframes tOut{to{opacity:0;transform:translateX(20px) scale(.97)}}
+.toast .ti{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;flex-shrink:0;font-size:.95rem}
+.toast.ok .ti{background:rgba(52,211,153,.16);color:var(--green)}
+.toast.err .ti{background:rgba(251,113,133,.16);color:var(--coral)}
+.toast.info .ti{background:rgba(34,211,238,.16);color:var(--cyan)}
+.toast.warn .ti{background:rgba(245,196,81,.16);color:var(--gold)}
+.toast-body{flex:1;min-width:0}
+.toast-body b{display:block;font-size:.86rem;font-weight:600}
+.toast-body span{font-size:.78rem;color:var(--text-2)}
+
+/* bar chart */
+.bars{display:flex;align-items:flex-end;gap:8px;height:140px;margin-top:10px;padding:0 4px}
+.bar{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end}
+.bar .b{width:100%;border-radius:6px 6px 0 0;background:linear-gradient(180deg,var(--cyan),rgba(139,92,246,.5));
+  min-height:4px;box-shadow:0 0 12px rgba(34,211,238,.3);transition:height .6s var(--ease)}
+.bar small{font-size:.66rem;color:var(--muted)}
+
+/* mobile */
+.hamburger{display:none}
+.scrim{position:fixed;inset:0;z-index:100;background:rgba(1,7,15,.6);backdrop-filter:blur(4px);
+  opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s}
+.scrim.on{opacity:1;visibility:visible}
+
+@media(max-width:900px){
+  .admin-shell{padding:10px;gap:10px}
+  .sidebar{position:fixed;left:10px;top:10px;bottom:10px;height:auto;width:min(280px,86vw);z-index:200;
+    transform:translateX(-115%);transition:transform .4s var(--ease);box-shadow:var(--shadow)}
+  .sidebar.open{transform:none}
+  .topbar .hamburger{display:grid}   ← specificity match garyo
+  .topbar{top:10px}
+}
+@media(max-width:640px){
+  .admin-shell{padding:8px}
+  .topbar{padding:11px 14px}
+  .topbar h1{font-size:1rem}
+  table.data th, table.data td{padding:11px 12px;font-size:.82rem}
+  /* table → card */
+  table.data thead{display:none}
+  table.data tr{display:block;padding:14px;margin-bottom:12px;border:1px solid var(--line);border-radius:var(--radius-sm)}
+  table.data td{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border:none;
+    text-align:right;font-size:.82rem}
+  table.data td::before{content:attr(data-label);font-weight:600;color:var(--muted);font-size:.68rem;
+    letter-spacing:.1em;text-transform:uppercase;text-align:left}
+  table.data td img.thumb{width:44px;height:44px}
+  .actions{justify-content:flex-end}
+  .stat{padding:18px}
+  .stat .ic{width:44px;height:44px;font-size:1.1rem}
+  .stat .meta .num{font-size:1.4rem}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms !important;transition-duration:.001ms !important}
+}
+</style>
+</head>
+<body>
+
+  <div class="water-bg" aria-hidden="true"></div>
+
+<!-- ═════════ LOGIN ═════════ -->
+<div class="login-screen" id="login-screen">
+  <div class="login-card">
+    <div class="login-brand">
+      <span class="mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#7dd3fc" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 12s3.6-6 10-6 8 5 10 6c-2 1-3.6 6-10 6S2 12 2 12z"/><circle cx="15" cy="11" r="1.2" fill="#7dd3fc"/>
+        </svg>
+      </span>
+      <h1>ABI FISH PETS<small>ADMIN PANEL</small></h1>
+    </div>
+    <h2>🔐 Admin Login</h2>
+    <p>Sign in with your Firebase admin account</p>
+    <form id="loginForm" autocomplete="on">
+      <div class="form-group">
+        <label for="loginEmail">Email</label>
+        <div class="input-wrap">
+          <i class="fas fa-envelope"></i>
+          <input type="email" id="loginEmail" placeholder="admin@abifishpets.com" required autocomplete="email" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="loginPassword">Password</label>
+        <div class="input-wrap">
+          <i class="fas fa-key"></i>
+          <input type="password" id="loginPassword" placeholder="••••••••" required autocomplete="current-password" />
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary" id="loginBtn">
+        <i class="fas fa-sign-in-alt"></i> <span>Sign In</span>
+      </button>
+      <div class="login-msg" id="loginMsg"></div>
+    </form>
+  </div>
+</div>
+
+<!-- ═════════ ADMIN SHELL ═════════ -->
+<div class="admin-shell" id="shell" style="display:none">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="side-head">
+      <span class="mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#7dd3fc" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 12s3.6-6 10-6 8 5 10 6c-2 1-3.6 6-10 6S2 12 2 12z"/><circle cx="15" cy="11" r="1.2" fill="#7dd3fc"/>
+        </svg>
+      </span>
+      <div class="title">ABI ADMIN<small>CONTROL CENTER</small></div>
+    </div>
+
+    <nav class="side-nav" id="sideNav">
+      <a href="#dashboard" data-nav="dashboard"><i class="fas fa-chart-pie"></i> Dashboard</a>
+      <a href="#products" data-nav="products"><i class="fas fa-box-open"></i> Products</a>
+      <a href="#orders" data-nav="orders"><i class="fas fa-shopping-cart"></i> Orders</a>
+      <a href="#sellers" data-nav="sellers"><i class="fas fa-store"></i> Sellers</a>
+      <a href="#approvals" data-nav="approvals"><i class="fas fa-clipboard-check"></i> Approvals <span class="badge" id="badgeApprovals" hidden>0</span></a>
+      <a href="#withdrawals" data-nav="withdrawals"><i class="fas fa-money-bill-wave"></i> Withdrawals</a>
+      <a href="#users" data-nav="users"><i class="fas fa-user-friends"></i> Users</a>
+      <a href="#messages" data-nav="messages"><i class="fas fa-envelope"></i> Messages <span class="badge" id="badgeMessages" hidden>0</span></a>
+    </nav>
+
+    <div class="side-foot">
+      <div class="who">
+        <b id="adminEmail">—</b>
+        <span>Signed in as administrator</span>
+      </div>
+      <button class="btn btn-ghost btn-sm btn-block" id="logoutBtn">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </button>
+    </div>
+  </aside>
+
+  <div class="scrim" id="scrim"></div>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="topbar">
+      <button class="hamburger" id="hamburger" aria-label="Open menu"><i class="fas fa-bars"></i></button>
+      <h1 id="pageTitle">Dashboard<span id="pageSub">Overview & stats</span></h1>
+      <div class="topbar-actions">
+        <a class="icon-btn" href="index.html" target="_blank" rel="noopener" title="Open storefront">
+          <i class="fas fa-globe"></i>
+        </a>
+        <a class="icon-btn" href="seller.html" target="_blank" rel="noopener" title="Open seller panel">
+          <i class="fas fa-store"></i>
+        </a>
+        <button class="icon-btn" id="themeToggle" title="Toggle theme">
+          <i class="fas fa-moon"></i>
+        </button>
+        <button class="icon-btn" id="refreshBtn" title="Refresh data">
+          <i class="fas fa-sync-alt"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <section class="page active" id="page-dashboard">
+      <div class="grid grid-4">
+        <div class="card stat">
+          <div class="ic"><i class="fas fa-fish"></i></div>
+          <div class="meta">
+            <small>Total Products</small>
+            <div class="num" id="statProducts">—</div>
+            <span class="delta up"><i class="fas fa-arrow-up"></i> live</span>
+          </div>
+        </div>
+        <div class="card stat">
+          <div class="ic gold"><i class="fas fa-shopping-bag"></i></div>
+          <div class="meta">
+            <small>Total Orders</small>
+            <div class="num" id="statOrders">—</div>
+            <span class="delta up"><i class="fas fa-arrow-up"></i> live</span>
+          </div>
+        </div>
+        <div class="card stat">
+          <div class="ic violet"><i class="fas fa-store"></i></div>
+          <div class="meta">
+            <small>Active Sellers</small>
+            <div class="num" id="statSellers">—</div>
+            <span class="delta up"><i class="fas fa-arrow-up"></i> live</span>
+          </div>
+        </div>
+        <div class="card stat">
+          <div class="ic coral"><i class="fas fa-clock"></i></div>
+          <div class="meta">
+            <small>Pending Approvals</small>
+            <div class="num" id="statPending">—</div>
+            <span class="delta down"><i class="fas fa-exclamation"></i> action needed</span>
+          </div>
+        </div>
+        <div class="card stat">
+          <div class="ic green"><i class="fas fa-coins"></i></div>
+          <div class="meta">
+            <small>Total Revenue</small>
+            <div class="num" id="statRevenue">—</div>
+            <span class="delta up"><i class="fas fa-arrow-up"></i> all time</span>
+          </div>
+        </div>
+        <div class="card stat">
+          <div class="ic gold"><i class="fas fa-hand-holding-dollar"></i></div>
+          <div class="meta">
+            <small>Withdrawals</small>
+            <div class="num" id="statWithdrawals">—</div>
+            <span class="delta down"><i class="fas fa-clock"></i> pending</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-2" style="margin-top:16px">
+        <div class="card panel">
+          <div class="panel-head">
+            <div>
+              <h2><i class="fas fa-chart-bar"></i> Revenue — last 7 days</h2>
+              <div class="sub">Based on Firebase order timestamps</div>
+            </div>
+          </div>
+          <div class="bars" id="revenueChart"></div>
+        </div>
+        <div class="card panel">
+          <div class="panel-head">
+            <div>
+              <h2><i class="fas fa-bolt"></i> Recent Activity</h2>
+              <div class="sub">Latest orders & signups</div>
+            </div>
+          </div>
+          <div id="activityFeed" style="display:flex;flex-direction:column;gap:10px"></div>
+        </div>
+      </div>
+    </section>
+    <!-- PRODUCTS -->
+    <section class="page" id="page-products">
+      <div class="card panel">
+        <div class="panel-head">
+          <div><h2><i class="fas fa-box-open"></i> Products</h2><div class="sub" id="productsCount">—</div></div>
+        </div>
+        <div class="toolbar">
+          <div class="search"><i class="fas fa-search"></i><input type="search" id="productSearch" placeholder="Search products by name, seller, breed…" /></div>
+          <select class="select" id="productStatusFilter">
+            <option value="all">All statuses</option>
+            <option value="approved">Approved</option>
+            <option value="pending">Pending</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        </div>
+        <div class="table-wrap">
+          <table class="data">
+            <thead>
+              <tr>
+                <th>Image</th><th>Product</th><th>Seller</th><th>Price</th><th>Status</th><th style="text-align:right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="productsTbody">
+              <tr><td colspan="6" class="empty"><i class="fas fa-spinner fa-spin"></i><p>Loading products…</p></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ORDERS -->
+    <section class="page" id="page-orders">
+      <div class="card panel">
+        <div class="panel-head">
+          <div><h2><i class="fas fa-shopping-cart"></i> Orders</h2><div class="sub" id="ordersCount">—</div></div>
+        </div>
+        <div class="toolbar">
+          <div class="search"><i class="fas fa-search"></i><input type="search" id="orderSearch" placeholder="Search by order ID, customer name, email…" /></div>
+          <select class="select" id="orderFilter">
+            <option value="all">All statuses</option>
+            <option value="pending">Pending</option>
+            <option value="confirmed">Confirmed</option>
+            <option value="packed">Packed</option>
+            <option value="shipped">Shipped</option>
+            <option value="delivered">Delivered</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+        <div class="table-wrap">
+          <table class="data">
+            <thead>
+              <tr><th>Order</th><th>Customer</th><th>Total</th><th>Date</th><th>Status</th><th style="text-align:right">Actions</th></tr>
+            </thead>
+            <tbody id="ordersTbody">
+              <tr><td colspan="6" class="empty"><i class="fas fa-spinner fa-spin"></i><p>Loading orders…</p></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- SELLERS -->
+    <section class="page" id="page-sellers">
+      <div class="card panel">
+        <div class="panel-head">
+          <div><h2><i class="fas fa-store"></i> Sellers</h2><div class="sub" id="sellersCount">—</div></div>
+        </div>
+        <div class="toolbar">
+          <div class="search"><i class="fas fa-search"></i><input type="search" id="sellerSearch" placeholder="Search by shop, name or email…" /></div>
+        </div>
+        <div class="table-wrap">
+          <table class="data">
+            <thead>
+              <tr><th>Shop</th><th>Seller</th><th>Contact</th><th>Balance</th><th>Pets</th><th>Status</th><th style="text-align:right">Actions</th></tr>
+            </thead>
+            <tbody id="sellersTbody">
+              <tr><td colspan="7" class="empty"><i class="fas fa-spinner fa-spin"></i><p>Loading sellers…</p></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- APPROVALS -->
+    <section class="page" id="page-approvals">
+      <div class="card panel">
+        <div class="panel-head">
+          <div>
+            <h2><i class="fas fa-clipboard-check"></i> Product Approval Queue</h2>
+            <div class="sub">Review seller-submitted listings before they appear on the storefront</div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn btn-ghost btn-sm" id="bulkApproveBtn"><i class="fas fa-check-double"></i> Approve selected</button>
+            <button class="btn btn-ghost btn-sm" id="bulkRejectBtn"><i class="fas fa-times-circle"></i> Reject selected</button>
+          </div>
+        </div>
+        <div class="toolbar">
+          <select class="select" id="approvalFilter">
+            <option value="pending">Pending review</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+            <option value="all">All products</option>
+          </select>
+          <div class="search"><i class="fas fa-search"></i><input type="search" id="approvalSearch" placeholder="Search submissions…" /></div>
+        </div>
+        <div class="approval-grid" id="approvalsGrid">
+          <div class="empty" style="grid-column:1/-1"><i class="fas fa-spinner fa-spin"></i><p>Loading submissions…</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- WITHDRAWALS -->
+    <section class="page" id="page-withdrawals">
+      <div class="card panel">
+        <div class="panel-head">
+          <div><h2><i class="fas fa-money-bill-wave"></i> Withdrawal Requests</h2><div class="sub" id="withdrawalsCount">—</div></div>
+        </div>
+        <div class="toolbar">
+          <select class="select" id="withdrawalFilter">
+            <option value="pending">Pending</option>
+            <option value="completed">Completed</option>
+            <option value="rejected">Rejected</option>
+            <option value="all">All requests</option>
+          </select>
+        </div>
+        <div class="table-wrap">
+          <table class="data">
+            <thead>
+              <tr><th>Seller</th><th>Amount</th><th>Method</th><th>Details</th><th>Date</th><th>Status</th><th style="text-align:right">Actions</th></tr>
+            </thead>
+            <tbody id="withdrawalsTbody">
+              <tr><td colspan="7" class="empty"><i class="fas fa-spinner fa-spin"></i><p>Loading requests…</p></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- USERS -->
+    <section class="page" id="page-users">
+      <div class="card panel">
+        <div class="panel-head">
+          <div><h2><i class="fas fa-user-friends"></i> Users</h2><div class="sub" id="usersCount">—</div></div>
+        </div>
+        <div class="toolbar">
+          <div class="search"><i class="fas fa-search"></i><input type="search" id="userSearch" placeholder="Search users by name or email…" /></div>
+        </div>
+        <div class="table-wrap">
+          <table class="data">
+            <thead>
+              <tr><th>Name</th><th>Email</th><th>Phone</th><th>Joined</th><th>Status</th></tr>
+            </thead>
+            <tbody id="usersTbody">
+              <tr><td colspan="5" class="empty"><i class="fas fa-spinner fa-spin"></i><p>Loading users…</p></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- MESSAGES -->
+    <section class="page" id="page-messages">
+      <div class="card panel">
+        <div class="panel-head">
+          <div><h2><i class="fas fa-envelope"></i> Messages</h2><div class="sub" id="messagesCount">—</div></div>
+        </div>
+        <div class="toolbar">
+          <select class="select" id="messageFilter">
+            <option value="all">All messages</option>
+            <option value="unread">Unread only</option>
+            <option value="read">Read</option>
+          </select>
+        </div>
+        <div class="table-wrap">
+          <table class="data">
+            <thead>
+              <tr><th>Date</th><th>From</th><th>Email</th><th>Message</th><th>Status</th><th style="text-align:right">Actions</th></tr>
+            </thead>
+            <tbody id="messagesTbody">
+              <tr><td colspan="6" class="empty"><i class="fas fa-spinner fa-spin"></i><p>Loading messages…</p></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+          </div>
+
+  <!-- ═════════ MODAL (generic) ═════════ -->
+<div class="modal" id="modal" role="dialog" aria-modal="true">
+  <div class="modal-box" id="modalBox">
+    <div class="modal-head">
+      <div><h3 id="modalTitle">Details</h3><p id="modalSub"></p></div>
+      <button class="x-btn" id="modalClose" aria-label="Close"><i class="fas fa-times"></i></button>
+    </div>
+    <div id="modalBody"></div>
+    <div class="modal-actions" id="modalActions"></div>
+  </div>
+</div>
+
+<!-- ═════════ CONFIRM MODAL ═════════ -->
+<div class="modal" id="confirmModal" role="dialog" aria-modal="true">
+  <div class="modal-box confirm-box">
+    <div class="ic"><i class="fas fa-exclamation-triangle"></i></div>
+    <h3 id="confirmTitle">Are you sure?</h3>
+    <p id="confirmBody">This action cannot be undone.</p>
+    <div class="modal-actions" style="justify-content:center;border:none;padding-top:22px">
+      <button class="btn btn-ghost btn-sm" id="confirmCancel">Cancel</button>
+      <button class="btn btn-danger btn-sm" id="confirmOk">Yes, continue</button>
+    </div>
+  </div>
+</div>
+
+<div class="toasts" id="toasts" aria-live="polite"></div>
+
+<!-- ═════════ FIREBASE SDK ═════════ -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+import {
+  getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut
+} from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+import {
+  getDatabase, ref, onValue, get, set, update, remove, push, query, orderByChild
+} from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+
+/* ───────── SAME CONFIG AS STOREFRONT & SELLER PANEL ───────── */
+const firebaseConfig = {
+  apiKey: "AIzaSyAgrXYL1M-cO8LYTmJeEtfwhkp-ghXfNWY",
+  authDomain: "abi-fish-pets.firebaseapp.com",
+  databaseURL: "https://abi-fish-pets-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "abi-fish-pets",
+  storageBucket: "abi-fish-pets.firebasestorage.app",
+  messagingSenderId: "644115504257",
+  appId: "1:644115504257:web:278b713d235aa8938a0180"
+};
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getDatabase(app);
+
+/* ───────── UTILITIES ───────── */
+const $  = (s, r=document) => r.querySelector(s);
+const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const npr = n => 'Rs. ' + Number(n || 0).toLocaleString('en-IN', { maximumFractionDigits: 0 });
+const fmtDate = t => t ? new Date(t).toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' }) : '—';
+const fmtDateTime = t => t ? new Date(t).toLocaleString('en-GB', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' }) : '—';
+const timeAgo = t => {
+  if (!t) return '—';
+  const s = Math.floor((Date.now() - t) / 1000);
+  if (s < 60) return 'just now';
+  if (s < 3600) return Math.floor(s/60) + 'm ago';
+  if (s < 86400) return Math.floor(s/3600) + 'h ago';
+  if (s < 604800) return Math.floor(s/86400) + 'd ago';
+  return fmtDate(t);
+};
+
+/* placeholder image if Firebase product has no imageUrl */
+function placeholder(seed) {
+  const h = String(seed || 'abi').split('').reduce((a,c)=>((a<<5)-a+c.charCodeAt(0))|0,0);
+  const hue = Math.abs(h) % 360;
+  return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+    <defs><radialGradient id="g" cx="50%" cy="35%"><stop offset="0%" stop-color="hsl(${hue} 70% 48%)"/><stop offset="100%" stop-color="#02101d"/></radialGradient></defs>
+    <rect width="200" height="200" fill="url(#g)"/>
+    <ellipse cx="100" cy="130" rx="55" ry="28" fill="hsl(${hue} 65% 55%)" opacity=".7"/>
+    <circle cx="78" cy="120" r="4" fill="#04121f"/><circle cx="77" cy="119" r="1.4" fill="#fff"/>
+    <text x="100" y="185" text-anchor="middle" font-family="Inter" font-size="11" font-weight="600" fill="#9fe4ff" opacity=".6">ABI FISH PETS</text>
+  </svg>`);
+}
+window.__img = (img, seed) => { img.onerror = null; img.src = placeholder(seed); };
+
+/* ───────── TOASTS ───────── */
+function toast(title, msg='', type='info') {
+  const ico = { ok:'fa-check-circle', err:'fa-circle-xmark', info:'fa-info-circle', warn:'fa-triangle-exclamation' };
+  const el = document.createElement('div');
+  el.className = 'toast ' + type;
+  el.innerHTML = `<span class="ti"><i class="fas ${ico[type]||ico.info}"></i></span>
+    <div class="toast-body"><b>${esc(title)}</b>${msg?`<span>${esc(msg)}</span>`:''}</div>`;
+  $('#toasts').appendChild(el);
+  const kill = () => { el.classList.add('out'); setTimeout(()=>el.remove(), 300); };
+  el.onclick = kill; setTimeout(kill, 3600);
+}
+
+/* ───────── CONFIRM MODAL ───────── */
+function confirmAction(title, body, onYes) {
+  $('#confirmTitle').textContent = title;
+  $('#confirmBody').textContent = body;
+  const m = $('#confirmModal');
+  m.classList.add('on');
+  const yes = $('#confirmOk'), no = $('#confirmCancel');
+  const close = () => { m.classList.remove('on'); yes.onclick = null; no.onclick = null; };
+  yes.onclick = () => { close(); onYes(); };
+  no.onclick = close;
+  m.onclick = e => { if (e.target === m) close(); };
+}
+
+/* ───────── GENERIC MODAL ───────── */
+function openModal({ title, sub='', body='', actions='', wide=false }) {
+  $('#modalTitle').textContent = title;
+  $('#modalSub').textContent = sub;
+  $('#modalBody').innerHTML = body;
+  $('#modalActions').innerHTML = actions;
+  $('#modalBox').classList.toggle('wide', wide);
+  $('#modal').classList.add('on');
+}
+function closeModal() { $('#modal').classList.remove('on'); }
+$('#modalClose').onclick = closeModal;
+$('#modal').onclick = e => { if (e.target.id === 'modal') closeModal(); };
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closeModal(); $('#confirmModal').classList.remove('on'); }
+});
+
+/* ───────── STATE ───────── */
+const S = {
+  pets: {}, sellers: {}, orders: {}, users: {}, messages: {}, withdrawals: {},
+  filters: {
+    productSearch:'', productStatus:'all',
+    orderSearch:'', orderStatus:'all',
+    sellerSearch:'',
+    approvalFilter:'pending', approvalSearch:'', approvalSelected:new Set(),
+    withdrawalFilter:'pending',
+    userSearch:'', messageFilter:'all'
+  }
+};
+
+/* ───────── AUTH ───────── */
+$('#loginForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const btn = $('#loginBtn');
+  const msg = $('#loginMsg');
+  const email = $('#loginEmail').value.trim();
+  const password = $('#loginPassword').value;
+  msg.className = 'login-msg'; msg.style.display = 'none';
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span><span>Signing in…</span>';
+
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+    toast('Welcome back', 'Signed in successfully.', 'ok');
+  } catch (err) {
+    msg.className = 'login-msg error';
+    msg.textContent = err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password'
+      ? 'Invalid email or password.'
+      : (err.message || 'Sign-in failed.');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> <span>Sign In</span>';
+  }
+});
+
+$('#logoutBtn').addEventListener('click', () => {
+  confirmAction('Log out?', 'You will need to sign in again to access the admin panel.', async () => {
+    await signOut(auth);
+    toast('Logged out', '', 'info');
+  });
+});
+
+onAuthStateChanged(auth, user => {
+  if (user) {
+    $('#login-screen').style.display = 'none';
+    $('#shell').style.display = 'flex';
+    $('#adminEmail').textContent = user.email || '—';
+    if (!Object.keys(S.pets).length && !Object.keys(S.sellers).length) attachListeners();
+  } else {
+    $('#login-screen').style.display = 'grid';
+    $('#shell').style.display = 'none';
+  }
+});
+
+/* ───────── NAVIGATION ───────── */
+
+/* ───────── SIDEBAR (declare FIRST) ───────── */
+const sidebar = $('#sidebar');
+const scrim = $('#scrim');
+function openSidebar()  { sidebar.classList.add('open');  scrim.classList.add('on');  }
+function closeSidebar() { sidebar.classList.remove('open'); scrim.classList.remove('on'); }
+$('#hamburger').onclick = openSidebar;
+scrim.onclick = closeSidebar;
+
+/* ───────── NAVIGATION ───────── */
+const TITLES = {
+  dashboard:  ['Dashboard', 'Overview & stats'],
+  products:   ['Products', 'Manage all listings'],
+  orders:     ['Orders', 'Customer orders'],
+  sellers:    ['Sellers', 'Registered store owners'],
+  approvals:  ['Approvals', 'Review submissions'],
+  withdrawals:['Withdrawals', 'Seller payout requests'],
+  users:      ['Users', 'Registered customers'],
+  messages:   ['Messages', 'Contact form entries']
+};
+function go(page) {
+  if (!TITLES[page]) page = 'dashboard';
+  $$('.side-nav a').forEach(a => a.classList.toggle('active', a.dataset.nav === page));
+  $$('.page').forEach(p => p.classList.toggle('active', p.id === 'page-' + page));
+  const [t, s] = TITLES[page];
+  $('#pageTitle').innerHTML = t + `<span>${s}</span>`;
+  if (location.hash !== '#' + page) location.hash = '#' + page;
+  closeSidebar();
+}
+$$('.side-nav a').forEach(a => a.addEventListener('click', e => {
+  e.preventDefault();
+  go(a.dataset.nav);
+}));
+window.addEventListener('hashchange', () => go((location.hash || '#dashboard').slice(1)));
+/* theme */
+const setTheme = t => {
+  document.documentElement.setAttribute('data-theme', t);
+  try { localStorage.setItem('abi_admin_theme', t); } catch {}
+  $('#themeToggle').innerHTML = t === 'dark' ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+};
+setTheme(localStorage.getItem('abi_admin_theme') || 'dark');
+$('#themeToggle').onclick = () => setTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+
+$('#refreshBtn').onclick = () => {
+  toast('Refreshing…', 'Real-time listeners keep data current automatically.', 'info');
+  const i = $('#refreshBtn').querySelector('i');
+  i.style.animation = 'spin .8s linear';
+  setTimeout(() => i.style.animation = '', 800);
+};
+
+/* ───────── FIREBASE LISTENERS ───────── */
+function attachListeners() {
+  /* Products */
+  onValue(ref(db, 'pets'), snap => {
+    S.pets = snap.val() || {};
+    renderProducts();
+    renderApprovals();
+    renderDashboardStats();
+  });
+  /* Sellers */
+  onValue(ref(db, 'sellers'), snap => {
+    S.sellers = snap.val() || {};
+    renderSellers();
+    renderDashboardStats();
+  });
+  /* Users */
+  onValue(ref(db, 'users'), snap => {
+    S.users = snap.val() || {};
+    renderUsers();
+  });
+  /* Orders — grouped by user */
+  onValue(ref(db, 'orders'), snap => {
+    const all = snap.val() || {};
+    S.orders = {};
+    Object.entries(all).forEach(([uid, userOrders]) => {
+      S.orders[uid] = userOrders || {};
+    });
+    renderOrders();
+    renderDashboardStats();
+    renderRevenueChart();
+    renderActivityFeed();
+  });
+  /* Withdrawals */
+  onValue(ref(db, 'withdrawals'), snap => {
+    S.withdrawals = snap.val() || {};
+    renderWithdrawals();
+    renderDashboardStats();
+  });
+  /* Messages */
+  onValue(ref(db, 'messages'), snap => {
+    S.messages = snap.val() || {};
+    renderMessages();
+    updateBadges();
+  });
+}
+/* ───────── HELPERS: order/item normalization ───────── */
+function getAllOrders() {
+  const list = [];
+  Object.entries(S.orders).forEach(([uid, userOrders]) => {
+    Object.entries(userOrders).forEach(([oid, o]) => {
+      list.push({ uid, id: oid, ...o });
+    });
+  });
+  return list;
+}
+function sellerPetCount(sellerId) {
+  let n = 0, approved = 0, pending = 0;
+  Object.values(S.pets).forEach(p => {
+    if (p.sellerId === sellerId) { n++; if (p.status === 'approved') approved++; if (p.status === 'pending') pending++; }
+  });
+  return { n, approved, pending };
+}
+
+/* ───────── DASHBOARD ───────── */
+function renderDashboardStats() {
+  const pets = Object.values(S.pets);
+  const orders = getAllOrders();
+  const pendingPets = pets.filter(p => p.status === 'pending').length;
+  const pendingWd = Object.values(S.withdrawals).filter(w => w.status === 'pending').length;
+  const revenue = orders.reduce((s, o) => s + Number(o.totalAmount || 0), 0);
+
+  $('#statProducts').textContent  = pets.length.toLocaleString('en-IN');
+  $('#statOrders').textContent    = orders.length.toLocaleString('en-IN');
+  $('#statSellers').textContent   = Object.keys(S.sellers).length.toLocaleString('en-IN');
+  $('#statPending').textContent   = pendingPets.toLocaleString('en-IN');
+  $('#statRevenue').textContent   = npr(revenue);
+  $('#statWithdrawals').textContent = pendingWd.toLocaleString('en-IN');
+
+  const bAppr = $('#badgeApprovals'), bMsg = $('#badgeMessages');
+  bAppr.hidden = pendingPets === 0; bAppr.textContent = pendingPets;
+  const unread = Object.values(S.messages).filter(m => !m.read).length;
+  bMsg.hidden = unread === 0; bMsg.textContent = unread;
+}
+function updateBadges() {
+  const pendingPets = Object.values(S.pets).filter(p => p.status === 'pending').length;
+  const unread = Object.values(S.messages).filter(m => !m.read).length;
+  const bAppr = $('#badgeApprovals'), bMsg = $('#badgeMessages');
+  bAppr.hidden = pendingPets === 0; bAppr.textContent = pendingPets;
+  bMsg.hidden = unread === 0; bMsg.textContent = unread;
+}
+
+function renderRevenueChart() {
+  const host = $('#revenueChart');
+  const now = new Date();
+  const days = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(now); d.setDate(d.getDate() - i); d.setHours(0,0,0,0);
+    days.push({ label: d.toLocaleDateString('en-GB', { weekday: 'short' }), start: d.getTime(), total: 0 });
+  }
+  getAllOrders().forEach(o => {
+    const t = o.date || 0;
+    for (let i = days.length - 1; i >= 0; i--) {
+      if (t >= days[i].start) { days[i].total += Number(o.totalAmount || 0); break; }
+    }
+  });
+  const max = Math.max(1, ...days.map(d => d.total));
+  host.innerHTML = days.map(d => `
+    <div class="bar" title="${npr(d.total)}">
+      <div class="b" style="height:${Math.max(4, (d.total / max) * 100)}%"></div>
+      <small>${d.label}</small>
+    </div>`).join('');
+}
+
+function renderActivityFeed() {
+  const items = [];
+  getAllOrders().slice(0, 12).forEach(o => {
+    items.push({
+      when: o.date || 0,
+      icon: 'fa-shopping-bag', color: 'var(--cyan)',
+      text: `<b>${esc(o.shippingName || 'Customer')}</b> placed an order · <b>${npr(o.totalAmount || 0)}</b>`
+    });
+  });
+  Object.entries(S.users).slice(0, 6).forEach(([, u]) => {
+    items.push({
+      when: u.joinedDate || 0,
+      icon: 'fa-user-plus', color: 'var(--violet)',
+      text: `<b>${esc(u.email || 'New user')}</b> registered`
+    });
+  });
+  Object.values(S.pets).slice(0, 8).forEach(p => {
+    if (p.status === 'pending' || p.status === 'approved') {
+      items.push({
+        when: p.approvedDate || p.createdAt || p.date || 0,
+        icon: p.status === 'approved' ? 'fa-circle-check' : 'fa-clock',
+        color: p.status === 'approved' ? 'var(--green)' : 'var(--gold)',
+        text: `<b>${esc(p.name || 'Listing')}</b> ${p.status === 'approved' ? 'approved' : 'awaiting approval'}`
+      });
+    }
+  });
+  items.sort((a, b) => b.when - a.when);
+  const host = $('#activityFeed');
+  host.innerHTML = items.slice(0, 8).map(i => `
+    <div style="display:flex;gap:11px;align-items:flex-start;font-size:.83rem">
+      <span style="width:30px;height:30px;border-radius:9px;display:grid;place-items:center;flex-shrink:0;
+        background:rgba(125,211,252,.08);border:1px solid var(--line);color:${i.color}">
+        <i class="fas ${i.icon}"></i>
+      </span>
+      <div style="flex:1;min-width:0">
+        <div>${i.text}</div>
+        <div style="font-size:.7rem;color:var(--muted);margin-top:2px">${timeAgo(i.when)}</div>
+      </div>
+    </div>`).join('') || '<p style="color:var(--muted);font-size:.85rem">No recent activity yet.</p>';
+}
+
+/* ───────── PRODUCTS ───────── */
+$('#productSearch').addEventListener('input', e => { S.filters.productSearch = e.target.value; renderProducts(); });
+$('#productStatusFilter').addEventListener('change', e => { S.filters.productStatus = e.target.value; renderProducts(); });
+
+function renderProducts() {
+  const tbody = $('#productsTbody');
+  const q = S.filters.productSearch.toLowerCase();
+  const status = S.filters.productStatus;
+  let list = Object.entries(S.pets).map(([id, p]) => ({ id, ...p }));
+  if (status !== 'all') list = list.filter(p => (p.status || 'pending') === status);
+  if (q) list = list.filter(p =>
+    (p.name || '').toLowerCase().includes(q) ||
+    (p.sellerName || '').toLowerCase().includes(q) ||
+    (p.breed || '').toLowerCase().includes(q) ||
+    (p.type || '').toLowerCase().includes(q)
+  );
+  list.sort((a,b) => (b.createdAt || b.date || 0) - (a.createdAt || a.date || 0));
+
+  $('#productsCount').textContent = `${list.length} of ${Object.keys(S.pets).length} listings`;
+  if (!list.length) {
+    tbody.innerHTML = `<tr><td colspan="6" class="empty"><i class="fas fa-box-open"></i><p>No products match.</p></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = list.map(p => `
+    <tr>
+      <td data-label="Image"><img class="thumb" src="${esc(p.imageUrl || '')}" alt="" data-seed="${esc(p.id)}" onerror="window.__img(this,'${esc(p.id)}')" /></td>
+      <td data-label="Product">
+        <b>${esc(p.name || 'Untitled')}</b>
+        <div style="font-size:.72rem;color:var(--muted);margin-top:2px">${esc(p.type || 'Fish')}${p.breed?' · '+esc(p.breed):''}</div>
+      </td>
+      <td data-label="Seller">
+        <div style="font-size:.82rem">${esc(p.sellerName || '—')}</div>
+        <div style="font-size:.7rem;color:var(--muted)">${esc(p.sellerEmail || '')}</div>
+      </td>
+      <td data-label="Price"><b style="color:var(--cyan);font-family:'Outfit'">${npr(p.price)}</b></td>
+      <td data-label="Status"><span class="pill ${esc(p.status || 'pending')}">${esc(p.status || 'pending')}</span></td>
+      <td data-label="Actions" style="text-align:right">
+        <div class="actions" style="justify-content:flex-end">
+          <button class="icon-act view" title="View details" data-action="view-product" data-id="${esc(p.id)}"><i class="fas fa-eye"></i></button>
+          ${p.status === 'pending' ? `
+            <button class="icon-act approve" title="Approve" data-action="approve-product" data-id="${esc(p.id)}"><i class="fas fa-check"></i></button>
+            <button class="icon-act reject" title="Reject" data-action="reject-product" data-id="${esc(p.id)}"><i class="fas fa-xmark"></i></button>
+          ` : ''}
+          <button class="icon-act del" title="Delete" data-action="delete-product" data-id="${esc(p.id)}"><i class="fas fa-trash"></i></button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+/* ───────── ORDERS ───────── */
+$('#orderSearch').addEventListener('input', e => { S.filters.orderSearch = e.target.value; renderOrders(); });
+$('#orderFilter').addEventListener('change', e => { S.filters.orderStatus = e.target.value; renderOrders(); });
+
+function renderOrders() {
+  const tbody = $('#ordersTbody');
+  const q = S.filters.orderSearch.toLowerCase();
+  const st = S.filters.orderStatus;
+  let list = getAllOrders();
+  if (st !== 'all') list = list.filter(o => (o.status || 'pending') === st);
+  if (q) list = list.filter(o =>
+    (o.id || '').toLowerCase().includes(q) ||
+    (o.shippingName || '').toLowerCase().includes(q) ||
+    (o.userEmail || '').toLowerCase().includes(q)
+  );
+  list.sort((a, b) => (b.date || 0) - (a.date || 0));
+
+  $('#ordersCount').textContent = `${list.length} order${list.length === 1 ? '' : 's'}`;
+  if (!list.length) {
+    tbody.innerHTML = `<tr><td colspan="6" class="empty"><i class="fas fa-shopping-cart"></i><p>No orders match.</p></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = list.map(o => `
+    <tr>
+      <td data-label="Order"><b style="font-family:'Outfit'">#${esc((o.id || '').slice(-8))}</b></td>
+      <td data-label="Customer">
+        <b>${esc(o.shippingName || 'Customer')}</b>
+        <div style="font-size:.7rem;color:var(--muted)">${esc(o.userEmail || '')}</div>
+      </td>
+      <td data-label="Total"><b style="color:var(--cyan);font-family: 'Outfit'">${npr(o.totalAmount)}</b></td>
+      <td data-label="Date"><span style="font-size:.82rem">${fmtDate(o.date)}</span></td>
+      <td data-label="Status"><span class="pill ${esc(o.status || 'pending')}">${esc(o.status || 'pending')}</span></td>
+      <td data-label="Actions" style="text-align:right">
+        <div class="actions" style="justify-content:flex-end">
+          <button class="icon-act view" title="View order" data-action="view-order" data-uid="${esc(o.uid)}" data-id="${esc(o.id)}"><i class="fas fa-eye"></i></button>
+          <button class="icon-act edit" title="Update status" data-action="edit-order-status" data-uid="${esc(o.uid)}" data-id="${esc(o.id)}"><i class="fas fa-pen"></i></button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+/* ───────── SELLERS ───────── */
+$('#sellerSearch').addEventListener('input', e => { S.filters.sellerSearch = e.target.value; renderSellers(); });
+
+function renderSellers() {
+  const tbody = $('#sellersTbody');
+  const q = S.filters.sellerSearch.toLowerCase();
+  let list = Object.entries(S.sellers).map(([id, s]) => ({ id, ...s }));
+  if (q) list = list.filter(s =>
+    (s.shopName || '').toLowerCase().includes(q) ||
+    (s.sellerName || '').toLowerCase().includes(q) ||
+    (s.email || '').toLowerCase().includes(q)
+  );
+  $('#sellersCount').textContent = `${list.length} of ${Object.keys(S.sellers).length} sellers`;
+  if (!list.length) {
+    tbody.innerHTML = `<tr><td colspan="7" class="empty"><i class="fas fa-store"></i><p>No sellers match.</p></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = list.map(s => {
+    const counts = sellerPetCount(s.id);
+    const status = s.status || 'active';
+    return `
+    <tr>
+      <td data-label="Shop"><b>${esc(s.shopName || 'No shop name')}</b></td>
+      <td data-label="Seller">${esc(s.sellerName || '—')}</td>
+      <td data-label="Contact">
+        <div style="font-size:.82rem">${esc(s.email || '')}</div>
+        <div style="font-size:.72rem;color:var(--muted)">${esc(s.phone || '—')}</div>
+      </td>
+      <td data-label="Balance"><b style="color:var(--gold);font-family:'Outfit'">${npr(s.walletBalance)}</b></td>
+      <td data-label="Pets"><span class="pill ${counts.pending?'pending':'approved'}">${counts.n}${counts.pending?' ('+counts.pending+' pending)':''}</span></td>
+      <td data-label="Status"><span class="pill ${esc(status)}">${esc(status)}</span></td>
+      <td data-label="Actions" style="text-align:right">
+        <div class="actions" style="justify-content:flex-end">
+          <button class="icon-act view" title="View seller" data-action="view-seller" data-id="${esc(s.id)}"><i class="fas fa-eye"></i></button>
+          <button class="icon-act del" title="Delete seller" data-action="delete-seller" data-id="${esc(s.id)}"><i class="fas fa-trash"></i></button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+/* ───────── APPROVALS ───────── */
+$('#approvalFilter').addEventListener('change', e => { S.filters.approvalFilter = e.target.value; S.filters.approvalSelected.clear(); renderApprovals(); });
+$('#approvalSearch').addEventListener('input', e => { S.filters.approvalSearch = e.target.value; renderApprovals(); });
+
+function renderApprovals() {
+  const host = $('#approvalsGrid');
+  const status = S.filters.approvalFilter;
+  const q = S.filters.approvalSearch.toLowerCase();
+  let list = Object.entries(S.pets).map(([id, p]) => ({ id, ...p }));
+  if (status !== 'all') list = list.filter(p => (p.status || 'pending') === status);
+  if (q) list = list.filter(p =>
+    (p.name || '').toLowerCase().includes(q) ||
+    (p.sellerName || '').toLowerCase().includes(q)
+  );
+  list.sort((a, b) => (b.createdAt || b.date || 0) - (a.createdAt || a.date || 0));
+
+  if (!list.length) {
+    host.innerHTML = `<div class="empty" style="grid-column:1/-1"><i class="fas fa-clipboard-check"></i><p>No submissions match.</p></div>`;
+    return;
+  }
+  host.innerHTML = list.map(p => {
+    const checked = S.filters.approvalSelected.has(p.id) ? 'checked' : '';
+    return `
+      <div class="approval-card">
+        <div class="cover">
+          <input type="checkbox" data-select="${esc(p.id)}" ${checked} aria-label="Select for bulk action" />
+          <img src="${esc(p.imageUrl || '')}" alt="${esc(p.name)}" data-seed="${esc(p.id)}" onerror="window.__img(this,'${esc(p.id)}')" />
+          <span class="pill ${esc(p.status || 'pending')}">${esc(p.status || 'pending')}</span>
+        </div>
+        <div class="body">
+          <h3>${esc(p.name || 'Untitled')}</h3>
+          <div class="price">${npr(p.price)}</div>
+          <div class="seller">
+            <b>Seller:</b> ${esc(p.sellerName || '—')}<br>
+            <b>Type:</b> ${esc(p.type || '—')} · <b>Breed:</b> ${esc(p.breed || 'Mixed')}<br>
+            <b>Age:</b> ${esc(p.age || '—')} mo · <b>Weight:</b> ${esc(p.weight || '—')} kg<br>
+            <b>Vaccination:</b> ${esc(p.vaccination || 'Not specified')}
+          </div>
+          <div class="acts">
+            ${p.status === 'pending' ? `
+              <button class="btn btn-success btn-sm" data-action="approve-product" data-id="${esc(p.id)}"><i class="fas fa-check"></i> Approve</button>
+              <button class="btn btn-danger btn-sm" data-action="reject-product" data-id="${esc(p.id)}"><i class="fas fa-xmark"></i> Reject</button>
+            ` : `<button class="btn btn-ghost btn-sm" data-action="view-product" data-id="${esc(p.id)}"><i class="fas fa-eye"></i> Details</button>`}
+            <button class="btn btn-ghost btn-sm" data-action="delete-product" data-id="${esc(p.id)}" aria-label="Delete"><i class="fas fa-trash"></i></button>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+/* bulk selection */
+document.addEventListener('change', e => {
+  const cb = e.target.closest('[data-select]');
+  if (cb) {
+    const id = cb.dataset.select;
+    if (cb.checked) S.filters.approvalSelected.add(id);
+    else S.filters.approvalSelected.delete(id);
+  }
+});
+$('#bulkApproveBtn').onclick = () => bulkAction('approve');
+$('#bulkRejectBtn').onclick  = () => bulkAction('reject');
+function bulkAction(kind) {
+  const ids = Array.from(S.filters.approvalSelected);
+  if (!ids.length) { toast('Nothing selected', 'Tick the checkboxes on the cards you want to act on.', 'warn'); return; }
+  const word = kind === 'approve' ? 'approve' : 'reject';
+  confirmAction(
+    `Bulk ${word} ${ids.length} product${ids.length === 1 ? '' : 's'}?`,
+    `All selected pending items will be ${word}d.`,
+    async () => {
+      const user = auth.currentUser;
+      const batch = {};
+      ids.forEach(id => {
+        batch[`pets/${id}/status`] = kind === 'approve' ? 'approved' : 'rejected';
+        batch[`pets/${id}/${kind === 'approve' ? 'approvedDate' : 'rejectedDate'}`] = Date.now();
+        batch[`pets/${id}/${kind === 'approve' ? 'approvedBy' : 'rejectedBy'}`] = user ? user.email : 'admin';
+      });
+      try {
+        await update(ref(db), batch);
+        S.filters.approvalSelected.clear();
+        toast(`${ids.length} ${word}d`, '', 'ok');
+      } catch (err) {
+        toast('Failed', err.message, 'err');
+      }
+    }
+  );
+}
+
+/* ───────── WITHDRAWALS ───────── */
+$('#withdrawalFilter').addEventListener('change', e => { S.filters.withdrawalFilter = e.target.value; renderWithdrawals(); });
+function renderWithdrawals() {
+  const tbody = $('#withdrawalsTbody');
+  const filter = S.filters.withdrawalFilter;
+  let list = Object.entries(S.withdrawals).map(([id, w]) => ({ id, ...w }));
+  if (filter !== 'all') list = list.filter(w => (w.status || 'pending') === filter);
+  list.sort((a, b) => (b.requestDate || 0) - (a.requestDate || 0));
+  $('#withdrawalsCount').textContent = `${list.length} request${list.length === 1 ? '' : 's'}`;
+  if (!list.length) {
+    tbody.innerHTML = `<tr><td colspan="7" class="empty"><i class="fas fa-money-bill-wave"></i><p>No requests match.</p></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = list.map(w => {
+    const method = (w.paymentMethod || 'n/a').toUpperCase();
+    let details = '—';
+    if (w.paymentMethod === 'esewa' || w.paymentMethod === 'khalti') {
+      details = `${method} · ${w.paymentDetails?.walletId || '—'}`;
+    } else if (w.paymentMethod === 'bank') {
+      details = `${w.paymentDetails?.bankName || 'Bank'} · ${w.paymentDetails?.accountNumber || '—'}`;
+    }
+    return `
+      <tr>
+        <td data-label="Seller"><b>${esc(w.sellerName || '—')}</b><div style="font-size:.7rem;color:var(--muted)">${esc(w.sellerEmail || '')}</div></td>
+        <td data-label="Amount"><b style="color:var(--gold);font-family:'Outfit'">${npr(w.amount)}</b></td>
+        <td data-label="Method">${method}</td>
+        <td data-label="Details"><span style="font-size:.78rem">${esc(details)}</span></td>
+        <td data-label="Date">${fmtDate(w.requestDate)}</td>
+        <td data-label="Status"><span class="pill ${esc(w.status || 'pending')}">${esc(w.status || 'pending')}</span></td>
+        <td data-label="Actions" style="text-align:right">
+          <div class="actions" style="justify-content:flex-end">
+            ${w.status === 'pending' ? `
+              <button class="icon-act approve" data-action="approve-withdrawal" data-id="${esc(w.id)}" title="Approve"><i class="fas fa-check"></i></button>
+              <button class="icon-act reject" data-action="reject-withdrawal" data-id="${esc(w.id)}" title="Reject"><i class="fas fa-xmark"></i></button>
+            ` : '<span style="font-size:.78rem;color:var(--muted)">Processed</span>'}
+          </div>
+        </td>
+      </tr>`;
+  }).join('');
+}
+
+/* ───────── USERS ───────── */
+$('#userSearch').addEventListener('input', e => { S.filters.userSearch = e.target.value; renderUsers(); });
+function renderUsers() {
+  const tbody = $('#usersTbody');
+  const q = S.filters.userSearch.toLowerCase();
+  let list = Object.entries(S.users).map(([id, u]) => ({ id, ...u }));
+  if (q) list = list.filter(u => (u.name || '').toLowerCase().includes(q) || (u.email || '').toLowerCase().includes(q));
+  list.sort((a, b) => (b.joinedDate || 0) - (a.joinedDate || 0));
+  $('#usersCount').textContent = `${list.length} of ${Object.keys(S.users).length} users`;
+  if (!list.length) {
+    tbody.innerHTML = `<tr><td colspan="5" class="empty"><i class="fas fa-user-friends"></i><p>No users match.</p></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = list.map(u => `
+    <tr>
+      <td data-label="Name"><b>${esc(u.name || '—')}</b></td>
+      <td data-label="Email">${esc(u.email || '—')}</td>
+      <td data-label="Phone">${esc(u.phone || '—')}</td>
+      <td data-label="Joined">${fmtDate(u.joinedDate)}</td>
+      <td data-label="Status"><span class="pill active">Active</span></td>
+    </tr>`).join('');
+}
+
+/* ───────── MESSAGES ───────── */
+$('#messageFilter').addEventListener('change', e => { S.filters.messageFilter = e.target.value; renderMessages(); });
+function renderMessages() {
+  const tbody = $('#messagesTbody');
+  const f = S.filters.messageFilter;
+  let list = Object.entries(S.messages).map(([id, m]) => ({ id, ...m }));
+  if (f === 'unread') list = list.filter(m => !m.read);
+  if (f === 'read') list = list.filter(m => m.read);
+  list.sort((a, b) => (b.date || 0) - (a.date || 0));
+  $('#messagesCount').textContent = `${list.length} message${list.length === 1 ? '' : 's'}`;
+  if (!list.length) {
+    tbody.innerHTML = `<tr><td colspan="6" class="empty"><i class="fas fa-envelope"></i><p>No messages match.</p></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = list.map(m => `
+    <tr>
+      <td data-label="Date"><span style="font-size:.8rem">${fmtDateTime(m.date)}</span></td>
+      <td data-label="From"><b>${esc(m.name || '—')}</b></td>
+      <td data-label="Email">${esc(m.email || '—')}</td>
+      <td data-label="Message"><span style="font-size:.82rem">${esc((m.message || '').slice(0, 90))}${(m.message || '').length > 90 ? '…' : ''}</span></td>
+      <td data-label="Status"><span class="pill ${m.read ? 'read' : 'unread'}">${m.read ? 'Read' : 'Unread'}</span></td>
+      <td data-label="Actions" style="text-align:right">
+        <div class="actions" style="justify-content:flex-end">
+          <button class="icon-act view" data-action="view-message" data-id="${esc(m.id)}" title="View"><i class="fas fa-eye"></i></button>
+          <button class="icon-act del" data-action="delete-message" data-id="${esc(m.id)}" title="Delete"><i class="fas fa-trash"></i></button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+/* ───────── ACTION DELEGATION ───────── */
+document.addEventListener('click', async e => {
+  const btn = e.target.closest('[data-action]');
+  if (!btn) return;
+  const action = btn.dataset.action;
+  const id = btn.dataset.id;
+  const user = auth.currentUser;
+
+  /* ---- PRODUCTS ---- */
+  if (action === 'view-product') return viewProduct(id);
+  if (action === 'approve-product') return confirmAction('Approve this product?', 'The listing will immediately appear on the storefront.', async () => {
+    try {
+      await update(ref(db, `pets/${id}`), { status: 'approved', approvedDate: Date.now(), approvedBy: user?.email || 'admin' });
+      toast('Product approved', '', 'ok');
+    } catch (err) { toast('Failed', err.message, 'err'); }
+  });
+  if (action === 'reject-product') return confirmAction('Reject this product?', 'The seller will see this listing as rejected.', async () => {
+    try {
+      await update(ref(db, `pets/${id}`), { status: 'rejected', rejectedDate: Date.now(), rejectedBy: user?.email || 'admin' });
+      toast('Product rejected', '', 'warn');
+    } catch (err) { toast('Failed', err.message, 'err'); }
+  });
+  if (action === 'delete-product') return confirmAction('Delete this product?', 'This action cannot be undone.', async () => {
+    try { await remove(ref(db, `pets/${id}`)); toast('Product deleted', '', 'ok'); }
+    catch (err) { toast('Failed', err.message, 'err'); }
+  });
+
+  /* ---- ORDERS ---- */
+  if (action === 'view-order') return viewOrder(btn.dataset.uid, id);
+  if (action === 'edit-order-status') return editOrderStatus(btn.dataset.uid, id);
+
+  /* ---- SELLERS ---- */
+  if (action === 'view-seller') return viewSeller(id);
+  if (action === 'delete-seller') return confirmAction('Delete this seller?', 'All their product listings will also be removed.', async () => {
+    try {
+      const batch = {};
+      Object.entries(S.pets).forEach(([pid, p]) => { if (p.sellerId === id) batch[`pets/${pid}`] = null; });
+      batch[`sellers/${id}`] = null;
+      await update(ref(db), batch);
+      toast('Seller deleted', '', 'ok');
+    } catch (err) { toast('Failed', err.message, 'err'); }
+  });
+
+  /* ---- WITHDRAWALS ---- */
+  if (action === 'approve-withdrawal') return approveWithdrawal(id);
+  if (action === 'reject-withdrawal')  return rejectWithdrawal(id);
+
+  /* ---- MESSAGES ---- */
+  if (action === 'view-message') return viewMessage(id);
+  if (action === 'delete-message') return confirmAction('Delete this message?', 'This action cannot be undone.', async () => {
+    try { await remove(ref(db, `messages/${id}`)); toast('Message deleted', '', 'ok'); }
+    catch (err) { toast('Failed', err.message, 'err'); }
+  });
+});
+
+/* ---- individual viewers ---- */
+function viewProduct(id) {
+  const p = S.pets[id];
+  if (!p) return;
+  openModal({
+    title: p.name || 'Product',
+    sub: `${p.type || 'Fish'}${p.breed ? ' · ' + p.breed : ''}`,
+    body: `
+      <img src="${esc(p.imageUrl || '')}" alt="" style="width:100%;max-height:260px;object-fit:cover;border-radius:12px;border:1px solid var(--line);margin-bottom:16px"
+           data-seed="${esc(id)}" onerror="window.__img(this,'${esc(id)}')" />
+      <div class="kv-grid">
+        <div class="kv"><small>Price</small><b>${npr(p.price)}</b></div>
+        <div class="kv"><small>Status</small><b><span class="pill ${esc(p.status || 'pending')}">${esc(p.status || 'pending')}</span></b></div>
+        <div class="kv"><small>Seller</small><b>${esc(p.sellerName || '—')}</b></div>
+        <div class="kv"><small>Seller Email</small><b>${esc(p.sellerEmail || '—')}</b></div>
+        <div class="kv"><small>Age</small><b>${esc(p.age || '—')} months</b></div>
+        <div class="kv"><small>Weight</small><b>${esc(p.weight || '—')} kg</b></div>
+        <div class="kv"><small>Vaccination</small><b>${esc(p.vaccination || '—')}</b></div>
+        <div class="kv"><small>Created</small><b>${fmtDateTime(p.createdAt || p.date)}</b></div>
+      </div>
+      ${p.description ? `<div style="margin-top:16px"><small style="display:block;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:6px">Description</small>
+        <p style="font-size:.88rem;color:var(--text-2);line-height:1.7">${esc(p.description)}</p></div>` : ''}
+    `,
+    actions: p.status === 'pending' ? `
+      <button class="btn btn-ghost btn-sm" onclick="document.getElementById('modal').classList.remove('on')">Close</button>
+      <button class="btn btn-danger btn-sm" data-action="reject-product" data-id="${esc(id)}">Reject</button>
+      <button class="btn btn-success btn-sm" data-action="approve-product" data-id="${esc(id)}">Approve</button>
+    ` : `<button class="btn btn-ghost btn-sm" onclick="document.getElementById('modal').classList.remove('on')">Close</button>`
+  });
+  }
+  
+  function viewOrder(uid, oid) {
+  const o = S.orders[uid]?.[oid];
+  if (!o) return;
+  const items = (o.items || []).map(i => `
+    <div class="kv" style="grid-column:1/-1">
+      <small>${esc(i.name || 'Item')}</small>
+      <b>${npr(i.price)} × ${i.quantity} = ${npr((i.price || 0) * (i.quantity || 0))}</b>
+    </div>`).join('');
+  openModal({
+    title: `Order #${oid.slice(-8)}`,
+    sub: fmtDateTime(o.date),
+    wide: true,
+    body: `
+      <div class="kv-grid">
+        <div class="kv"><small>Customer</small><b>${esc(o.shippingName || '—')}</b></div>
+        <div class="kv"><small>Mobile</small><b>${esc(o.shippingMobile || '—')}</b></div>
+        <div class="kv"><small>Email</small><b>${esc(o.userEmail || '—')}</b></div>
+        <div class="kv"><small>Status</small><b><span class="pill ${esc(o.status || 'pending')}">${esc(o.status || 'pending')}</span></b></div>
+        <div class="kv" style="grid-column:1/-1"><small>Shipping Address</small><b>${esc(o.shippingAddress || '—')}</b></div>
+      </div>
+      <h4 style="margin:18px 0 10px;font-size:.92rem">Items</h4>
+      <div class="kv-grid">${items || '<div class="kv" style="grid-column:1/-1"><small>Items</small><b>No line items</b></div>'}</div>
+      <div style="margin-top:18px;padding:14px 16px;border-radius:12px;background:rgba(34,211,238,.08);border:1px solid var(--line);display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:.85rem;color:var(--text-2)">Order Total</span>
+        <b style="font-family:'Outfit';font-size:1.25rem;color:var(--cyan)">${npr(o.totalAmount)}</b>
+      </div>
+    `,
+    actions: `<button class="btn btn-ghost btn-sm" onclick="document.getElementById('modal').classList.remove('on')">Close</button>`
+  });
+}
+function editOrderStatus(uid, oid) {
+  const o = S.orders[uid]?.[oid];
+  if (!o) return;
+  openModal({
+    title: 'Update Order Status',
+    sub: `Order #${oid.slice(-8)}`,
+    body: `
+      <div class="form-group">
+        <label>New status</label>
+        <select class="select" id="orderStatusSelect" style="width:100%">
+          ${['pending','confirmed','packed','shipped','delivered','cancelled'].map(s =>
+            `<option value="${s}" ${o.status === s ? 'selected' : ''}>${s[0].toUpperCase()+s.slice(1)}</option>`).join('')}
+        </select>
+      </div>`,
+    actions: `
+      <button class="btn btn-ghost btn-sm" onclick="document.getElementById('modal').classList.remove('on')">Cancel</button>
+      <button class="btn btn-primary btn-sm" id="saveOrderStatus">Save</button>`
+  });
+  $('#saveOrderStatus').onclick = async () => {
+    const val = $('#orderStatusSelect').value;
+    try {
+      await update(ref(db, `orders/${uid}/${oid}`), { status: val });
+      closeModal();
+      toast('Status updated', 'Order moved to ' + val, 'ok');
+    } catch (err) { toast('Failed', err.message, 'err'); }
+  };
+}
+
+function viewSeller(id) {
+  const s = S.sellers[id];
+  if (!s) return;
+  const counts = sellerPetCount(id);
+  openModal({
+    title: s.shopName || 'Seller',
+    sub: s.sellerName || '',
+    body: `
+      <div class="kv-grid">
+        <div class="kv"><small>Email</small><b>${esc(s.email || '—')}</b></div>
+        <div class="kv"><small>Phone</small><b>${esc(s.phone || '—')}</b></div>
+        <div class="kv"><small>Registered</small><b>${fmtDate(s.registrationDate)}</b></div>
+        <div class="kv"><small>Status</small><b><span class="pill ${esc(s.status || 'active')}">${esc(s.status || 'active')}</span></b></div>
+        <div class="kv"><small>Wallet Balance</small><b>${npr(s.walletBalance)}</b></div>
+        <div class="kv"><small>Total Earnings</small><b>${npr(s.totalEarnings)}</b></div>
+        <div class="kv"><small>Total Withdrawn</small><b>${npr(s.totalWithdrawn)}</b></div>
+        <div class="kv"><small>Listings</small><b>${counts.n} (${counts.approved} approved · ${counts.pending} pending)</b></div>
+      </div>
+    `,
+    actions: `
+      <button class="btn btn-ghost btn-sm" onclick="document.getElementById('modal').classList.remove('on')">Close</button>
+      <button class="btn btn-primary btn-sm" data-action="toggle-seller-status" data-id="${esc(id)}">${s.status === 'rejected' ? 'Activate seller' : 'Reject seller'}</button>`
+  });
+}
+document.addEventListener('click', async e => {
+  const btn = e.target.closest('[data-action="toggle-seller-status"]');
+  if (!btn) return;
+  const id = btn.dataset.id;
+  const s = S.sellers[id];
+  if (!s) return;
+  const next = s.status === 'rejected' ? 'active' : 'rejected';
+  try {
+    await update(ref(db, `sellers/${id}`), { status: next });
+    closeModal();
+    toast('Seller updated', 'Status is now ' + next, 'ok');
+  } catch (err) { toast('Failed', err.message, 'err'); }
+});
+
+async function approveWithdrawal(id) {
+  const w = S.withdrawals[id];
+  if (!w) return;
+  confirmAction('Approve this withdrawal?', `${w.sellerName} will receive ${npr(w.amount)}. Their wallet balance will be reduced.`, async () => {
+    try {
+      const sellerRef = ref(db, `sellers/${w.sellerId}`);
+      const snap = await get(sellerRef);
+      const batch = {};
+      batch[`withdrawals/${id}/status`] = 'completed';
+      batch[`withdrawals/${id}/processedDate`] = Date.now();
+      batch[`withdrawals/${id}/processedBy`] = auth.currentUser?.email || 'admin';
+      if (snap.exists()) {
+        const seller = snap.val();
+        const newBal = Math.max(0, Number(seller.walletBalance || 0) - Number(w.amount || 0));
+        batch[`sellers/${w.sellerId}/walletBalance`] = newBal;
+        batch[`sellers/${w.sellerId}/totalWithdrawn`] = Number(seller.totalWithdrawn || 0) + Number(w.amount || 0);
+      }
+      await update(ref(db), batch);
+      toast('Withdrawal approved', '', 'ok');
+    } catch (err) { toast('Failed', err.message, 'err'); }
+  });
+}
+async function rejectWithdrawal(id) {
+  confirmAction('Reject this withdrawal?', 'The seller will see the request as rejected.', async () => {
+    try {
+      await update(ref(db, `withdrawals/${id}`), { status: 'rejected', rejectedDate: Date.now(), rejectedBy: auth.currentUser?.email || 'admin' });
+      toast('Withdrawal rejected', '', 'warn');
+    } catch (err) { toast('Failed', err.message, 'err'); }
+  });
+}
+
+function viewMessage(id) {
+  const m = S.messages[id];
+  if (!m) return;
+  openModal({
+    title: 'Message from ' + (m.name || '—'),
+    sub: m.email || '',
+    body: `
+      <div class="kv-grid">
+        <div class="kv"><small>Received</small><b>${fmtDateTime(m.date)}</b></div>
+        <div class="kv"><small>Email</small><b>${esc(m.email || '—')}</b></div>
+      </div>
+      <p style="margin-top:16px;font-size:.9rem;line-height:1.8;color:var(--text-2);white-space:pre-wrap">${esc(m.message || '')}</p>
+    `,
+    actions: `<button class="btn btn-ghost btn-sm" onclick="document.getElementById('modal').classList.remove('on')">Close</button>`
+  });
+  /* mark as read */
+  if (!m.read) {
+    update(ref(db, `messages/${id}`), { read: true }).catch(() => {});
+  }
+}
+
+
+/* ───────── INITIAL PAGE (must run LAST) ───────── */
+if (!location.hash) location.hash = '#dashboard';
+go((location.hash || '#dashboard').slice(1));
+
+console.log('[ABI Admin] ready');
+</script>
+</body>
+</html>
 
