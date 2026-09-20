@@ -277,7 +277,7 @@ function fishOptsFromProduct(product, size = 1) {
   };
 }
 
-/* ---- Aquarium scene ---- */
+  /* ---- Aquarium scene ---- */
 class Aquarium {
   constructor(canvas, THREE, quality, mode = 'hero') {
     this.THREE = THREE; this.canvas = canvas; this.mode = mode;
@@ -355,7 +355,7 @@ this.scene.fog = new THREE.FogExp2(0x010a18, mode === 'showroom' ? .06 : .032);
       this.scene.add(rock);
     }
 
-const plantCount = small ? 5 : 11;
+    const plantCount = small ? 5 : 11;
     for (let i = 0; i < plantCount; i++) {
       const plant = new T.Group();
       const hue = 0.34 + Math.random() * 0.14;
@@ -521,7 +521,7 @@ buildFish(products) {
     }
   }
 
-  resize() {
+          resize() {
     const parent = this.canvas.parentElement || this.canvas;
     const w = parent.clientWidth || 1, h = parent.clientHeight || 1;
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, this.dprCap));
@@ -659,8 +659,7 @@ export async function initThree() {
     heroCanvas.height = heroStage.clientHeight || window.innerHeight;
 
     Aquarium3D.hero = new Aquarium(heroCanvas, THREE, Aquarium3D.quality, 'hero');
-    Aquarium3D.hero.buildFish([]); 
-
+Aquarium3D.hero.buildFish([]);   // ← YO LINE THAPNUS — jellyfish turuntai banaucha
     const hc = new OrbitControls(Aquarium3D.hero.camera, heroCanvas);
     hc.enableDamping = true; hc.dampingFactor = .06;
     hc.enableZoom = false; hc.enablePan = false;
@@ -805,7 +804,7 @@ export async function open3DViewer(productId) {
   controls.minDistance = 1.6; controls.maxDistance = 7;
   controls.enablePan = false;
 
-  const fit = () => {
+      const fit = () => {
     const w = stage.clientWidth || 1, h = stage.clientHeight || 1;
     renderer.setSize(w, h, false);
     camera.aspect = w / h; camera.updateProjectionMatrix();
