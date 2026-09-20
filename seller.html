@@ -1427,7 +1427,7 @@
     </div>
 
          <!-- Firebase SDK -->
-    <script type="module">
+                                <script type="module">
         // Import Firebase
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
         import {
@@ -1656,7 +1656,7 @@
                     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                     const userId = userCredential.user.uid;
 
-                    const sellerData = {
+                         const sellerData = {
                         shopName,
                         sellerName,
                         email,
@@ -1740,7 +1740,7 @@
             }
         });
 
-                // === PAGE LOADERS ===
+        // === PAGE LOADERS ===
 
         // Dashboard
         async function loadDashboard() {
@@ -1851,7 +1851,7 @@
             }
         }
 
-        // === Navigation ===
+                          // === Navigation ===
         function setupNavigation() {
             document.querySelectorAll('.nav-link').forEach(link => {
                 link.addEventListener('click', async function(e) {
@@ -2046,7 +2046,7 @@
             });
         }
 
-        // === MY PETS ===
+                              // === MY PETS ===
         async function loadMyPetsPage() {
             const main = document.getElementById('main-content');
             main.innerHTML = `
@@ -2252,7 +2252,7 @@
             } catch (e) { showToast('Error', 'Failed to update order.', 'error'); }
         };
 
-        // === SALES ANALYTICS ===
+                                 // === SALES ANALYTICS ===
         async function loadSalesPage() {
             const main = document.getElementById('main-content');
             main.innerHTML = `
